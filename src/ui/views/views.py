@@ -1,6 +1,9 @@
 import pygame
 import pygame_gui
 from pygame_gui.elements import *
+from pygame_gui.windows import *
+from pygame_gui.core import ObjectID
+
 import sys
 
 class View:
@@ -9,7 +12,7 @@ class View:
         WIDTH, HEIGHT = 800, 600
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("CyberAware - Plataforma")
-        self.ui_manager = pygame_gui.UIManager((WIDTH, HEIGHT))
+        self.ui_manager = pygame_gui.UIManager((WIDTH, HEIGHT), 'theme.json')
         self.clock = pygame.time.Clock()
 
         self.view_controller = ViewController(self)
@@ -81,79 +84,146 @@ class ViewController:
                 self.view.dragging_entity.update_position(dx, dy)
 
     def ui_button_pressed(self, event):
-        if event.ui_object_id == 'new_game_button':
-            self.view.ui_manager.clear_and_reset()
-            self.view = BuildView()
-            self.view.run()
-        elif event.ui_object_id == 'open_game_button':
-            pass
-        elif event.ui_object_id == 'quit_button':
+        if event.ui_object_id == '#new_game_button':
+            self.view.controller.new_game()
+        elif event.ui_object_id == '#open_game_button':
+            self.view.controller.open_game()
+        elif event.ui_object_id == '#quit_button':
             pygame.quit()
             sys.exit()
+
+        elif event.ui_object_id == 'auto_resizing_container.#toolbar_new_game':
+            self.view.toolbar.controller.new_game()
+        elif event.ui_object_id == 'auto_resizing_container.#toolbar_save_game':
+            self.view.toolbar.controller.save_game()
+        elif event.ui_object_id == 'auto_resizing_container.#toolbar_open_game':
+            self.view.toolbar.controller.open_game()
+        elif event.ui_object_id == 'auto_resizing_container.#toolbar_compile':
+            self.view.toolbar.controller.compile()
 
 class BuildView(View):
     def __init__(self):
         super().__init__()
 
+        self.toolbar = Toolbar(self)
+
+        self.dragging_entity = None
+
     def render(self):
         super().render()
         
+        self.toolbar.draw(self.screen)
+
         self.update_display()
 
 class HomeView(View):
     def __init__(self):
         super().__init__()
 
-        UIButton(relative_rect=pygame.Rect((350, 275), (100, 50)), text='New Game', object_id='new_game_button', manager=self.ui_manager)
-        UIButton(relative_rect=pygame.Rect((350, 350), (100, 50)), text='Open Game', object_id='open_game_button', manager=self.ui_manager)
-        UIButton(relative_rect=pygame.Rect((350, 425), (100, 50)), text='Quit', object_id='quit_button', manager=self.ui_manager)
+        self.controller = HomeViewControl(self)
+
+        label_width = 220
+        button_width = 220
+
+        UILabel(relative_rect=pygame.Rect((self.screen.get_width()/2 - label_width/2, 100), (label_width, 50)), text='CyberAware', object_id='#title', manager=self.ui_manager)
+        UILabel(relative_rect=pygame.Rect((self.screen.get_width()/2 - label_width/2 + 5, 145), (label_width, 50)), text='Plataforma', object_id='#subtitle', manager=self.ui_manager)
+
+        UIButton(relative_rect=pygame.Rect((self.screen.get_width()/2 - button_width/2, 350), (button_width, 50)), text='New Game', 
+                 object_id=ObjectID(class_id='@main_menu_button', object_id='#new_game_button'), manager=self.ui_manager)
+
+        UIButton(relative_rect=pygame.Rect((self.screen.get_width()/2 - button_width/2, 425), (button_width, 50)), text='Open Game', 
+                 object_id=ObjectID(class_id='@main_menu_button', object_id='#open_game_button'), manager=self.ui_manager)
+
+        UIButton(relative_rect=pygame.Rect((self.screen.get_width()/2 - button_width/2, 500), (button_width, 50)), text='Quit', 
+                 object_id=ObjectID(class_id='@main_menu_button', object_id='#quit_button'), manager=self.ui_manager)
         
     def render(self):
         super().render()
         
         self.update_display()
 
-class Toolbar:
-    def __init__(self):
-        self.button_width = 100
-        self.button_height = 20
-        self.button_margin = 10
-        self.toolbar_height = 40
+class HomeViewControl:
+    def __init__(self, view):
+        self.view = view
 
-        self.toolbar_buttons = [
-            {"text": "Button 1", "rect": pygame.Rect(self.button_margin, self.button_margin, self.button_width, self.button_height)},
-            {"text": "Button 2", "rect": pygame.Rect(self.button_margin * 2 + self.button_width, self.button_margin, self.button_width, self.button_height)}
-        ]
+    def new_game(self):
+        self.view.ui_manager.clear_and_reset()
+        self.view = BuildView()
+        self.view.run()
+
+    def open_game(self):
+        pass
+
+    def quit(self):
+        pygame.quit()
+        sys.exit()
+
+class Toolbar:
+    def __init__(self, view):
+        self.view = view
+
+        self.controller = ToolbarControl(self)
+
+        self.toolbar_height = 40
+        self.toolbar_width = 800
+
+        self.toolbar_container = UIAutoResizingContainer(
+            relative_rect=pygame.Rect(0, 0, self.toolbar_width, self.toolbar_height),
+            manager=self.view.ui_manager
+        )
+
+        button_width = 100
+        button_height = 20
+        button_margin = 10
+
+        buttons = [('New Game', '#toolbar_new_game'), ('Save Game', '#toolbar_save_game'), ('Open Game', '#toolbar_open_game'), ('Compile', '#toolbar_compile')]
+
+        for i, (text, object_id) in enumerate(buttons):
+            UIButton(
+                relative_rect=pygame.Rect(button_margin * (i + 1) + button_width * i, button_margin, button_width, button_height),
+                text=text,
+                manager=self.view.ui_manager,
+                container=self.toolbar_container,
+                object_id=ObjectID(class_id='@toolbar_button', object_id=object_id)
+            )
 
     def draw(self, screen):
-        pygame.draw.rect(screen, (200, 200, 200), (0, 0, 800, self.toolbar_height))
+        shadow_surface = pygame.Surface((self.toolbar_width, self.toolbar_height), pygame.SRCALPHA)
 
-        for button in self.toolbar_buttons:
-            pygame.draw.rect(screen, (0, 255, 0), button["rect"])
-            font = pygame.font.Font(None, 18)
-            text_surface = font.render(button["text"], True, (255, 255, 255))
-            text_rect = text_surface.get_rect(center=button["rect"].center)
-            screen.blit(text_surface, text_rect)
+        for y in range(self.toolbar_height):
+            alpha = 255 - int((255 / self.toolbar_height) * y)
+            shadow_color = (0, 0, 0, alpha)
+            shadow_rect = pygame.Rect((0, y), (self.toolbar_width, 1))
+            pygame.draw.rect(shadow_surface, shadow_color, shadow_rect)
+
+        screen.blit(shadow_surface, (0, 3))
+
+        main_rect = pygame.Rect((0, 0), (800, self.toolbar_height))
+        pygame.draw.rect(screen, (255, 255, 255), main_rect)
 
 class ToolbarControl:
     def __init__(self, toolbar):
         self.toolbar = toolbar
 
-    def open_file():
+    def new_game(self):
+        self.toolbar.view.ui_manager.clear_and_reset()
+        self.toolbar.view = BuildView()
+        self.toolbar.view.run()
+
+    def save_game(self):
         pass
 
-    def save_file():
-        pass
+    def open_game(self):
+        self.file_dialog = UIFileDialog(pygame.Rect(160, 50, 440, 500),
+                                                    self.toolbar.view.ui_manager,
+                                                    window_title='Open Game',
+                                                    allow_picking_directories=False,
+                                                    allow_existing_files_only=True,
+                                                    allowed_suffixes={""})
 
-    def new_file():
-        pass
-
-    def compile():
+    def compile(self):
         pass
     
-    def exit():
-        sys.exit()
-
 if __name__ == "__main__":
     view = HomeView()
     view.run()
