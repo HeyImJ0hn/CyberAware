@@ -1,6 +1,5 @@
 import pygame
 import pygame_gui
-import pygame.gfxdraw as gfx
 from pygame_gui.elements import *
 
 class EntityBody:

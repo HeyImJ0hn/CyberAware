@@ -68,7 +68,7 @@ class EntityManager:
             entity = Entity(len(self.entities), x, y, 75, 75, self.ui_manager, depth=depth)
             parent.add_option(entity)
         else:
-            entity = Entity(len(self.entities), self.ui_manager.window_resolution[0]//2-75, self.ui_manager.window_resolution[1]//2-75, 75, 75, self.ui_manager)
+            entity = Entity(len(self.entities), self.ui_manager.window_resolution[0]//2-75//2, self.ui_manager.window_resolution[1]//2-75//2, 75, 75, self.ui_manager)
 
         self.entities.append(entity)
 
@@ -90,7 +90,7 @@ class Entity:
         self.width = width
         self.height = height
         self.depth = depth
-        self.name = "Node {}".format(id) if name == "" else name
+        self.name = f"Node {id}" if name == "" else name
         self.text = text
         self.notes = notes
         self.media = media
@@ -118,7 +118,6 @@ class Entity:
         text_surface = font.render(self.name, True, (0, 0, 0))
         text_rect = pygame.Rect(self.body.x + self.body.width//2 - 25, self.body.y + self.body.height//2 - 55, 24, 75)
         screen.blit(text_surface, text_rect)
-
         
         if self.hovered:
             for button in self.buttons:
