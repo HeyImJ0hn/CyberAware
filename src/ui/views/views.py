@@ -7,20 +7,22 @@ from pygame_gui.core import ObjectID
 import sys
 
 class View:
-    def __init__(self):
+    def __init__(self, game_manager):
         pygame.init()
         WIDTH, HEIGHT = 800, 600
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE | pygame.SRCALPHA)
         pygame.display.set_caption("CyberAware - Plataforma")
         self.ui_manager = pygame_gui.UIManager((WIDTH, HEIGHT), 'theme.json')
         self.clock = pygame.time.Clock()
+        self.game_manager = game_manager
 
         self.view_controller = ViewController(self)
-        pass
 
     def run(self):
         while True:
             self.UI_REFRESH_RATE = self.clock.tick(60)/1000
+            self.view_controller.mouse_hover()
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -34,7 +36,7 @@ class View:
                 #elif (event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and
                 #      event.ui_object_id == "#main_text_entry"):
                 #    print("Text entered:", event.text)
-                if event.type == pygame_gui.UI_BUTTON_PRESSED:
+                elif event.type == pygame_gui.UI_BUTTON_PRESSED:
                         self.view_controller.ui_button_pressed(event)
             
                 self.ui_manager.process_events(event)
@@ -56,8 +58,8 @@ class ViewController:
     def mouse_button_down(self, event):
         if isinstance(self.view, BuildView):
             self.mouse_pos = pygame.mouse.get_pos()
-            for entity in self.view.entity_manager.entities:
-                if entity.wasBodyClicked(self.mouse_pos[0], self.mouse_pos[1]):
+            for entity in self.view.game_manager.get_entities():
+                if entity.was_body_clicked(self.mouse_pos[0], self.mouse_pos[1]):
                     self.view.dragging_entity = entity
                     self.offset_x = entity.body.rect.x - self.mouse_pos[0] 
                     self.offset_y = entity.body.rect.y - self.mouse_pos[1]
@@ -68,12 +70,11 @@ class ViewController:
             self.view.dragging_entity = None
             current_pos = pygame.mouse.get_pos()
             if self.mouse_pos == current_pos:
-                for entity in self.view.entity_manager.entities:
-                    if entity.wasButtonClicked(current_pos[0], current_pos[1]):
-                        print("Button clicked")
-                    if entity.wasBodyClicked(current_pos[0], current_pos[1]):
-                        print("Entity clicked")
-                        self.view.entity_manager.openMenu(entity)
+                for entity in self.view.game_manager.get_entities():
+                    if entity.was_button_clicked(current_pos[0], current_pos[1]):
+                        self.view.game_manager.add_entity(entity)
+                    if entity.was_body_clicked(current_pos[0], current_pos[1]):
+                        entity.open_menu()
 
     def mouse_motion(self, event):
         if isinstance(self.view, BuildView):
@@ -81,7 +82,7 @@ class ViewController:
                 mouse_pos = pygame.mouse.get_pos()
                 dx = mouse_pos[0] + self.offset_x - self.view.dragging_entity.body.rect.x
                 dy = mouse_pos[1] + self.offset_y - self.view.dragging_entity.body.rect.y
-                self.view.dragging_entity.update_position(dx, dy)
+                self.view.dragging_entity.move(dx, dy)
 
     def ui_button_pressed(self, event):
         if event.ui_object_id == '#new_game_button':
@@ -101,9 +102,14 @@ class ViewController:
         elif event.ui_object_id == 'auto_resizing_container.#toolbar_compile':
             self.view.toolbar.controller.compile()
 
+    def mouse_hover(self):
+        for entity in self.view.game_manager.get_entities():
+            current_pos = pygame.mouse.get_pos()
+            entity.hovered = True if (entity.was_button_clicked(current_pos[0], current_pos[1]) or entity.was_body_clicked(current_pos[0], current_pos[1])) else False
+
 class BuildView(View):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, game_manager):
+        super().__init__(game_manager)
 
         self.toolbar = Toolbar(self)
 
@@ -112,13 +118,18 @@ class BuildView(View):
     def render(self):
         super().render()
         
+        for entity in self.game_manager.get_entities():
+            entity.draw(self.screen)
+
         self.toolbar.draw(self.screen)
 
         self.update_display()
 
 class HomeView(View):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, game_manager):
+        super().__init__(game_manager)
+
+        self.game_manager = game_manager
 
         self.controller = HomeViewControl(self)
 
@@ -147,12 +158,15 @@ class HomeViewControl:
         self.view = view
 
     def new_game(self):
-        self.view.ui_manager.clear_and_reset()
-        self.view = BuildView()
-        self.view.run()
+        self.view.game_manager.new_game()
 
     def open_game(self):
-        pass
+        self.file_dialog = UIFileDialog(pygame.Rect(160, 50, 440, 500),
+                                                    self.view.ui_manager,
+                                                    window_title='Open Game',
+                                                    allow_picking_directories=False,
+                                                    allow_existing_files_only=True,
+                                                    allowed_suffixes={""})
 
     def quit(self):
         pygame.quit()
@@ -196,7 +210,7 @@ class Toolbar:
             shadow_rect = pygame.Rect((0, y), (self.toolbar_width, 1))
             pygame.draw.rect(shadow_surface, shadow_color, shadow_rect)
 
-        screen.blit(shadow_surface, (0, 3))
+        screen.blit(shadow_surface, (0, 5))
 
         main_rect = pygame.Rect((0, 0), (800, self.toolbar_height))
         pygame.draw.rect(screen, (255, 255, 255), main_rect)
@@ -206,9 +220,7 @@ class ToolbarControl:
         self.toolbar = toolbar
 
     def new_game(self):
-        self.toolbar.view.ui_manager.clear_and_reset()
-        self.toolbar.view = BuildView()
-        self.toolbar.view.run()
+        self.toolbar.view.game_manager.new_game()
 
     def save_game(self):
         pass
@@ -223,7 +235,3 @@ class ToolbarControl:
 
     def compile(self):
         pass
-    
-if __name__ == "__main__":
-    view = HomeView()
-    view.run()
