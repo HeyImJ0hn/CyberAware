@@ -26,6 +26,15 @@
             "text_shadow": "#777777",
             "filled_bar": "#f4251b",
             "unfilled_bar": "#CCCCCC"
+        },
+        "font":
+        {
+            "name": "roboto-regular",
+            "size": "14",
+            "bold": "0",
+            "italic": "0",
+            "regular_path": "fonts/Roboto-Regular.ttf",
+            "bold_path": "fonts/Roboto-Bold.ttf"
         }
     },
     "@toolbar_button":
@@ -67,22 +76,58 @@
     },
     "@main_menu_button":
     {
+        "colours":
+        {
+            "normal_bg": "#4A99F8",
+            "hovered_bg": "#3B7BC8",
+            "selected_bg": "#4A99F8",
+            "active_bg": "#4A99F8",
+            "dark_bg": "#050E27",
+            "normal_text": "#FFFFFF",
+            "hovered_text": "#FFFFFF",
+            "disabled_text": "#808080",
+            "selected_text": "#FFFFFF",
+            "active_text": "#FFFFFF"
+        },
         "misc":
         {
             "shape": "rounded_rectangle",
-            "shape_corner_radius": "23"
+            "shape_corner_radius": "23",
+            "border_width": "0"
+        },
+        "font":
+        {
+            "name": "roboto-special",
+            "size": "16",
+            "bold": "1",
+            "regular_path": "fonts/Roboto-Thin.ttf",
+            "bold_path": "fonts/Roboto-Black.ttf"
+        }
+    },
+    "#quit_button": 
+    {
+        "colours":
+        {
+            "normal_bg": "#050E27",
+            "hovered_bg": "#0A1A48",
+            "selected_bg": "#050E27",
+            "active_bg": "#050E27",
+            "dark_bg": "#050E27"
         }
     },
     "#title":
     {
         "colours":
         {
-            "normal_text": "#000000"
+            "normal_text": "#050E27"
         },
         "font":
         {
-            "size": "36",
-            "bold": "1"
+            "name": "roboto-special",
+            "size": "64",
+            "bold": "1",
+            "regular_path": "fonts/Roboto-Thin.ttf",
+            "bold_path": "fonts/Roboto-Black.ttf"
         },
         "misc":
         {
@@ -94,11 +139,14 @@
     {
         "colours":
         {
-            "normal_text": "#000000"
+            "normal_text": "#050E27"
         },
         "font":
         {
-            "bold": "1"
+            "name": "roboto-special",
+            "size": "32",
+            "regular_path": "fonts/Roboto-Thin.ttf",
+            "bold_path": "fonts/Roboto-Black.ttf"
         },
         "misc":
         {

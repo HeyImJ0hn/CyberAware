@@ -1,11 +1,16 @@
 import pygame
 import sys
+from pygame_gui.windows import UIFileDialog
 
 from ui.entity_design.EntityDesign import EntityBody, EntityButton, EntityMenu
 from ui.views.Views import HomeView, BuildView
 
 class GameManager:
-    def __init__(self):
+    def __init__(self, screen, ui_manager, resolution):
+        self.screen = screen
+        self.ui_manager = ui_manager
+        self.resolution = resolution
+
         self.view = HomeView(self)
 
         self.game_name = None
@@ -26,7 +31,12 @@ class GameManager:
         self.view.run()
 
     def open_game(self):
-        pass
+        self.file_dialog = UIFileDialog(pygame.Rect(160, 50, 440, 500),
+                                                    self.view.ui_manager,
+                                                    window_title='Open Game',
+                                                    allow_picking_directories=False,
+                                                    allow_existing_files_only=True,
+                                                    allowed_suffixes={"json"})
 
     def save_game(self):
         pass

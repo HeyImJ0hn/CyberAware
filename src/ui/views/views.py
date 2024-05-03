@@ -8,13 +8,12 @@ import sys
 
 class View:
     def __init__(self, game_manager):
-        pygame.init()
-        self.WIDTH, self.HEIGHT = 800, 600
-        self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE | pygame.SRCALPHA)
-        pygame.display.set_caption("CyberAware - Plataforma")
-        self.ui_manager = pygame_gui.UIManager((self.WIDTH, self.HEIGHT), 'theme.json')
-        self.clock = pygame.time.Clock()
         self.game_manager = game_manager
+        self.screen = self.game_manager.screen
+        self.WIDTH, self.HEIGHT = self.game_manager.resolution
+        pygame.display.set_caption("CyberAware - Plataforma")
+        self.ui_manager = self.game_manager.ui_manager
+        self.clock = pygame.time.Clock()
 
         self.view_controller = ViewController(self)
 
@@ -143,6 +142,22 @@ class ViewController:
         self.view.WIDTH, self.view.HEIGHT = event.w, event.h
         self.view.ui_manager.set_window_resolution((self.view.WIDTH, self.view.HEIGHT))
 
+        if isinstance(self.view, HomeView):
+            self.view.ui_manager.clear_and_reset()
+            
+            self.view.title.rect.x = self.view.WIDTH/2 - 400/2
+            self.view.subtitle.rect.x = self.view.WIDTH/2 - 400/2 + 30
+            self.view.new_button.rect.x = self.view.WIDTH/2 - 240/2
+            self.view.open_button.rect.x = self.view.WIDTH/2 - 240/2
+            self.view.quit_button.rect.x = self.view.WIDTH/2 - 240/2
+
+            self.view.title.rect.y = self.view.HEIGHT/2 - 400/2
+            self.view.subtitle.rect.y = self.view.HEIGHT/2 - 400/2 + 45
+            self.view.new_button.rect.y = self.view.HEIGHT/2 - 240/2 + 200
+            self.view.open_button.rect.y = self.view.HEIGHT/2 - 240/2 + 275
+            self.view.quit_button.rect.y = self.view.HEIGHT/2 - 240/2 + 350
+
+            self.view.draw_ui()
 
 class BuildView(View):
     def __init__(self, game_manager):
@@ -178,24 +193,31 @@ class HomeView(View):
 
         self.controller = HomeViewControl(self)
 
-        label_width = 220
-        button_width = 220
+        self.bg = pygame.image.load('static/homeview_bg.png')
 
-        UILabel(relative_rect=pygame.Rect((self.screen.get_width()/2 - label_width/2, 100), (label_width, 50)), text='CyberAware', object_id='#title', manager=self.ui_manager)
-        UILabel(relative_rect=pygame.Rect((self.screen.get_width()/2 - label_width/2 + 5, 145), (label_width, 50)), text='Plataforma', object_id='#subtitle', manager=self.ui_manager)
+        self.draw_ui()
 
-        UIButton(relative_rect=pygame.Rect((self.screen.get_width()/2 - button_width/2, 350), (button_width, 50)), text='New Game', 
-                 object_id=ObjectID(class_id='@main_menu_button', object_id='#new_game_button'), manager=self.ui_manager)
+    def draw_ui(self):
+        label_width = 400
+        button_width = 240
+        button_height = 50
 
-        UIButton(relative_rect=pygame.Rect((self.screen.get_width()/2 - button_width/2, 425), (button_width, 50)), text='Open Game', 
-                 object_id=ObjectID(class_id='@main_menu_button', object_id='#open_game_button'), manager=self.ui_manager)
 
-        UIButton(relative_rect=pygame.Rect((self.screen.get_width()/2 - button_width/2, 500), (button_width, 50)), text='Quit', 
-                 object_id=ObjectID(class_id='@main_menu_button', object_id='#quit_button'), manager=self.ui_manager)
+        self.title = UILabel(relative_rect=pygame.Rect((self.screen.get_width()/2 - label_width/2, self.screen.get_height()/2 - 400/2), (label_width, 100)), text='CyberAware', object_id='#title', manager=self.ui_manager)
+        self.subtitle = UILabel(relative_rect=pygame.Rect((self.screen.get_width()/2 - label_width/2 + 30, self.screen.get_height()/2 - 400/2+45), (label_width, 100)), text='Plataforma', object_id='#subtitle', manager=self.ui_manager)
+
+        self.new_button = UIButton(relative_rect=pygame.Rect((self.screen.get_width()/2 - button_width/2, self.screen.get_height()/2 - 400/2+200), (button_width, button_height)), 
+                                   text='New Game', object_id=ObjectID(class_id='@main_menu_button', object_id='#new_game_button'), manager=self.ui_manager)
+        self.open_button = UIButton(relative_rect=pygame.Rect((self.screen.get_width()/2 - button_width/2, self.screen.get_height()/2 - 400/2+275), (button_width, button_height)), 
+                                    text='Open Game', object_id=ObjectID(class_id='@main_menu_button', object_id='#open_game_button'), manager=self.ui_manager)
+        self.quit_button = UIButton(relative_rect=pygame.Rect((self.screen.get_width()/2 - button_width/2, self.screen.get_height()/2 - 400/2+350), (button_width, button_height)), 
+                                    text='Quit', object_id=ObjectID(class_id='@main_menu_button', object_id='#quit_button'), manager=self.ui_manager)
+        
         
     def render(self):
         super().render()
         
+        self.screen.blit(self.bg, (0, 0))
         self.update_display()
 
 class HomeViewControl:
@@ -206,12 +228,7 @@ class HomeViewControl:
         self.view.game_manager.new_game()
 
     def open_game(self):
-        self.file_dialog = UIFileDialog(pygame.Rect(160, 50, 440, 500),
-                                                    self.view.ui_manager,
-                                                    window_title='Open Game',
-                                                    allow_picking_directories=False,
-                                                    allow_existing_files_only=True,
-                                                    allowed_suffixes={""})
+        self.view.game_manager.open_game()
 
     def quit(self):
         pygame.quit()
