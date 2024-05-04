@@ -6,26 +6,26 @@ from ui.entity_design.EntityDesign import EntityBody, EntityButton, EntityMenu
 from ui.views.Views import HomeView, BuildView
 
 class GameManager:
-    def __init__(self, screen, ui_manager, resolution):
-        self.screen = screen
-        self.ui_manager = ui_manager
-        self.resolution = resolution
+    def __init__(self):
+        pygame.init()
+        self.resolution = (800, 600)
 
         self.view = HomeView(self)
 
         self.game_name = None
         self.file_path = None
 
-        self._entity_manager = EntityManager(self.view.ui_manager)
+        self._entity_manager = None
 
     def run(self):
         self.view.run()
 
     def new_game(self):
-        self.clear_entities()
-        self.view.ui_manager.clear_and_reset()
         self.view = BuildView(self)
         
+        self._entity_manager = EntityManager(self.view.ui_manager)
+        self.clear_entities()
+
         self.add_entity()
 
         self.view.run()
@@ -62,6 +62,9 @@ class GameManager:
     
     def clear_entities(self):
         return self._entity_manager.clear_entities()
+    
+    def update_resolution(self, resolution):
+        self.resolution = resolution
 
 class EntityManager:
     def __init__(self, ui_manager, entities=[]):
@@ -105,6 +108,7 @@ class Entity:
         self.notes = notes
         self.media = media
         self.ui_manager = ui_manager
+        self.menu = None
 
         self.options = []
 
@@ -177,13 +181,22 @@ class Entity:
         self.media = media
 
     def open_menu(self):
-        EntityMenu(self.ui_manager, self)
+        self.menu = EntityMenu(self.ui_manager, self)
 
+    def refresh_menu(self, pos):
+        self.menu = EntityMenu(self.ui_manager, self)
+        self.menu.set_position(pos)
+        
     def was_body_clicked(self, x, y):
         return self.body.rect.collidepoint(x, y)
 
     def was_button_clicked(self, x, y):
         return self.buttons[0].rect.collidepoint(x, y)
+    
+    def was_menu_clicked(self, x, y):
+        if self.menu:
+            return self.menu.rect.collidepoint(x, y)
+        return False
     
 class Option:
     def __init__(self, text, entity):

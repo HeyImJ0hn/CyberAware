@@ -9,10 +9,11 @@ import sys
 class View:
     def __init__(self, game_manager):
         self.game_manager = game_manager
-        self.screen = self.game_manager.screen
-        self.WIDTH, self.HEIGHT = self.game_manager.resolution
+        self.resolution = self.game_manager.resolution
+        self.screen = pygame.display.set_mode(self.resolution, pygame.RESIZABLE | pygame.SRCALPHA)
+        self.ui_manager = pygame_gui.UIManager(self.resolution, 'theme.json')
         pygame.display.set_caption("CyberAware - Plataforma")
-        self.ui_manager = self.game_manager.ui_manager
+        
         self.clock = pygame.time.Clock()
 
         self.view_controller = ViewController(self)
@@ -64,6 +65,10 @@ class ViewController:
         self.mouse_pos = None
         self.space_pressed = False
         self.dragging_entity = None
+        self.hovering_entity = False
+        self.dragging_menu = None
+        self.open_menu = None
+        self.clicked_outside = True
 
         self.view_offset = (0, 0)
 
@@ -71,22 +76,50 @@ class ViewController:
         if isinstance(self.view, BuildView):
             self.mouse_pos = pygame.mouse.get_pos()
             for entity in self.view.game_manager.get_entities():
-                if entity.was_body_clicked(self.mouse_pos[0], self.mouse_pos[1]):
+                if entity.was_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
+                        self.view.game_manager.add_entity(entity)
+                        if self.open_menu and self.open_menu == entity.menu:
+                            self.open_menu.kill()
+                            entity.refresh_menu((self.open_menu.rect.x, self.open_menu.rect.y))
+                            self.open_menu = entity.menu
+                elif entity.was_body_clicked(self.mouse_pos[0], self.mouse_pos[1]):
                     self.dragging_entity = entity
                     self.offset_x = entity.body.rect.x - self.mouse_pos[0] 
                     self.offset_y = entity.body.rect.y - self.mouse_pos[1]
-                    break
+                elif entity.was_menu_clicked(self.mouse_pos[0], self.mouse_pos[1]):
+                    self.offset_x = entity.menu.rect.x - self.mouse_pos[0]
+                    self.offset_y = entity.menu.rect.y - self.mouse_pos[1]
+                    self.dragging_menu = entity.menu
 
     def mouse_button_up(self, event):
         if isinstance(self.view, BuildView):
             self.dragging_entity = None
+            self.dragging_menu = None
+            self.clicked_outside = True
+
             current_pos = pygame.mouse.get_pos()
-            if self.mouse_pos == current_pos:
+            for entity in self.view.game_manager.get_entities():
+                if entity.was_menu_clicked(current_pos[0], current_pos[1]) or entity.was_body_clicked(current_pos[0], current_pos[1]) \
+                    or entity.was_button_clicked(current_pos[0], current_pos[1]):
+                    self.clicked_outside = False
+
+                if self.mouse_pos == current_pos and not self.space_pressed:
+                        if entity.was_body_clicked(current_pos[0], current_pos[1]):
+                            if not self.open_menu:
+                                entity.open_menu()
+                                self.open_menu = entity.menu
+                            else:
+                                self.open_menu.kill()
+                                entity.open_menu()
+                                self.open_menu = entity.menu
+
+            if self.clicked_outside and self.open_menu:
                 for entity in self.view.game_manager.get_entities():
-                    if entity.was_button_clicked(current_pos[0], current_pos[1]):
-                        self.view.game_manager.add_entity(entity)
-                    if entity.was_body_clicked(current_pos[0], current_pos[1]):
-                        entity.open_menu()
+                    if entity.menu == self.open_menu:
+                        entity.menu = None
+                        self.open_menu.kill()
+                        self.open_menu = None
+
             self.mouse_pos = None
 
     def mouse_motion(self, event):
@@ -94,18 +127,23 @@ class ViewController:
             if self.mouse_pos is not None:
                 if self.space_pressed:
                     mouse_pos = pygame.mouse.get_pos()
-                    for entity in self.view.game_manager.get_entities():
-                        dx = mouse_pos[0] - self.mouse_pos[0]
-                        dy = mouse_pos[1] - self.mouse_pos[1]
-                        self.view_offset = (self.view_offset[0] + dx, self.view_offset[1] + dy)
-                        entity.move(dx, dy)
+                    dx = mouse_pos[0] - self.mouse_pos[0]
+                    dy = mouse_pos[1] - self.mouse_pos[1]
+                    self.view_offset = (self.view_offset[0] + dx, self.view_offset[1] + dy)
                     self.mouse_pos = mouse_pos
+                    for entity in self.view.game_manager.get_entities():
+                        entity.move(dx, dy)
                 else:
                     if self.dragging_entity:
                         mouse_pos = pygame.mouse.get_pos()
                         dx = mouse_pos[0] + self.offset_x - self.dragging_entity.body.rect.x
                         dy = mouse_pos[1] + self.offset_y - self.dragging_entity.body.rect.y
                         self.dragging_entity.move(dx, dy)
+                    elif self.dragging_menu:
+                        mouse_pos = pygame.mouse.get_pos()
+                        dx = mouse_pos[0] + self.offset_x - self.dragging_menu.rect.x
+                        dy = mouse_pos[1] + self.offset_y - self.dragging_menu.rect.y
+                        self.dragging_menu.move(dx, dy)
 
     def ui_button_pressed(self, event):
         if event.ui_object_id == '#new_game_button':
@@ -126,36 +164,51 @@ class ViewController:
             self.view.toolbar.controller.compile()
 
     def mouse_hover(self):
-        for entity in self.view.game_manager.get_entities():
-            current_pos = pygame.mouse.get_pos()
-            entity.hovered = True if (entity.was_button_clicked(current_pos[0], current_pos[1]) or entity.was_body_clicked(current_pos[0], current_pos[1])) else False
+        if isinstance(self.view, BuildView):
+            if self.hovering_entity and not self.space_pressed:
+                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+                self.hovering_entity = False
+
+            for entity in self.view.game_manager.get_entities():
+                entity.hovered = False
+                current_pos = pygame.mouse.get_pos()
+                if (entity.was_button_clicked(current_pos[0], current_pos[1]) or entity.was_body_clicked(current_pos[0], current_pos[1])):
+                    entity.hovered = True
+                    self.hovering_entity = True
+            
+            if not self.hovering_entity and not self.space_pressed:
+                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
     def key_down(self, event):
         if event.key == pygame.K_SPACE:
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_CROSSHAIR)
             self.space_pressed = True
 
     def key_up(self, event):
         if event.key == pygame.K_SPACE:
             self.space_pressed = False
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
     def window_resize(self, event):
-        self.view.WIDTH, self.view.HEIGHT = event.w, event.h
-        self.view.ui_manager.set_window_resolution((self.view.WIDTH, self.view.HEIGHT))
+        self.view.resolution = (event.w, event.h)
+        self.view.game_manager.update_resolution((event.w, event.h))
+        self.view.ui_manager.set_window_resolution(self.view.resolution)
 
+        WIDTH, HEIGHT = self.view.resolution
         if isinstance(self.view, HomeView):
             self.view.ui_manager.clear_and_reset()
             
-            self.view.title.rect.x = self.view.WIDTH/2 - 400/2
-            self.view.subtitle.rect.x = self.view.WIDTH/2 - 400/2 + 30
-            self.view.new_button.rect.x = self.view.WIDTH/2 - 240/2
-            self.view.open_button.rect.x = self.view.WIDTH/2 - 240/2
-            self.view.quit_button.rect.x = self.view.WIDTH/2 - 240/2
+            self.view.title.rect.x = WIDTH/2 - 400/2
+            self.view.subtitle.rect.x = WIDTH/2 - 400/2 + 30
+            self.view.new_button.rect.x = WIDTH/2 - 240/2
+            self.view.open_button.rect.x = WIDTH/2 - 240/2
+            self.view.quit_button.rect.x = WIDTH/2 - 240/2
 
-            self.view.title.rect.y = self.view.HEIGHT/2 - 400/2
-            self.view.subtitle.rect.y = self.view.HEIGHT/2 - 400/2 + 45
-            self.view.new_button.rect.y = self.view.HEIGHT/2 - 240/2 + 200
-            self.view.open_button.rect.y = self.view.HEIGHT/2 - 240/2 + 275
-            self.view.quit_button.rect.y = self.view.HEIGHT/2 - 240/2 + 350
+            self.view.title.rect.y = HEIGHT/2 - 400/2
+            self.view.subtitle.rect.y = HEIGHT/2 - 400/2 + 45
+            self.view.new_button.rect.y = HEIGHT/2 - 240/2 + 200
+            self.view.open_button.rect.y = HEIGHT/2 - 240/2 + 275
+            self.view.quit_button.rect.y = HEIGHT/2 - 240/2 + 350
 
             self.view.draw_ui()
 
@@ -168,14 +221,16 @@ class BuildView(View):
     def render(self):
         super().render()
 
-        num_circles_x = (self.screen.get_width() + 15 - 1) // 15
-        num_circles_y = (self.screen.get_height() + 15 - 1) // 15
-        spacing_x = self.screen.get_width() // num_circles_x
-        spacing_y = self.screen.get_height() // num_circles_y
+        WIDTH, HEIGHT = self.resolution
+
+        num_circles_x = (WIDTH + 15 - 1) // 15
+        num_circles_y = (HEIGHT + 15 - 1) // 15
+        spacing_x = WIDTH // num_circles_x
+        spacing_y = HEIGHT // num_circles_y
         start_x = self.view_controller.view_offset[0] % spacing_x
         start_y = self.view_controller.view_offset[1] % spacing_y
-        for x in range(start_x, self.screen.get_width(), spacing_x):
-            for y in range(start_y, self.screen.get_height(), spacing_y):
+        for x in range(start_x, WIDTH, spacing_x):
+            for y in range(start_y, HEIGHT, spacing_y):
                 pygame.draw.circle(self.screen, (240, 240, 240), (x, y), 2)
         
         for entity in self.game_manager.get_entities():
@@ -198,19 +253,20 @@ class HomeView(View):
         self.draw_ui()
 
     def draw_ui(self):
+        WIDTH, HEIGHT = self.resolution
+
         label_width = 400
         button_width = 240
         button_height = 50
 
+        self.title = UILabel(relative_rect=pygame.Rect((WIDTH/2 - label_width/2, HEIGHT/2 - 400/2), (label_width, 100)), text='CyberAware', object_id='#title', manager=self.ui_manager)
+        self.subtitle = UILabel(relative_rect=pygame.Rect((WIDTH/2 - label_width/2 + 30, HEIGHT/2 - 400/2+45), (label_width, 100)), text='Plataforma', object_id='#subtitle', manager=self.ui_manager)
 
-        self.title = UILabel(relative_rect=pygame.Rect((self.screen.get_width()/2 - label_width/2, self.screen.get_height()/2 - 400/2), (label_width, 100)), text='CyberAware', object_id='#title', manager=self.ui_manager)
-        self.subtitle = UILabel(relative_rect=pygame.Rect((self.screen.get_width()/2 - label_width/2 + 30, self.screen.get_height()/2 - 400/2+45), (label_width, 100)), text='Plataforma', object_id='#subtitle', manager=self.ui_manager)
-
-        self.new_button = UIButton(relative_rect=pygame.Rect((self.screen.get_width()/2 - button_width/2, self.screen.get_height()/2 - 400/2+200), (button_width, button_height)), 
+        self.new_button = UIButton(relative_rect=pygame.Rect((WIDTH/2 - button_width/2, HEIGHT/2 - 400/2+200), (button_width, button_height)), 
                                    text='New Game', object_id=ObjectID(class_id='@main_menu_button', object_id='#new_game_button'), manager=self.ui_manager)
-        self.open_button = UIButton(relative_rect=pygame.Rect((self.screen.get_width()/2 - button_width/2, self.screen.get_height()/2 - 400/2+275), (button_width, button_height)), 
+        self.open_button = UIButton(relative_rect=pygame.Rect((WIDTH/2 - button_width/2, HEIGHT/2 - 400/2+275), (button_width, button_height)), 
                                     text='Open Game', object_id=ObjectID(class_id='@main_menu_button', object_id='#open_game_button'), manager=self.ui_manager)
-        self.quit_button = UIButton(relative_rect=pygame.Rect((self.screen.get_width()/2 - button_width/2, self.screen.get_height()/2 - 400/2+350), (button_width, button_height)), 
+        self.quit_button = UIButton(relative_rect=pygame.Rect((WIDTH/2 - button_width/2, HEIGHT/2 - 400/2+350), (button_width, button_height)), 
                                     text='Quit', object_id=ObjectID(class_id='@main_menu_button', object_id='#quit_button'), manager=self.ui_manager)
         
         
@@ -241,11 +297,12 @@ class Toolbar:
         self.controller = ToolbarControl(self)
 
         self.toolbar_height = 40
-        self.toolbar_width = self.view.screen.get_width()
+        self.toolbar_width = self.view.resolution[0]
 
         self.toolbar_container = UIAutoResizingContainer(
             relative_rect=pygame.Rect(0, 0, self.toolbar_width, self.toolbar_height),
-            manager=self.view.ui_manager
+            manager=self.view.ui_manager,
+            object_id='@toolbar'
         )
 
         button_width = 100
@@ -263,8 +320,15 @@ class Toolbar:
                 object_id=ObjectID(class_id='@toolbar_button', object_id=object_id)
             )
 
+        self.input = UITextEntryLine(
+            relative_rect=pygame.Rect(button_margin * (len(buttons) + 2) + button_width * len(buttons) - 30, 5, 300, 30),
+            manager=self.view.ui_manager,
+            container=self.toolbar_container,
+            object_id='#toolbar_input'
+        )
+
     def draw(self, screen):
-        self.toolbar_width = self.view.screen.get_width()
+        self.toolbar_width = self.view.resolution[0]
 
         self.toolbar_container.relative_rect.width = self.toolbar_width
 
@@ -289,15 +353,10 @@ class ToolbarControl:
         self.toolbar.view.game_manager.new_game()
 
     def save_game(self):
-        pass
+        self.toolbar.view.game_manager.save_game()
 
     def open_game(self):
-        self.file_dialog = UIFileDialog(pygame.Rect(160, 50, 440, 500),
-                                                    self.toolbar.view.ui_manager,
-                                                    window_title='Open Game',
-                                                    allow_picking_directories=False,
-                                                    allow_existing_files_only=True,
-                                                    allowed_suffixes={""})
+        self.toolbar.view.game_manager.open_game()
 
     def compile(self):
-        pass
+        self.toolbar.view.game_manager.compile()

@@ -35,6 +35,10 @@
             "italic": "0",
             "regular_path": "fonts/Roboto-Regular.ttf",
             "bold_path": "fonts/Roboto-Bold.ttf"
+        },
+        "misc":
+        {
+            "text_shadow_size": "0"
         }
     },
     "@toolbar_button":
@@ -72,6 +76,60 @@
             "shadow_width": "0",
             "shape_corner_radius": "0",
             "text_horiz_alignment": "left"
+        },
+        "font":
+        {
+            "name": "roboto-regular",
+            "size": "16",
+            "bold": "0",
+            "italic": "0",
+            "regular_path": "fonts/Roboto-Regular.ttf",
+            "bold_path": "fonts/Roboto-Bold.ttf"
+        }
+    },
+    "#toolbar_input": 
+    {
+        "colours":
+        {
+            "normal_bg": "#FFFFFF",
+            "hovered_bg": "#FFFFFF",
+            "disabled_bg": "#FFFFFF",
+            "selected_bg": "#FFFFFF",
+            "active_bg": "#FFFFFF",
+            "dark_bg": "#d9d9d9",
+            "disabled_dark_bg": "#FFFFFF",
+            "normal_text": "#000000",
+            "hovered_text": "#808080",
+            "disabled_text": "#808080",
+            "selected_text": "#bbbbbb",
+            "active_text": "#bbbbbb",
+            "normal_border": "#FFFFFF",
+            "hovered_border": "#FFFFFF",
+            "disabled_border": "#FFFFFF",
+            "selected_border": "#FFFFFF",
+            "active_border": "#FFFFFF",
+            "link_text": "#6897bb",
+            "link_hover": "#84bfed",
+            "link_selected": "#84bfed",
+            "text_shadow": "#777777",
+            "filled_bar": "#f4251b",
+            "unfilled_bar": "#CCCCCC"
+        },
+        "misc":
+        {
+            "shape": "rectangle",
+            "border_width": "0",
+            "shadow_width": "0",
+            "shape_corner_radius": "0"
+        },
+        "font":
+        {
+            "name": "roboto-regular",
+            "size": "16",
+            "bold": "0",
+            "italic": "0",
+            "regular_path": "fonts/Roboto-Regular.ttf",
+            "bold_path": "fonts/Roboto-Bold.ttf"
         }
     },
     "@main_menu_button":
@@ -153,6 +211,160 @@
             "text_shadow_size": "0",
             "text_horiz_alignment": "left"
 
+        }
+    },
+    "#entity_menu": 
+    {
+        "colours":
+        {
+            "dark_bg": "#FFFFFF"
+        },
+        "misc":
+        {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "12",
+            "border_width": "0",
+            "shadow_width": "5",
+            "enable_title_bar": "0",
+            "text_shadow_size": "0"
+        },
+        "font":
+        {
+            "name": "roboto-regular",
+            "size": "16",
+            "bold": "0",
+            "italic": "0",
+            "regular_path": "fonts/Roboto-Regular.ttf",
+            "bold_path": "fonts/Roboto-Bold.ttf"
+        }
+    },
+    "#entity_menu.#title_bar": 
+    {
+        "colours":
+        {
+            "normal_text": "#000000",
+            "normal_bg": "#FFFFFF"
+        },
+        "misc":
+        {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "12, 0, 0, 0",
+            "shadow_width": "0",
+            "border_width": "0",
+            "text_horiz_alignment": "center"
+        }
+    },
+    "#entity_menu.#close_button":
+    {
+        "colours":
+        {
+            "normal_text": "#000000",
+            "dark_bg": "#FFFFFF"
+        },
+        "misc":
+        {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "0, 12, 0, 0",
+            "shadow_width": "0",
+            "border_width": "0"
+        }
+    },
+    "@entity_menu_label": 
+    {
+        "colours":
+        {
+            "normal_text": "#000000"
+        },
+        "misc":
+        {
+            "text_shadow_size": "0",
+            "border_width": "0",
+            "shadow_width": "0",
+            "text_horiz_alignment": "left"
+        },
+        "font":
+        {
+            "name": "roboto-regular",
+            "size": "14",
+            "bold": "1",
+            "italic": "0",
+            "regular_path": "fonts/Roboto-Regular.ttf",
+            "bold_path": "fonts/Roboto-Bold.ttf"
+        }
+    },
+    "@entity_menu_input": 
+    {
+        "colours":
+        {
+            "normal_text": "#000000",
+            "dark_bg": "#d9d9d9"
+        },
+        "misc":
+        {
+            "text_shadow_size": "0",
+            "border_width": "0",
+            "shadow_width": "0"
+        },
+        "font":
+        {
+            "name": "roboto-regular",
+            "size": "14",
+            "bold": "0",
+            "italic": "0",
+            "regular_path": "fonts/Roboto-Regular.ttf",
+            "bold_path": "fonts/Roboto-Bold.ttf"
+        }
+    },
+    "@entity_option_name": 
+    {
+        "colours":
+        {
+            "normal_text": "#000000"
+        },
+        "misc":
+        {
+            "text_shadow_size": "0",
+            "border_width": "0",
+            "shadow_width": "0"
+        },
+        "font":
+        {
+            "name": "roboto-regular",
+            "size": "14",
+            "bold": "0",
+            "italic": "0",
+            "regular_path": "fonts/Roboto-Regular.ttf",
+            "bold_path": "fonts/Roboto-Bold.ttf"
+        }
+    },
+    "@entity_option_input": 
+    {
+        "colours":
+        {
+            "normal_text": "#000000",
+            "dark_bg": "#d9d9d9"
+        },
+        "misc":
+        {
+            "text_shadow_size": "0",
+            "border_width": "0",
+            "shadow_width": "0"
+        },
+        "font":
+        {
+            "name": "roboto-regular",
+            "size": "14",
+            "bold": "0",
+            "italic": "0",
+            "regular_path": "fonts/Roboto-Regular.ttf",
+            "bold_path": "fonts/Roboto-Bold.ttf"
+        }
+    },
+    "#text_entry_line":
+    {
+        "colours":
+        {
+            "dark_bg": "#FFFFFF"
         }
     },
     "#default_shape_style":

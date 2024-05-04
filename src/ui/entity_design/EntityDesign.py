@@ -1,6 +1,7 @@
 import pygame
 import pygame_gui
 from pygame_gui.elements import *
+from pygame_gui.core import ObjectID
 
 class EntityBody:
     def __init__(self, x, y, width, height):
@@ -32,11 +33,30 @@ class EntityButton:
 
 class EntityMenu(UIWindow):
     def __init__(self, ui_manager, entity):
-        super().__init__(pygame.Rect((50, 50), (224, 224)), ui_manager,
+        super().__init__(pygame.Rect((entity.x + entity.width + 25, entity.y - entity.height), (224, 224)), ui_manager,
                          window_display_title='Entity Menu',
                          object_id='#entity_menu',
                          resizable=False)
-        
         self.entity = entity
-        UILabel(relative_rect=pygame.Rect((10, 10), (100, 20)), text=f"X: {self.entity.x}", manager=self.ui_manager, container=self)
-        UILabel(relative_rect=pygame.Rect((10, 30), (100, 20)), text=f"Y: {self.entity.y}", manager=self.ui_manager, container=self)
+
+        self.namme_label = UILabel(relative_rect=pygame.Rect((10, 10), (60, 20)), text="Name", manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@entity_menu_label', object_id='#name_label'))
+        self.name = UITextEntryLine(relative_rect=pygame.Rect((80, 10), (100, 20)), manager=self.ui_manager, container=self, initial_text=entity.name, object_id=ObjectID(class_id='@entity_menu_input', object_id='#name_input'))
+
+        UILabel(relative_rect=pygame.Rect((10, 40), (60, 20)), text="Media", manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@entity_menu_label', object_id='#media_label'))
+        self.media = UITextEntryLine(relative_rect=pygame.Rect((80, 40), (100, 20)), manager=self.ui_manager, container=self, initial_text=entity.media, object_id=ObjectID(class_id='@entity_menu_input', object_id='#media_input'))
+
+        UILabel(relative_rect=pygame.Rect((10, 70), (60, 20)), text="Text", manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@entity_menu_label', object_id='#text_label'))
+        self.text = UITextEntryLine(relative_rect=pygame.Rect((80, 70), (100, 20)), manager=self.ui_manager, container=self, initial_text=entity.text, object_id=ObjectID(class_id='@entity_menu_input', object_id='#text_input'))
+
+        UILabel(relative_rect=pygame.Rect((10, 100), (60, 20)), text="Notes", manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@entity_menu_label', object_id='#notes_label'))
+        self.notes = UITextEntryBox(relative_rect=pygame.Rect((80, 100), (100, 60)), manager=self.ui_manager, container=self, initial_text=entity.notes, object_id=ObjectID(class_id='@entity_menu_input', object_id='#notes_input'))
+
+        options = entity.options
+        if len(options) > 0:
+            UILabel(relative_rect=pygame.Rect((10, 170), (60, 20)), text="Options", manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@entity_menu_label', object_id='#options_label'))
+            for i, option in enumerate(options):
+                UILabel(relative_rect=pygame.Rect((10, 170 + 20*(i+1)), (60, 20)), text=option.entity.name, manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@entity_option_name', object_id='#option_name_label'))
+                UITextEntryLine(relative_rect=pygame.Rect((80, 170 + 20*(i+1)), (60, 20)), manager=self.ui_manager, container=self, placeholder_text="Texto", object_id=ObjectID(class_id='@entity_option_input', object_id='#option_text_input'))
+        
+    def move(self, dx, dy):
+        self.set_position((self.rect.x + dx, self.rect.y + dy))
