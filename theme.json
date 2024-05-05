@@ -97,10 +97,10 @@
             "selected_bg": "#FFFFFF",
             "active_bg": "#FFFFFF",
             "dark_bg": "#d9d9d9",
-            "disabled_dark_bg": "#FFFFFF",
+            "disabled_dark_bg": "#b9b9b9",
             "normal_text": "#000000",
             "hovered_text": "#808080",
-            "disabled_text": "#808080",
+            "disabled_text": "#1A1A1A",
             "selected_text": "#bbbbbb",
             "active_text": "#bbbbbb",
             "normal_border": "#FFFFFF",
@@ -156,7 +156,7 @@
         "font":
         {
             "name": "roboto-special",
-            "size": "16",
+            "size": "14",
             "bold": "1",
             "regular_path": "fonts/Roboto-Thin.ttf",
             "bold_path": "fonts/Roboto-Black.ttf"
@@ -358,6 +358,99 @@
             "italic": "0",
             "regular_path": "fonts/Roboto-Regular.ttf",
             "bold_path": "fonts/Roboto-Bold.ttf"
+        }
+    },
+    "#new_game_dialog": 
+    {
+        "colours":
+        {
+            "dark_bg": "#FFFFFF"
+        },
+        "misc":
+        {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "12",
+            "border_width": "0",
+            "shadow_width": "12",
+            "enable_title_bar": "0",
+            "text_shadow_size": "0"
+        }
+    },
+    "@new_game_dialog_label": 
+    {
+        "colours": 
+        {
+            "normal_text": "#000000"
+        },
+        "misc":
+        {
+            "text_shadow_size": "0",
+            "border_width": "0",
+            "shadow_width": "0",
+            "text_horiz_alignment": "left"
+        },
+        "font":
+        {
+            "name": "roboto-regular",
+            "bold": "1",
+            "size": "14"
+        }
+    },
+    "@new_game_dialog_input":
+    {
+        "colours":
+        {
+            "normal_text": "#000000",
+            "dark_bg": "#d9d9d9"
+        },
+        "misc":
+        {
+            "text_shadow_size": "0",
+            "border_width": "0",
+            "shadow_width": "0"
+        },
+        "font":
+        {
+            "name": "roboto-regular",
+            "size": "14"
+        }
+    },
+    "@new_game_dialog_button":
+    {
+        "colours":
+        {
+            "normal_bg": "#4A99F8",
+            "hovered_bg": "#3B7BC8",
+            "selected_bg": "#4A99F8",
+            "active_bg": "#4A99F8",
+            "dark_bg": "#050E27",
+            "normal_text": "#FFFFFF",
+            "hovered_text": "#FFFFFF",
+            "disabled_text": "#808080",
+            "selected_text": "#FFFFFF",
+            "active_text": "#FFFFFF"
+        },
+        "misc":
+        {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "12",
+            "border_width": "0",
+            "shadow_width": "0"
+        },
+        "font":
+        {
+            "name": "roboto-special",
+            "size": "14",
+            "bold": "1"
+        }
+    },
+    "#browse_button":
+    {
+        "misc":
+        {
+            "shape": "rounded_rectangle",
+            "border_width": "0",
+            "shape_corner_radius": "2"
         }
     },
     "#text_entry_line":

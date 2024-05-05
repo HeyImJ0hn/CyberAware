@@ -3,6 +3,7 @@ import pygame_gui
 from pygame_gui.elements import *
 from pygame_gui.windows import *
 from pygame_gui.core import ObjectID
+from ui.design.DialogBoxes import *
 
 import sys
 
@@ -78,7 +79,7 @@ class ViewController:
             for entity in self.view.game_manager.get_entities():
                 if entity.was_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
                         self.view.game_manager.add_entity(entity)
-                        if self.open_menu and self.open_menu == entity.menu:
+                        if self.open_menu and self.open_menu.entity.id == entity.id:
                             self.open_menu.kill()
                             entity.refresh_menu((self.open_menu.rect.x, self.open_menu.rect.y))
                             self.open_menu = entity.menu
@@ -115,10 +116,11 @@ class ViewController:
 
             if self.clicked_outside and self.open_menu:
                 for entity in self.view.game_manager.get_entities():
-                    if entity.menu == self.open_menu:
-                        entity.menu = None
+                    if entity.id == self.open_menu.entity.id:
                         self.open_menu.kill()
                         self.open_menu = None
+                        entity.menu = None
+                        break
 
             self.mouse_pos = None
 
@@ -154,14 +156,27 @@ class ViewController:
             pygame.quit()
             sys.exit()
 
-        elif event.ui_object_id == 'auto_resizing_container.#toolbar_new_game':
+        elif event.ui_object_id == '@toolbar.#toolbar_new_game':
             self.view.toolbar.controller.new_game()
-        elif event.ui_object_id == 'auto_resizing_container.#toolbar_save_game':
+        elif event.ui_object_id == '@toolbar.#toolbar_save_game':
             self.view.toolbar.controller.save_game()
-        elif event.ui_object_id == 'auto_resizing_container.#toolbar_open_game':
+        elif event.ui_object_id == '@toolbar.#toolbar_open_game':
             self.view.toolbar.controller.open_game()
-        elif event.ui_object_id == 'auto_resizing_container.#toolbar_compile':
+        elif event.ui_object_id == '@toolbar.#toolbar_compile':
             self.view.toolbar.controller.compile()
+
+        elif event.ui_object_id == '#new_game_dialog.#create_button':
+            self.view.game_manager.new_game()
+        elif event.ui_object_id == '#new_game_dialog.#cancel_button':
+            event.ui_element.ui_container.parent_element.kill()
+            for b in self.view.buttons:
+                b.enable()
+
+        elif event.ui_object_id == '#file_dialog.#cancel_button' or event.ui_object_id == '#file_dialog.#close_button' \
+            or event.ui_object_id == '#file_dialog.#ok_button':
+            self.view.toolbar.controller.enable_toolbar()
+            
+        print(event.ui_object_id)
 
     def mouse_hover(self):
         if isinstance(self.view, BuildView):
@@ -263,12 +278,13 @@ class HomeView(View):
         self.subtitle = UILabel(relative_rect=pygame.Rect((WIDTH/2 - label_width/2 + 30, HEIGHT/2 - 400/2+45), (label_width, 100)), text='Plataforma', object_id='#subtitle', manager=self.ui_manager)
 
         self.new_button = UIButton(relative_rect=pygame.Rect((WIDTH/2 - button_width/2, HEIGHT/2 - 400/2+200), (button_width, button_height)), 
-                                   text='New Game', object_id=ObjectID(class_id='@main_menu_button', object_id='#new_game_button'), manager=self.ui_manager)
+                                   text='NEW GAME', object_id=ObjectID(class_id='@main_menu_button', object_id='#new_game_button'), manager=self.ui_manager)
         self.open_button = UIButton(relative_rect=pygame.Rect((WIDTH/2 - button_width/2, HEIGHT/2 - 400/2+275), (button_width, button_height)), 
-                                    text='Open Game', object_id=ObjectID(class_id='@main_menu_button', object_id='#open_game_button'), manager=self.ui_manager)
+                                    text='OPEN GAME', object_id=ObjectID(class_id='@main_menu_button', object_id='#open_game_button'), manager=self.ui_manager)
         self.quit_button = UIButton(relative_rect=pygame.Rect((WIDTH/2 - button_width/2, HEIGHT/2 - 400/2+350), (button_width, button_height)), 
-                                    text='Quit', object_id=ObjectID(class_id='@main_menu_button', object_id='#quit_button'), manager=self.ui_manager)
+                                    text='QUIT', object_id=ObjectID(class_id='@main_menu_button', object_id='#quit_button'), manager=self.ui_manager)
         
+        self.buttons = [self.new_button, self.open_button, self.quit_button]
         
     def render(self):
         super().render()
@@ -281,7 +297,9 @@ class HomeViewControl:
         self.view = view
 
     def new_game(self):
-        self.view.game_manager.new_game()
+        NewGameDialog(self.view.ui_manager)
+        for b in self.view.buttons:
+            b.disable()
 
     def open_game(self):
         self.view.game_manager.open_game()
@@ -310,15 +328,16 @@ class Toolbar:
         button_margin = 10
 
         buttons = [('New Game', '#toolbar_new_game'), ('Save Game', '#toolbar_save_game'), ('Open Game', '#toolbar_open_game'), ('Compile', '#toolbar_compile')]
+        self.toolbar_buttons = []
 
         for i, (text, object_id) in enumerate(buttons):
-            UIButton(
+            self.toolbar_buttons.append(UIButton(
                 relative_rect=pygame.Rect(button_margin * (i + 1) + button_width * i, button_margin, button_width, button_height),
                 text=text,
                 manager=self.view.ui_manager,
                 container=self.toolbar_container,
                 object_id=ObjectID(class_id='@toolbar_button', object_id=object_id)
-            )
+            ))
 
         self.input = UITextEntryLine(
             relative_rect=pygame.Rect(button_margin * (len(buttons) + 2) + button_width * len(buttons) - 30, 5, 300, 30),
@@ -326,6 +345,7 @@ class Toolbar:
             container=self.toolbar_container,
             object_id='#toolbar_input'
         )
+        self.toolbar_buttons.append(self.input)
 
     def draw(self, screen):
         self.toolbar_width = self.view.resolution[0]
@@ -350,13 +370,23 @@ class ToolbarControl:
         self.toolbar = toolbar
 
     def new_game(self):
+        self.disable_toolbar()
         self.toolbar.view.game_manager.new_game()
 
     def save_game(self):
         self.toolbar.view.game_manager.save_game()
 
     def open_game(self):
+        self.disable_toolbar()
         self.toolbar.view.game_manager.open_game()
 
     def compile(self):
         self.toolbar.view.game_manager.compile()
+    
+    def disable_toolbar(self):
+        for button in self.toolbar.toolbar_buttons:
+            button.disable()
+
+    def enable_toolbar(self):
+        for button in self.toolbar.toolbar_buttons:
+            button.enable()

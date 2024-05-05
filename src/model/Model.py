@@ -2,7 +2,7 @@ import pygame
 import sys
 from pygame_gui.windows import UIFileDialog
 
-from ui.entity_design.EntityDesign import EntityBody, EntityButton, EntityMenu
+from ui.design.EntityDesign import EntityBody, EntityButton, EntityMenu
 from ui.views.Views import HomeView, BuildView
 
 class GameManager:
