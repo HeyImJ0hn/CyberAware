@@ -1,5 +1,4 @@
 import pygame
-import pygame_gui
 from pygame_gui.elements import *
 from pygame_gui.core import ObjectID
 
@@ -13,6 +12,10 @@ class EntityBody:
 
     def draw(self, screen):
         pygame.draw.rect(screen, (215, 215, 215), self.rect, border_radius=12)
+
+    def draw_selected(self, screen):
+        pygame.draw.rect(screen, (74, 153, 248), self.rect, border_radius=12)
+        pygame.draw.rect(screen, (215, 215, 215), pygame.Rect(self.x+4, self.y+4, self.width-8, self.height-8), border_radius=12)
 
 class EntityButton:
     def __init__(self, x, y, width, height, text):

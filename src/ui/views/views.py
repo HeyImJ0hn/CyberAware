@@ -46,7 +46,6 @@ class View:
                 elif event.type == pygame.VIDEORESIZE:
                     self.view_controller.window_resize(event)
                     
-            
                 self.ui_manager.process_events(event)
 
             self.render()
@@ -66,7 +65,7 @@ class ViewController:
         self.mouse_pos = None
         self.space_pressed = False
         self.dragging_entity = None
-        self.hovering_entity = False
+        self.hovering_entity = None
         self.dragging_menu = None
         self.open_menu = None
         self.clicked_outside = True
@@ -77,6 +76,8 @@ class ViewController:
         if isinstance(self.view, BuildView):
             self.mouse_pos = pygame.mouse.get_pos()
             for entity in self.view.game_manager.get_entities():
+                if entity.hidden:
+                    continue
                 if entity.was_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
                         self.view.game_manager.add_entity(entity)
                         if self.open_menu and self.open_menu.entity.id == entity.id:
@@ -91,6 +92,10 @@ class ViewController:
                     self.offset_x = entity.menu.rect.x - self.mouse_pos[0]
                     self.offset_y = entity.menu.rect.y - self.mouse_pos[1]
                     self.dragging_menu = entity.menu
+                elif entity.was_hide_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
+                    entity.toggle_options()
+                elif entity.was_remove_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
+                    ConfirmationDialog(self.view.ui_manager)
 
     def mouse_button_up(self, event):
         if isinstance(self.view, BuildView):
@@ -101,10 +106,11 @@ class ViewController:
             current_pos = pygame.mouse.get_pos()
             for entity in self.view.game_manager.get_entities():
                 if entity.was_menu_clicked(current_pos[0], current_pos[1]) or entity.was_body_clicked(current_pos[0], current_pos[1]) \
-                    or entity.was_button_clicked(current_pos[0], current_pos[1]):
+                    or entity.was_button_clicked(current_pos[0], current_pos[1]) or entity.was_hide_button_clicked(current_pos[0], current_pos[1]) \
+                    or entity.was_remove_button_clicked(current_pos[0], current_pos[1]):
                     self.clicked_outside = False
 
-                if self.mouse_pos == current_pos and not self.space_pressed:
+                if self.mouse_pos == current_pos and not self.space_pressed and not entity.hidden:
                         if entity.was_body_clicked(current_pos[0], current_pos[1]):
                             if not self.open_menu:
                                 entity.open_menu()
@@ -166,6 +172,7 @@ class ViewController:
             self.view.toolbar.controller.compile()
 
         elif event.ui_object_id == '#new_game_dialog.#create_button':
+            self.view.game_manager.game_name = event.ui_element.ui_container.parent_element.game_name.get_text()
             self.view.game_manager.new_game()
         elif event.ui_object_id == '#new_game_dialog.#cancel_button':
             event.ui_element.ui_container.parent_element.kill()
@@ -174,22 +181,22 @@ class ViewController:
 
         elif event.ui_object_id == '#file_dialog.#cancel_button' or event.ui_object_id == '#file_dialog.#close_button' \
             or event.ui_object_id == '#file_dialog.#ok_button':
-            self.view.toolbar.controller.enable_toolbar()
+            if isinstance(self.view, BuildView):
+                self.view.toolbar.controller.enable_toolbar()
             
-        print(event.ui_object_id)
-
     def mouse_hover(self):
         if isinstance(self.view, BuildView):
-            if self.hovering_entity and not self.space_pressed:
+            if self.hovering_entity and not self.space_pressed and not self.hovering_entity.hidden:
                 pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-                self.hovering_entity = False
+                self.hovering_entity = None
 
             for entity in self.view.game_manager.get_entities():
                 entity.hovered = False
                 current_pos = pygame.mouse.get_pos()
-                if (entity.was_button_clicked(current_pos[0], current_pos[1]) or entity.was_body_clicked(current_pos[0], current_pos[1])):
+                if entity.was_button_clicked(current_pos[0], current_pos[1]) or entity.was_body_clicked(current_pos[0], current_pos[1]) \
+                    or entity.was_hide_button_clicked(current_pos[0], current_pos[1]) or entity.was_remove_button_clicked(current_pos[0], current_pos[1]):
                     entity.hovered = True
-                    self.hovering_entity = True
+                    self.hovering_entity = entity
             
             if not self.hovering_entity and not self.space_pressed:
                 pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
@@ -343,7 +350,8 @@ class Toolbar:
             relative_rect=pygame.Rect(button_margin * (len(buttons) + 2) + button_width * len(buttons) - 30, 5, 300, 30),
             manager=self.view.ui_manager,
             container=self.toolbar_container,
-            object_id='#toolbar_input'
+            object_id='#toolbar_input',
+            initial_text=self.view.game_manager.game_name,
         )
         self.toolbar_buttons.append(self.input)
 

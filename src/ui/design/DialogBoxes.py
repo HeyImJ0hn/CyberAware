@@ -5,7 +5,7 @@ from pygame_gui.core import ObjectID
 
 class NewGameDialog(UIWindow):
     def __init__(self, ui_manager):
-        super().__init__(pygame.Rect((ui_manager.window_resolution[0]//2-240//2, ui_manager.window_resolution[1]//2-100//2), (240, 120)), ui_manager,
+        super().__init__(pygame.Rect((ui_manager.window_resolution[0]/2-240/2, ui_manager.window_resolution[1]/2-100/2), (240, 120)), ui_manager,
                          window_display_title='New Game',
                          object_id='#new_game_dialog',
                          resizable=False)
@@ -19,3 +19,14 @@ class NewGameDialog(UIWindow):
         
         self.create_button = UIButton(relative_rect=pygame.Rect((30, 85), (80, 20)), text="Create", manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@new_game_dialog_button', object_id='#create_button'))
         self.cancel_button = UIButton(relative_rect=pygame.Rect((130, 85), (80, 20)), text="Cancel", manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@new_game_dialog_button', object_id='#cancel_button'))
+
+class ConfirmationDialog:
+    def __init__(self, ui_manager):
+        pygame_gui.windows.UIConfirmationDialog(
+        rect=pygame.Rect(200, 150, 400, 200),
+        manager=ui_manager,
+        window_title='Remove Node',
+        action_long_desc='Are you sure you want to proceed? This action cannot be undone.',
+        action_short_name='Proceed',
+        blocking=True
+        )

@@ -1,5 +1,6 @@
 import pygame
 import sys
+import math
 from pygame_gui.windows import UIFileDialog
 
 from ui.design.EntityDesign import EntityBody, EntityButton, EntityMenu
@@ -76,12 +77,11 @@ class EntityManager:
         entity = None
         if parent:
             depth = parent.depth + 1
-            x = parent.x
-            y = parent.y + parent.height + 50
-            entity = Entity(len(self.entities), x, y, 75, 75, self.ui_manager, depth=depth)
+            entity = Entity(len(self.entities), 0, 0, 75, 75, self.ui_manager, depth=depth)
+            PositionManager().set_position(parent, entity, self.entities)
             parent.add_option(entity)
         else:
-            entity = Entity(len(self.entities), self.ui_manager.window_resolution[0]//2-75//2, self.ui_manager.window_resolution[1]//2-75//2, 75, 75, self.ui_manager)
+            entity = Entity(len(self.entities), self.ui_manager.window_resolution[0]/2-75/2, self.ui_manager.window_resolution[1]/2-75/2, 75, 75, self.ui_manager)
 
         self.entities.append(entity)
 
@@ -112,25 +112,34 @@ class Entity:
 
         self.options = []
 
-        self.centroid = (self.x + self.width//2, self.y + self.height//2)
+        self.centroid = (self.x + self.width/2, self.y + self.height/2)
 
+        self.hidden = False
         self.hovered = False
 
         self.body = EntityBody(x, y, width, height)
-        self.button_add = EntityButton(x + width, y, width//5, height//5, "+")
+        self.button_add = EntityButton(x + width, y, width/5, height/5, "+")
         if (depth != 0):
-            self.button_remove = EntityButton(x + width, y + height//5 + 2, width//5, height//5, "-")
-        self.buttons = [self.button_add, self.button_remove] if depth != 0 else [self.button_add]
+            self.button_remove = EntityButton(x + width, y + height/5 + 2, width/5, height/5, "-")
+        self.button_hide = EntityButton(x - width/5 - 2, y, width/5, height/5, "H")
+        self.buttons = [self.button_add, self.button_remove, self.button_hide] if depth != 0 else [self.button_add, self.button_hide]
 
     def draw(self, screen):
-        for option in self.options:
-            pygame.draw.aaline(screen, (0, 0, 0), self.centroid, option.entity.centroid)
+        if self.hidden:
+            return
 
-        self.body.draw(screen)
+        for option in self.options:
+            if not option.entity.hidden:
+                pygame.draw.aaline(screen, (0, 0, 0), self.centroid, option.entity.centroid)
+
+        if self.menu and self.menu.alive():
+            self.body.draw_selected(screen)
+        else:
+            self.body.draw(screen)
 
         font = pygame.font.Font(None, 24)
         text_surface = font.render(self.name, True, (0, 0, 0))
-        text_rect = pygame.Rect(self.body.x + self.body.width//2 - 25, self.body.y + self.body.height//2 - 55, 24, 75)
+        text_rect = pygame.Rect(self.body.x + self.body.width/2 - 25, self.body.y + self.body.height/2 - 55, 24, 75)
         screen.blit(text_surface, text_rect)
         
         if self.hovered:
@@ -155,14 +164,20 @@ class Entity:
         self.button_add.rect.x = x + self.width
         self.button_add.rect.y = y
 
+        self.button_hide.x = x - 2 - self.width/5
+        self.button_hide.y = y
+
+        self.button_hide.rect.x = x - 2 - self.width/5
+        self.button_hide.rect.y = y
+
         if self.depth != 0:
             self.button_remove.x = x + self.width
-            self.button_remove.y = y + self.height//5 + 2
+            self.button_remove.y = y + self.height/5 + 2
 
             self.button_remove.rect.x = x + self.width
-            self.button_remove.rect.y = y + self.height//5 + 2
+            self.button_remove.rect.y = y + self.height/5 + 2
 
-        self.centroid = (self.x + self.width//2, self.y + self.height//2)
+        self.centroid = (self.x + self.width/2, self.y + self.height/2)
 
     def add_option(self, entity):
         self.options.append(Option("", entity))
@@ -193,10 +208,28 @@ class Entity:
     def was_button_clicked(self, x, y):
         return self.buttons[0].rect.collidepoint(x, y)
     
+    def was_hide_button_clicked(self, x, y):
+        return self.buttons[-1].rect.collidepoint(x, y)
+    
+    def was_remove_button_clicked(self, x, y):
+        return self.buttons[1].rect.collidepoint(x, y)
+    
     def was_menu_clicked(self, x, y):
         if self.menu:
             return self.menu.rect.collidepoint(x, y)
         return False
+
+    def get_position(self):
+        return (self.x, self.y)
+    
+    def toggle(self):
+        self.hidden = not self.hidden
+
+    def toggle_options(self, options=None):
+        for option in self.options if not options else options:
+            option.entity.toggle()
+            if option.entity.options:
+                self.toggle_options(option.entity.options)
     
 class Option:
     def __init__(self, text, entity):
@@ -204,10 +237,32 @@ class Option:
         self.entity = entity
 
 class PositionManager:
-    def __init__(self):
-        self.radius = 50
-        self.positions = []
+    def set_position(self, parent, entity, entities):
+        radius = 150
+        correct_pos = False
 
-    def get_position(parent, entity):
-        # Returns the position of the entity relative to the parent
-        pass
+        while not correct_pos:
+            positions = [(0, radius), (radius, 0), (0, -radius), (-radius, 0), 
+                          (radius/1.5, radius/1.5), (radius/1.5, -radius/1.5), 
+                          (-radius/1.5, -radius/1.5), (-radius/1.5, radius/1.5)]
+            for offset in positions:
+                parent_pos = parent.centroid
+                pos = (offset[0] + parent_pos[0], offset[1] + parent_pos[1])
+                entity.set_position(pos[0] - parent.width/2, pos[1] - parent.height/2)
+                correct_pos = True
+                for e in entities:
+                    if self.dist(e.centroid, entity.centroid) < radius/3 or self.doesCollide(e, entity):
+                        correct_pos = False
+                        break
+                if correct_pos:
+                    break
+            radius *= 1.8
+        
+            
+    def dist(self, pos_a, pos_b):
+        x = pos_a[0] - pos_b[0]
+        y = pos_a[1] - pos_b[1]
+        return math.sqrt(x**2 + y**2)
+    
+    def doesCollide(self, e1, e2):
+        return e1.body.rect.colliderect(e2.body.rect)
