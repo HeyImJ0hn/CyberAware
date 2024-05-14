@@ -1,0 +1,152 @@
+{
+    "name": "jogo de teste",
+    "entities": [
+        {
+            "id": 0,
+            "name": "Node 0",
+            "coords": [
+                362.5,
+                262.5
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 0,
+            "text": "",
+            "notes": "",
+            "media": "",
+            "options": [
+                {
+                    "text": "",
+                    "entity_id": 1
+                },
+                {
+                    "text": "",
+                    "entity_id": 2
+                },
+                {
+                    "text": "",
+                    "entity_id": 3
+                }
+            ]
+        },
+        {
+            "id": 1,
+            "name": "Node 1",
+            "coords": [
+                117.5,
+                395.5
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 1,
+            "text": "",
+            "notes": "",
+            "media": "",
+            "options": [
+                {
+                    "text": "",
+                    "entity_id": 5
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "name": "Node 2",
+            "coords": [
+                512.5,
+                262.5
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 1,
+            "text": "",
+            "notes": "",
+            "media": "",
+            "options": [
+                {
+                    "text": "",
+                    "entity_id": 4
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "name": "Node 3",
+            "coords": [
+                211.5,
+                150.5
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 1,
+            "text": "",
+            "notes": "",
+            "media": "",
+            "options": [
+                {
+                    "text": "",
+                    "entity_id": 6
+                }
+            ]
+        },
+        {
+            "id": 4,
+            "name": "Node 4",
+            "coords": [
+                512.5,
+                412.5
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 2,
+            "text": "",
+            "notes": "",
+            "media": "",
+            "options": []
+        },
+        {
+            "id": 5,
+            "name": "Node 5",
+            "coords": [
+                117.5,
+                545.5
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 2,
+            "text": "",
+            "notes": "",
+            "media": "",
+            "options": []
+        },
+        {
+            "id": 6,
+            "name": "Node 6",
+            "coords": [
+                53.5,
+                108.5
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 2,
+            "text": "",
+            "notes": "",
+            "media": "",
+            "options": []
+        }
+    ]
+}

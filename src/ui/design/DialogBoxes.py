@@ -50,3 +50,15 @@ class SavePathDialog:
         object_id=id,
         allowed_suffixes={"."}
         )
+
+class OpenGameDialog:
+    def __init__(self, ui_manager, id):
+        self.dialog = pygame_gui.windows.UIFileDialog(
+        rect=pygame.Rect(160, 50, 440, 500),
+        manager=ui_manager,
+        window_title='Open Game',
+        allow_picking_directories=False,
+        allow_existing_files_only=True,
+        object_id=id,
+        allowed_suffixes={"json"}
+        )

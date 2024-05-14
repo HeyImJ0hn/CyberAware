@@ -161,6 +161,9 @@ class ViewController:
         if event.ui_object_id == '#save_path_dialog':
             self.view.game_manager.file_path = event.text
             self.new_game_dialog.update_file_path(event.text)
+        elif event.ui_object_id == '#open_path_dialog':
+            self.view.game_manager.new_game()
+            self.view.game_manager.open_game(event.text)
 
     def ui_button_pressed(self, event):
         if event.ui_object_id == '#new_game_button':
@@ -326,7 +329,7 @@ class HomeViewControl:
             b.disable()
 
     def open_game(self):
-        self.view.game_manager.open_game()
+        OpenGameDialog(self.view.ui_manager, '#open_path_dialog')
 
     def quit(self):
         pygame.quit()
@@ -403,7 +406,7 @@ class ToolbarControl:
 
     def open_game(self):
         self.disable_toolbar()
-        self.toolbar.view.game_manager.open_game()
+        OpenGameDialog(self.toolbar.view.ui_manager, '#open_path_dialog')
 
     def compile(self):
         self.toolbar.view.game_manager.compile()

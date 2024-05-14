@@ -6,6 +6,7 @@ from pygame_gui.windows import UIFileDialog
 from ui.design.EntityDesign import EntityBody, EntityButton, EntityMenu
 from ui.views.Views import HomeView, BuildView
 from dao.FileDAO import FileDAO
+from conv.JSONConverter import JSONConverter
 
 class GameManager:
     def __init__(self):
@@ -14,8 +15,9 @@ class GameManager:
 
         self.view = HomeView(self)
 
-        self.game_name = None
+        self.game_name = ""
         self.file_path = None
+        self.file_name = None
 
         self._entity_manager = None
 
@@ -23,7 +25,9 @@ class GameManager:
         self.view.run()
 
     def new_game(self):
-        FileDAO.create(self.file_path, self.game_to_file_name(self.game_name), self.game_name)
+        #self.file_name = self.game_to_file_name(self.game_name)
+
+        #FileDAO.create(self.file_path, self.file_name, self.game_name)
 
         self.view = BuildView(self)
         
@@ -34,16 +38,11 @@ class GameManager:
 
         self.view.run()
 
-    def open_game(self):
-        self.file_dialog = UIFileDialog(pygame.Rect(160, 50, 440, 500),
-                                                    self.view.ui_manager,
-                                                    window_title='Open Game',
-                                                    allow_picking_directories=False,
-                                                    allow_existing_files_only=True,
-                                                    allowed_suffixes={"json"})
+    def open_game(self, path):
+        JSONConverter().convert_from_json(self, path)
 
     def save_game(self):
-        pass
+        FileDAO.save(self)
 
     def compile(self):
         pass
