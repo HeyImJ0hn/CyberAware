@@ -101,6 +101,12 @@ class EntityManager:
         self.entities = []
         self.depth = 0
 
+    def get_entity_by_id(self, id):
+        for entity in self.entities:
+            if entity.id == id:
+                return entity
+        return None
+
 class Entity:
     def __init__(self, id, x, y, width, height, ui_manager, depth=0, name="", text="", notes="", media=""):
         self.id = id
