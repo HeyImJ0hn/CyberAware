@@ -23,7 +23,7 @@ class GameManager:
         self.view.run()
 
     def new_game(self):
-        FileDAO.create(self.file_path, self.game_to_file_name(self.game_name))
+        FileDAO.create(self.file_path, self.game_to_file_name(self.game_name), self.game_name)
 
         self.view = BuildView(self)
         
