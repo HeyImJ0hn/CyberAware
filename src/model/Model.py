@@ -5,6 +5,7 @@ from pygame_gui.windows import UIFileDialog
 
 from ui.design.EntityDesign import EntityBody, EntityButton, EntityMenu
 from ui.views.Views import HomeView, BuildView
+from dao.FileDAO import FileDAO
 
 class GameManager:
     def __init__(self):
@@ -22,6 +23,8 @@ class GameManager:
         self.view.run()
 
     def new_game(self):
+        FileDAO.create(self.file_path, self.game_to_file_name(self.game_name))
+
         self.view = BuildView(self)
         
         self._entity_manager = EntityManager(self.view.ui_manager)
@@ -66,6 +69,9 @@ class GameManager:
     
     def update_resolution(self, resolution):
         self.resolution = resolution
+
+    def game_to_file_name(self, game_name):
+        return game_name.replace(" ", "_").lower() + ".json"
 
 class EntityManager:
     def __init__(self, ui_manager, entities=[]):

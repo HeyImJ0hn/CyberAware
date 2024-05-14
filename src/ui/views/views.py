@@ -45,6 +45,8 @@ class View:
                     self.view_controller.key_up(event)
                 elif event.type == pygame.VIDEORESIZE:
                     self.view_controller.window_resize(event)
+                elif event.type == pygame_gui.UI_FILE_DIALOG_PATH_PICKED:
+                    self.view_controller.ui_file_dialog_path_picked(event)
                     
                 self.ui_manager.process_events(event)
 
@@ -69,6 +71,8 @@ class ViewController:
         self.dragging_menu = None
         self.open_menu = None
         self.clicked_outside = True
+
+        self.new_game_dialog = None
 
         self.view_offset = (0, 0)
 
@@ -153,6 +157,11 @@ class ViewController:
                         dy = mouse_pos[1] + self.offset_y - self.dragging_menu.rect.y
                         self.dragging_menu.move(dx, dy)
 
+    def ui_file_dialog_path_picked(self, event):
+        if event.ui_object_id == '#save_path_dialog':
+            self.view.game_manager.file_path = event.text
+            self.new_game_dialog.update_file_path(event.text)
+
     def ui_button_pressed(self, event):
         if event.ui_object_id == '#new_game_button':
             self.view.controller.new_game()
@@ -171,11 +180,17 @@ class ViewController:
         elif event.ui_object_id == '@toolbar.#toolbar_compile':
             self.view.toolbar.controller.compile()
 
+        elif event.ui_object_id == '#new_game_dialog.#browse_button':
+            SavePathDialog(self.view.ui_manager, '#save_path_dialog')
+
         elif event.ui_object_id == '#new_game_dialog.#create_button':
             self.view.game_manager.game_name = event.ui_element.ui_container.parent_element.game_name.get_text()
+            self.view.game_manager.file_path = event.ui_element.ui_container.parent_element.file_path.get_text()
             self.view.game_manager.new_game()
         elif event.ui_object_id == '#new_game_dialog.#cancel_button':
             event.ui_element.ui_container.parent_element.kill()
+            self.view.game_manager.game_name = ""
+            self.view.game_manager.file_path = ""
             for b in self.view.buttons:
                 b.enable()
 
@@ -183,6 +198,8 @@ class ViewController:
             or event.ui_object_id == '#file_dialog.#ok_button':
             if isinstance(self.view, BuildView):
                 self.view.toolbar.controller.enable_toolbar()
+
+        print(event.ui_object_id)
             
     def mouse_hover(self):
         if isinstance(self.view, BuildView):
@@ -304,7 +321,7 @@ class HomeViewControl:
         self.view = view
 
     def new_game(self):
-        NewGameDialog(self.view.ui_manager)
+        self.view.view_controller.new_game_dialog = NewGameDialog(self.view.ui_manager, self.view.game_manager.game_name, self.view.game_manager.file_path)
         for b in self.view.buttons:
             b.disable()
 

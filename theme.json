@@ -393,7 +393,7 @@
         {
             "name": "roboto-regular",
             "bold": "1",
-            "size": "14"
+            "size": "20"
         }
     },
     "@new_game_dialog_input":
@@ -433,7 +433,7 @@
         "misc":
         {
             "shape": "rounded_rectangle",
-            "shape_corner_radius": "12",
+            "shape_corner_radius": "23",
             "border_width": "0",
             "shadow_width": "0"
         },
