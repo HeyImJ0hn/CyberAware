@@ -1,12 +1,12 @@
 {
-    "name": "jogo de teste",
+    "name": "Jogo de Teste",
     "entities": [
         {
             "id": 0,
             "name": "Node 0",
             "coords": [
-                362.5,
-                262.5
+                968.5,
+                368.0
             ],
             "size": [
                 75,
@@ -27,7 +27,11 @@
                 },
                 {
                     "text": "",
-                    "entity_id": 3
+                    "entity_id": 8
+                },
+                {
+                    "text": "",
+                    "entity_id": 9
                 }
             ]
         },
@@ -35,8 +39,8 @@
             "id": 1,
             "name": "Node 1",
             "coords": [
-                117.5,
-                395.5
+                463.5,
+                431.0
             ],
             "size": [
                 75,
@@ -49,26 +53,8 @@
             "options": [
                 {
                     "text": "",
-                    "entity_id": 5
-                }
-            ]
-        },
-        {
-            "id": 2,
-            "name": "Node 2",
-            "coords": [
-                512.5,
-                262.5
-            ],
-            "size": [
-                75,
-                75
-            ],
-            "depth": 1,
-            "text": "",
-            "notes": "",
-            "media": "",
-            "options": [
+                    "entity_id": 3
+                },
                 {
                     "text": "",
                     "entity_id": 4
@@ -76,11 +62,11 @@
             ]
         },
         {
-            "id": 3,
-            "name": "Node 3",
+            "id": 2,
+            "name": "Node 2",
             "coords": [
-                211.5,
-                150.5
+                1263.5,
+                311.0
             ],
             "size": [
                 75,
@@ -94,6 +80,32 @@
                 {
                     "text": "",
                     "entity_id": 6
+                },
+                {
+                    "text": "",
+                    "entity_id": 7
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "name": "Node 3",
+            "coords": [
+                528.5,
+                595.0
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 2,
+            "text": "",
+            "notes": "",
+            "media": "",
+            "options": [
+                {
+                    "text": "",
+                    "entity_id": 5
                 }
             ]
         },
@@ -101,8 +113,8 @@
             "id": 4,
             "name": "Node 4",
             "coords": [
-                512.5,
-                412.5
+                356.5,
+                557.0
             ],
             "size": [
                 75,
@@ -118,8 +130,25 @@
             "id": 5,
             "name": "Node 5",
             "coords": [
-                117.5,
-                545.5
+                518.5,
+                768.0
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 3,
+            "text": "",
+            "notes": "",
+            "media": "",
+            "options": []
+        },
+        {
+            "id": 6,
+            "name": "Node 6",
+            "coords": [
+                1378.5,
+                524.0
             ],
             "size": [
                 75,
@@ -132,17 +161,51 @@
             "options": []
         },
         {
-            "id": 6,
-            "name": "Node 6",
+            "id": 7,
+            "name": "Node 7",
             "coords": [
-                53.5,
-                108.5
+                1476.5,
+                241.0
             ],
             "size": [
                 75,
                 75
             ],
             "depth": 2,
+            "text": "",
+            "notes": "",
+            "media": "",
+            "options": []
+        },
+        {
+            "id": 8,
+            "name": "Node 8",
+            "coords": [
+                957.5,
+                819.0
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 1,
+            "text": "",
+            "notes": "",
+            "media": "",
+            "options": []
+        },
+        {
+            "id": 9,
+            "name": "Node 9",
+            "coords": [
+                1098.5,
+                830.0
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 1,
             "text": "",
             "notes": "",
             "media": "",

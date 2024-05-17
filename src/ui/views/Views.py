@@ -4,14 +4,20 @@ from pygame_gui.elements import *
 from pygame_gui.windows import *
 from pygame_gui.core import ObjectID
 from ui.design.DialogBoxes import *
+from config.Settings import *
+from pygame import Window
 
 import sys
 
 class View:
     def __init__(self, game_manager):
         self.game_manager = game_manager
-        self.resolution = self.game_manager.resolution
+        self.resolution = Settings.RESOLUTION
         self.screen = pygame.display.set_mode(self.resolution, pygame.RESIZABLE | pygame.SRCALPHA)
+
+        #if Settings.FULLSCREEN:
+        #    Window.from_display_module().maximize()
+        
         self.ui_manager = pygame_gui.UIManager(self.resolution, 'theme.json')
         pygame.display.set_caption("CyberAware - Plataforma")
         
@@ -26,8 +32,7 @@ class View:
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+                    self.view_controller.quit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     self.view_controller.mouse_button_down(event)
                 elif event.type == pygame.MOUSEBUTTONUP:
@@ -56,6 +61,12 @@ class View:
         self.ui_manager.update(self.UI_REFRESH_RATE)
         self.screen.fill((255, 255, 255))
 
+        if self.view_controller.active_toast:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.view_controller.toast_start_time >= self.view_controller.toast_duration:
+                self.view_controller.active_toast.kill()
+                self.view_controller.active_toast = None
+
     def update_display(self):
         self.ui_manager.draw_ui(self.screen)
         pygame.display.flip()
@@ -73,6 +84,12 @@ class ViewController:
         self.clicked_outside = True
 
         self.new_game_dialog = None
+
+        self.active_toast = None
+        self.toast_duration = 2000
+        self.toast_start_time = 0
+
+        self.ctrl_pressed = False
 
         self.view_offset = (0, 0)
 
@@ -162,7 +179,6 @@ class ViewController:
             self.view.game_manager.file_path = event.text
             self.new_game_dialog.update_file_path(event.text)
         elif event.ui_object_id == '#open_path_dialog':
-            self.view.game_manager.new_game()
             self.view.game_manager.open_game(event.text)
 
     def ui_button_pressed(self, event):
@@ -171,8 +187,7 @@ class ViewController:
         elif event.ui_object_id == '#open_game_button':
             self.view.controller.open_game()
         elif event.ui_object_id == '#quit_button':
-            pygame.quit()
-            sys.exit()
+            self.view.controller.quit()
 
         elif event.ui_object_id == '@toolbar.#toolbar_new_game':
             self.view.toolbar.controller.new_game()
@@ -188,7 +203,7 @@ class ViewController:
 
         elif event.ui_object_id == '#new_game_dialog.#create_button':
             self.view.game_manager.game_name = event.ui_element.ui_container.parent_element.game_name.get_text()
-            self.view.game_manager.file_path = event.ui_element.ui_container.parent_element.file_path.get_text()
+            self.view.game_manager.path = event.ui_element.ui_container.parent_element.file_path.get_text()
             self.view.game_manager.new_game()
         elif event.ui_object_id == '#new_game_dialog.#cancel_button':
             event.ui_element.ui_container.parent_element.kill()
@@ -225,6 +240,14 @@ class ViewController:
         if event.key == pygame.K_SPACE:
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_CROSSHAIR)
             self.space_pressed = True
+        elif event.key == pygame.K_LCTRL:
+            self.ctrl_pressed = True
+        elif event.key == pygame.K_s and self.ctrl_pressed:
+            self.view.game_manager.save_game()
+            if self.active_toast:
+                self.active_toast.kill()
+            self.active_toast = SavedToast(self.view.ui_manager)
+            self.toast_start_time = pygame.time.get_ticks()
 
     def key_up(self, event):
         if event.key == pygame.K_SPACE:
@@ -233,6 +256,15 @@ class ViewController:
 
     def window_resize(self, event):
         self.view.resolution = (event.w, event.h)
+        Settings.RESOLUTION = (event.w, event.h)
+        Settings.FULLSCREEN = False
+
+        #monitor_res = pygame.display.list_modes()[0]
+        #if event.w == monitor_res[0] and event.h >= monitor_res[1] - 80:
+        #    Settings.FULLSCREEN = True
+        #else:
+        #    Settings.RESOLUTION = (event.w, event.h)
+        
         self.view.game_manager.update_resolution((event.w, event.h))
         self.view.ui_manager.set_window_resolution(self.view.resolution)
 
@@ -253,6 +285,11 @@ class ViewController:
             self.view.quit_button.rect.y = HEIGHT/2 - 240/2 + 350
 
             self.view.draw_ui()
+
+    def quit(self):
+        self.view.game_manager.save_settings()
+        pygame.quit()
+        sys.exit()
 
 class BuildView(View):
     def __init__(self, game_manager):
@@ -324,7 +361,7 @@ class HomeViewControl:
         self.view = view
 
     def new_game(self):
-        self.view.view_controller.new_game_dialog = NewGameDialog(self.view.ui_manager, self.view.game_manager.game_name, self.view.game_manager.file_path)
+        self.view.view_controller.new_game_dialog = NewGameDialog(self.view.ui_manager)
         for b in self.view.buttons:
             b.disable()
 
@@ -332,8 +369,7 @@ class HomeViewControl:
         OpenGameDialog(self.view.ui_manager, '#open_path_dialog')
 
     def quit(self):
-        pygame.quit()
-        sys.exit()
+        self.view.view_controller.quit()
 
 class Toolbar:
     def __init__(self, view):
@@ -403,6 +439,8 @@ class ToolbarControl:
 
     def save_game(self):
         self.toolbar.view.game_manager.save_game()
+        self.toolbar.view.view_controller.toast_start_time = pygame.time.get_ticks()
+        self.toolbar.view.view_controller.active_toast = SavedToast(self.toolbar.view.ui_manager)
 
     def open_game(self):
         self.disable_toolbar()

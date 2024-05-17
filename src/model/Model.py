@@ -1,48 +1,59 @@
 import pygame
 import sys
 import math
-from pygame_gui.windows import UIFileDialog
 
 from ui.design.EntityDesign import EntityBody, EntityButton, EntityMenu
 from ui.views.Views import HomeView, BuildView
 from dao.FileDAO import FileDAO
 from conv.JSONConverter import JSONConverter
+from config.Settings import Settings
 
 class GameManager:
     def __init__(self):
         pygame.init()
-        self.resolution = (800, 600)
 
+        self.json_converter = JSONConverter()
+        self.json_converter.settings_from_json()
+
+        if Settings.FIRST_RUN:
+            Settings.FIRST_RUN = False
+            self.save_settings()
+        
         self.view = HomeView(self)
 
         self.game_name = ""
-        self.file_path = None
-        self.file_name = None
+        self.path = None
 
-        self._entity_manager = None
+        self._entity_manager = EntityManager(self.view.ui_manager)
 
     def run(self):
         self.view.run()
 
     def new_game(self):
-        #self.file_name = self.game_to_file_name(self.game_name)
-
-        #FileDAO.create(self.file_path, self.file_name, self.game_name)
+        self.file_name = self.game_to_file_name(self.game_name)
+        self.path = FileDAO.create_absolute_path(self.path, self.file_name)
 
         self.view = BuildView(self)
         
-        self._entity_manager = EntityManager(self.view.ui_manager)
         self.clear_entities()
 
         self.add_entity()
 
         self.view.run()
 
+    def load_game(self, path):
+        self.game_name, entities = self.json_converter.game_from_json(self, path)
+        self.path = path
+        self._entity_manager.update_entities(entities)
+
     def open_game(self, path):
-        JSONConverter().convert_from_json(self, path)
+        self.load_game(path)
+        self.view = BuildView(self)
+        self.view.run()
 
     def save_game(self):
-        FileDAO.save(self)
+        json = self.json_converter.game_to_json(self)
+        FileDAO.save(json, self.path)
 
     def compile(self):
         pass
@@ -71,6 +82,15 @@ class GameManager:
 
     def game_to_file_name(self, game_name):
         return game_name.replace(" ", "_").lower() + ".json"
+    
+    def create_entity(self):
+        return self._entity_manager.create_entity()
+    
+    def create_option(self, text, entity):
+        return self._entity_manager.create_option(text, entity)
+    
+    def save_settings(self):
+        self.json_converter.settings_to_json()
 
 class EntityManager:
     def __init__(self, ui_manager, entities=[]):
@@ -96,6 +116,8 @@ class EntityManager:
     def update_entities(self, entities):
         self.entities = entities
 
+        self.fix_entity_options()
+
     def clear_entities(self):
         self.entities = []
         self.depth = 0
@@ -105,6 +127,18 @@ class EntityManager:
             if entity.id == id:
                 return entity
         return None
+    
+    def create_entity(self):
+        return Entity(len(self.entities), 0, 0, 75, 75, self.ui_manager, depth=1)
+    
+    def create_option(self, text, entity):
+        return Option(text, entity)
+    
+    def fix_entity_options(self):
+        for e in self.entities:
+            for o in e.options:
+                id = o.entity
+                o.entity = self.get_entity_by_id(id)
 
 class Entity:
     def __init__(self, id, x, y, width, height, ui_manager, depth=0, name="", text="", notes="", media=""):

@@ -2,7 +2,7 @@ import pygame
 import pygame_gui
 from pygame_gui.elements import *
 from pygame_gui.core import ObjectID
-import os
+from config.Settings import Settings
 
 class NewGameDialog(UIWindow):
     def __init__(self, ui_manager, game_name="", file_path=""):
@@ -62,3 +62,19 @@ class OpenGameDialog:
         object_id=id,
         allowed_suffixes={"json"}
         )
+
+class SavedToast(UIWindow):
+    def __init__(self, ui_manager):
+        screen_res = Settings.RESOLUTION
+        WIDTH, HEIGHT = 140, 60
+        padding = 20
+        toolbar_height = 40
+
+        super().__init__(pygame.Rect((screen_res[0] - WIDTH - padding, toolbar_height + padding), (WIDTH, HEIGHT)), ui_manager,
+                         window_display_title='Saved',
+                         object_id='#saved_popup',
+                         always_on_top=True,
+                         draggable=False)
+        
+        self.icon = UIImage(relative_rect=pygame.Rect((20, HEIGHT/2-10), (17.5, 20)), image_surface=pygame.image.load('static/check-solid.svg'), manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@saved_popup_icon', object_id='#icon'))
+        self.message = UILabel(relative_rect=pygame.Rect((28, 0), (WIDTH-28, HEIGHT)), text='Saved', manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@saved_popup_label', object_id='#message_label'))

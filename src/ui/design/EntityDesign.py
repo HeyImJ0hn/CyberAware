@@ -42,7 +42,7 @@ class EntityMenu(UIWindow):
                          resizable=False)
         self.entity = entity
 
-        self.namme_label = UILabel(relative_rect=pygame.Rect((10, 10), (60, 20)), text="Name", manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@entity_menu_label', object_id='#name_label'))
+        self.name_label = UILabel(relative_rect=pygame.Rect((10, 10), (60, 20)), text="Name", manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@entity_menu_label', object_id='#name_label'))
         self.name = UITextEntryLine(relative_rect=pygame.Rect((80, 10), (100, 20)), manager=self.ui_manager, container=self, initial_text=entity.name, object_id=ObjectID(class_id='@entity_menu_input', object_id='#name_input'))
 
         UILabel(relative_rect=pygame.Rect((10, 40), (60, 20)), text="Media", manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@entity_menu_label', object_id='#media_label'))
