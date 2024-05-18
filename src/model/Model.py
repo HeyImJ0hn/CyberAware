@@ -49,6 +49,7 @@ class GameManager:
     def open_game(self, path):
         self.load_game(path)
         self.view = BuildView(self)
+        self._entity_manager.update_ui_manager(self.view.ui_manager)
         self.view.run()
 
     def save_game(self):
@@ -95,7 +96,6 @@ class GameManager:
 class EntityManager:
     def __init__(self, ui_manager, entities=[]):
         self.entities = entities
-        self.depth = 0
         self.ui_manager = ui_manager
 
     def add_entity(self, parent=None):
@@ -116,11 +116,10 @@ class EntityManager:
     def update_entities(self, entities):
         self.entities = entities
 
-        self.fix_entity_options()
+        self.fix_entities()
 
     def clear_entities(self):
         self.entities = []
-        self.depth = 0
 
     def get_entity_by_id(self, id):
         for entity in self.entities:
@@ -134,11 +133,17 @@ class EntityManager:
     def create_option(self, text, entity):
         return Option(text, entity)
     
-    def fix_entity_options(self):
+    def fix_entities(self):
         for e in self.entities:
+            e.create_extra_buttons()
             for o in e.options:
                 id = o.entity
                 o.entity = self.get_entity_by_id(id)
+
+    def update_ui_manager(self, ui_manager):
+        self.ui_manager = ui_manager
+        for entity in self.entities:
+            entity.ui_manager = ui_manager
 
 class Entity:
     def __init__(self, id, x, y, width, height, ui_manager, depth=0, name="", text="", notes="", media=""):
@@ -164,10 +169,8 @@ class Entity:
 
         self.body = EntityBody(x, y, width, height)
         self.button_add = EntityButton(x + width, y, width/5, height/5, "+")
-        if (depth != 0):
-            self.button_remove = EntityButton(x + width, y + height/5 + 2, width/5, height/5, "-")
-        self.button_hide = EntityButton(x - width/5 - 2, y, width/5, height/5, "H")
-        self.buttons = [self.button_add, self.button_remove, self.button_hide] if depth != 0 else [self.button_add, self.button_hide]
+
+        self.create_extra_buttons()
 
     def draw(self, screen):
         if self.hidden:
@@ -190,6 +193,15 @@ class Entity:
         if self.hovered:
             for button in self.buttons:
                 button.draw(screen)
+
+    def create_extra_buttons(self):
+        self.buttons = [self.button_add]
+
+        self.button_remove = EntityButton(self.x + self.width, self.y + self.height/5 + 2, self.width/5, self.height/5, "-")
+        self.button_hide = EntityButton(self.x - self.width/5 - 2, self.y, self.width/5, self.height/5, "H")
+        if self.depth != 0:
+            self.buttons.append(self.button_remove)
+        self.buttons.append(self.button_hide)
 
     def move(self, dx, dy):
         self.set_position(self.x + dx, self.y + dy)

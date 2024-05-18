@@ -5,7 +5,6 @@ from pygame_gui.windows import *
 from pygame_gui.core import ObjectID
 from ui.design.DialogBoxes import *
 from config.Settings import *
-from pygame import Window
 
 import sys
 
@@ -39,9 +38,8 @@ class View:
                     self.view_controller.mouse_button_up(event)
                 elif event.type == pygame.MOUSEMOTION:
                     self.view_controller.mouse_motion(event)
-                #elif (event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and
-                #      event.ui_object_id == "#main_text_entry"):
-                #    print("Text entered:", event.text)
+                elif event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED:
+                    self.view_controller.ui_text_entry_finished(event)
                 elif event.type == pygame_gui.UI_BUTTON_PRESSED:
                     self.view_controller.ui_button_pressed(event)
                 elif event.type == pygame.KEYDOWN:
@@ -285,6 +283,9 @@ class ViewController:
             self.view.quit_button.rect.y = HEIGHT/2 - 240/2 + 350
 
             self.view.draw_ui()
+
+    def ui_text_entry_finished(self, event):
+        print(event.ui_object_id, event.text)
 
     def quit(self):
         self.view.game_manager.save_settings()
