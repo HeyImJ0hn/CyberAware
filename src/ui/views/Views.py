@@ -104,9 +104,10 @@ class ViewController:
                             entity.refresh_menu((self.open_menu.rect.x, self.open_menu.rect.y))
                             self.open_menu = entity.menu
                 elif entity.was_body_clicked(self.mouse_pos[0], self.mouse_pos[1]):
-                    self.dragging_entity = entity
-                    self.offset_x = entity.body.rect.x - self.mouse_pos[0] 
-                    self.offset_y = entity.body.rect.y - self.mouse_pos[1]
+                    if not self.dragging_menu:
+                        self.dragging_entity = entity
+                        self.offset_x = entity.body.rect.x - self.mouse_pos[0] 
+                        self.offset_y = entity.body.rect.y - self.mouse_pos[1]
                 elif entity.was_menu_clicked(self.mouse_pos[0], self.mouse_pos[1]):
                     self.offset_x = entity.menu.rect.x - self.mouse_pos[0]
                     self.offset_y = entity.menu.rect.y - self.mouse_pos[1]
