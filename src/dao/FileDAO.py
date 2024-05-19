@@ -1,5 +1,6 @@
 import os
 import json
+import shutil
 
 class FileDAO:
     @staticmethod
@@ -72,3 +73,25 @@ class FileDAO:
         with open(settings_file, 'r') as f:
             settings = json.load(f)
         return settings
+    
+    @staticmethod
+    def create_game_folder(game_name):
+        app_folder = FileDAO.get_app_folder()
+        game_folder = os.path.join(app_folder, game_name)
+
+        if not os.path.exists(game_folder):
+            print('Creating directory: ' + game_folder)
+            os.makedirs(game_folder)
+
+        return game_folder
+    
+    @staticmethod
+    def copy_media(source, game_name):
+        destination = FileDAO.create_game_folder(game_name)
+
+        if not os.path.exists(source):
+            print('Media does not exist: ' + source)
+            return
+        else:
+            print('Copying media: ' + source + ' to ' + destination)
+            shutil.copy2(source, destination)

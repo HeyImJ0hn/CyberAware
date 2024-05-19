@@ -16,6 +16,7 @@ class JSONConverter:
                 "text": e.text,
                 "notes": e.notes,
                 "media": e.media,
+                "hidden": e.hidden,
                 "options": []
             }
 
@@ -50,6 +51,7 @@ class JSONConverter:
             entity.text = e["text"]
             entity.notes = e["notes"]
             entity.media = e["media"]
+            entity.hidden = e["hidden"]
 
             for o in e["options"]:
                 entity.options.append(game_manager.create_option(o["text"], o["entity_id"]))

@@ -5,8 +5,8 @@
             "id": 0,
             "name": "Node 0",
             "coords": [
-                584.5,
-                107.0
+                899.5,
+                296.0
             ],
             "size": [
                 75,
@@ -16,6 +16,7 @@
             "text": "",
             "notes": "",
             "media": "",
+            "hidden": false,
             "options": [
                 {
                     "text": "",
@@ -39,8 +40,8 @@
             "id": 1,
             "name": "Node 1",
             "coords": [
-                79.5,
-                170.0
+                394.5,
+                359.0
             ],
             "size": [
                 75,
@@ -50,6 +51,7 @@
             "text": "",
             "notes": "",
             "media": "",
+            "hidden": false,
             "options": [
                 {
                     "text": "",
@@ -65,8 +67,8 @@
             "id": 2,
             "name": "Node 2",
             "coords": [
-                879.5,
-                50.0
+                1194.5,
+                239.0
             ],
             "size": [
                 75,
@@ -76,6 +78,7 @@
             "text": "",
             "notes": "",
             "media": "",
+            "hidden": false,
             "options": [
                 {
                     "text": "",
@@ -91,8 +94,8 @@
             "id": 3,
             "name": "Node 3",
             "coords": [
-                144.5,
-                334.0
+                459.5,
+                523.0
             ],
             "size": [
                 75,
@@ -102,6 +105,7 @@
             "text": "",
             "notes": "",
             "media": "",
+            "hidden": false,
             "options": [
                 {
                     "text": "",
@@ -113,8 +117,8 @@
             "id": 4,
             "name": "Node 4",
             "coords": [
-                -27.5,
-                296.0
+                287.5,
+                485.0
             ],
             "size": [
                 75,
@@ -124,14 +128,15 @@
             "text": "",
             "notes": "",
             "media": "",
+            "hidden": false,
             "options": []
         },
         {
             "id": 5,
             "name": "Node 5",
             "coords": [
-                134.5,
-                507.0
+                449.5,
+                696.0
             ],
             "size": [
                 75,
@@ -141,14 +146,15 @@
             "text": "",
             "notes": "",
             "media": "",
+            "hidden": false,
             "options": []
         },
         {
             "id": 6,
             "name": "Node 6",
             "coords": [
-                994.5,
-                263.0
+                1309.5,
+                452.0
             ],
             "size": [
                 75,
@@ -158,14 +164,15 @@
             "text": "",
             "notes": "",
             "media": "",
+            "hidden": false,
             "options": []
         },
         {
             "id": 7,
             "name": "Node 7",
             "coords": [
-                1092.5,
-                -20.0
+                1407.5,
+                169.0
             ],
             "size": [
                 75,
@@ -175,14 +182,15 @@
             "text": "",
             "notes": "",
             "media": "",
+            "hidden": false,
             "options": []
         },
         {
             "id": 8,
             "name": "Node 8",
             "coords": [
-                573.5,
-                558.0
+                888.5,
+                747.0
             ],
             "size": [
                 75,
@@ -192,14 +200,15 @@
             "text": "",
             "notes": "",
             "media": "",
+            "hidden": false,
             "options": []
         },
         {
             "id": 9,
             "name": "Node 9",
             "coords": [
-                714.5,
-                569.0
+                1029.5,
+                758.0
             ],
             "size": [
                 75,
@@ -209,6 +218,7 @@
             "text": "",
             "notes": "",
             "media": "",
+            "hidden": false,
             "options": []
         }
     ]

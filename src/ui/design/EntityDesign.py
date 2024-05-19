@@ -48,9 +48,9 @@ class EntityMenu(UIWindow):
         else:
             self.height = base_height + 60 + (option_height * (len(entity.options) - 1))
         
-        self.width = 224
+        self.width = 240
 
-        super().__init__(pygame.Rect((entity.x + entity.width + 25, entity.y - self.height), (self.width, self.height)), 
+        super().__init__(pygame.Rect((entity.x + entity.width + 25, entity.y), (self.width, self.height)), 
                          ui_manager, 
                          window_display_title='Entity Menu',
                          object_id='#entity_menu',
@@ -59,13 +59,13 @@ class EntityMenu(UIWindow):
         self.setup_ui()
 
     def setup_ui(self):
-        self.name_label = UILabel(relative_rect=pygame.Rect((10, 10), (60, 20)), 
+        UILabel(relative_rect=pygame.Rect((10, 10), (60, 20)), 
                                   text="Name", 
                                   manager=self.ui_manager, 
                                   container=self, 
                                   object_id=ObjectID(class_id='@entity_menu_label', object_id='#name_label'))
         
-        self.name = UITextEntryLine(relative_rect=pygame.Rect((80, 10), (100, 20)), 
+        self.name = UITextEntryLine(relative_rect=pygame.Rect((80, 10), (140, 20)), 
                                     manager=self.ui_manager, 
                                     container=self, 
                                     initial_text=self.entity.name, 
@@ -77,11 +77,17 @@ class EntityMenu(UIWindow):
                 container=self, 
                 object_id=ObjectID(class_id='@entity_menu_label', object_id='#media_label'))
         
-        self.media = UITextEntryLine(relative_rect=pygame.Rect((80, 40), (100, 20)), 
+        self.media = UITextEntryLine(relative_rect=pygame.Rect((80, 40), (120, 20)), 
                                      manager=self.ui_manager, 
                                      container=self, 
                                      initial_text=self.entity.media, 
                                      object_id=ObjectID(class_id='@entity_menu_input', object_id='#media_input'))
+        
+        self.browse_button = UIButton(relative_rect=pygame.Rect((200, 40), (20, 20)),
+                                        text='...',
+                                        manager=self.ui_manager,
+                                        container=self,
+                                        object_id=ObjectID(class_id='@entity_menu_button', object_id='#browse_button'))
 
         UILabel(relative_rect=pygame.Rect((10, 70), (60, 20)), 
                 text="Text", 
@@ -89,7 +95,7 @@ class EntityMenu(UIWindow):
                 container=self, 
                 object_id=ObjectID(class_id='@entity_menu_label', object_id='#text_label'))
         
-        self.text = UITextEntryLine(relative_rect=pygame.Rect((80, 70), (100, 20)), 
+        self.text = UITextEntryLine(relative_rect=pygame.Rect((80, 70), (140, 20)), 
                                     manager=self.ui_manager, 
                                     container=self, 
                                     initial_text=self.entity.text, 
@@ -101,7 +107,7 @@ class EntityMenu(UIWindow):
                 container=self, 
                 object_id=ObjectID(class_id='@entity_menu_label', object_id='#notes_label'))
         
-        self.notes = UITextEntryBox(relative_rect=pygame.Rect((80, 100), (100, 60)), 
+        self.notes = UITextEntryBox(relative_rect=pygame.Rect((80, 100), (140, 60)), 
                                     manager=self.ui_manager, 
                                     container=self, 
                                     initial_text=self.entity.notes, 
@@ -127,6 +133,16 @@ class EntityMenu(UIWindow):
                                 container=self, 
                                 placeholder_text="Texto", 
                                 object_id=ObjectID(class_id='@entity_option_input', object_id='#option_text_input'))
+
+    def kill(self):
+        event_data = {
+            'ui_element': self,
+            'entity': self.entity
+        }
+        event = pygame.event.Event(pygame.USEREVENT + 3000, event_data)
+
+        pygame.event.post(event)
+        super().kill()
 
     def move(self, dx, dy):
         self.set_position((self.rect.x + dx, self.rect.y + dy))

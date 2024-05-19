@@ -39,6 +39,8 @@ class GameManager:
 
         self.add_entity()
 
+        self._entity_manager.update_ui_manager(self.view.ui_manager)
+
         self.view.run()
 
     def load_game(self, path):
@@ -92,6 +94,10 @@ class GameManager:
     
     def save_settings(self):
         self.json_converter.settings_to_json()
+
+    def submit_media(self, media, entity):
+        FileDAO.copy_media(media, self.game_to_file_name(self.game_name).split(".")[0])
+        entity.update_media(media)
 
 class EntityManager:
     def __init__(self, ui_manager, entities=[]):
@@ -187,8 +193,11 @@ class Entity:
 
         font = pygame.font.Font(None, 24)
         text_surface = font.render(self.name, True, (0, 0, 0))
-        text_rect = pygame.Rect(self.body.x + self.body.width/2 - 25, self.body.y + self.body.height/2 - 55, 24, 75)
-        screen.blit(text_surface, text_rect)
+        text_width, _ = font.size(self.name)
+        
+        text_x = self.body.x + (self.body.width - text_width) / 2
+        text_y = self.body.y + self.body.height/2 - 55
+        screen.blit(text_surface, (text_x, text_y))
         
         if self.hovered:
             for button in self.buttons:

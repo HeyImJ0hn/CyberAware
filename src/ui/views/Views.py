@@ -50,6 +50,8 @@ class View:
                     self.view_controller.window_resize(event)
                 elif event.type == pygame_gui.UI_FILE_DIALOG_PATH_PICKED:
                     self.view_controller.ui_file_dialog_path_picked(event)
+                elif event.type == pygame.USEREVENT + 3000:
+                    self.view_controller.menu_kill(event)
                     
                 self.ui_manager.process_events(event)
 
@@ -82,6 +84,7 @@ class ViewController:
         self.clicked_outside = True
 
         self.new_game_dialog = None
+        self.media_dialog = None
 
         self.active_toast = None
         self.toast_duration = 2000
@@ -140,13 +143,14 @@ class ViewController:
                                 entity.open_menu()
                                 self.open_menu = entity.menu
 
-            if self.clicked_outside and self.open_menu:
-                for entity in self.view.game_manager.get_entities():
-                    if entity.id == self.open_menu.entity.id:
-                        self.open_menu.kill()
-                        self.open_menu = None
-                        entity.menu = None
-                        break
+            if not self.media_dialog:
+                if self.clicked_outside and self.open_menu:
+                    for entity in self.view.game_manager.get_entities():
+                        if entity.id == self.open_menu.entity.id:
+                            self.open_menu.kill()
+                            self.open_menu = None
+                            entity.menu = None
+                            break
 
             self.mouse_pos = None
 
@@ -179,6 +183,9 @@ class ViewController:
             self.new_game_dialog.update_file_path(event.text)
         elif event.ui_object_id == '#open_path_dialog':
             self.view.game_manager.open_game(event.text)
+        elif event.ui_object_id == '#browse_media_dialog':
+            self.view.game_manager.submit_media(event.text, self.open_menu.entity)
+            self.media_dialog = None
 
     def ui_button_pressed(self, event):
         if event.ui_object_id == '#new_game_button':
@@ -216,6 +223,13 @@ class ViewController:
             if isinstance(self.view, BuildView):
                 self.view.toolbar.controller.enable_toolbar()
 
+        elif event.ui_object_id == '#entity_menu.#browse_button':
+            self.media_dialog = BrowseMediaDialog(self.view.ui_manager, '#browse_media_dialog')
+        elif event.ui_object_id == '#browse_media_dialog.#ok_button':
+            self.media_dialog = None
+        elif event.ui_object_id == '#browse_media_dialog.#cancel_button':
+            self.media_dialog = None
+
         print(event.ui_object_id)
             
     def mouse_hover(self):
@@ -252,6 +266,8 @@ class ViewController:
         if event.key == pygame.K_SPACE:
             self.space_pressed = False
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+        elif event.key == pygame.K_LCTRL:
+            self.ctrl_pressed = False
 
     def window_resize(self, event):
         self.view.resolution = (event.w, event.h)
@@ -287,6 +303,11 @@ class ViewController:
 
     def ui_text_entry_finished(self, event):
         print(event.ui_object_id, event.text)
+
+    def menu_kill(self, event):
+        entity = event.entity
+        menu = event.ui_element
+        entity.update_properties(menu.name.get_text(), menu.text.get_text(), menu.notes.get_text())
 
     def quit(self):
         self.view.game_manager.save_settings()

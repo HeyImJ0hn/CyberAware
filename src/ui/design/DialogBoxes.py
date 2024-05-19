@@ -78,3 +78,15 @@ class SavedToast(UIWindow):
         
         self.icon = UIImage(relative_rect=pygame.Rect((20, HEIGHT/2-10), (17.5, 20)), image_surface=pygame.image.load('static/check-solid.svg'), manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@saved_popup_icon', object_id='#icon'))
         self.message = UILabel(relative_rect=pygame.Rect((28, 0), (WIDTH-28, HEIGHT)), text='Saved', manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@saved_popup_label', object_id='#message_label'))
+
+class BrowseMediaDialog:
+    def __init__(self, ui_manager, id):
+        self.dialog = pygame_gui.windows.UIFileDialog(
+        rect=pygame.Rect(160, 50, 440, 500),
+        manager=ui_manager,
+        window_title='Browse Media',
+        allow_picking_directories=False,
+        allow_existing_files_only=True,
+        object_id=id,
+        allowed_suffixes={"png", "jpg", "jpeg", "mp4", "mov", "avi", "wmv", "wav"}
+        )
