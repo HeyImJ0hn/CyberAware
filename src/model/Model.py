@@ -69,7 +69,7 @@ class GameManager:
         self._entity_manager.add_entity(parent)
 
     def remove_entity(self, entity):
-        self._entity_manager.remove_entity(entity)
+        return self._entity_manager.remove_entity(entity)
 
     def update_entities(self, entities):
         self._entity_manager.update_entities(entities)
@@ -117,7 +117,12 @@ class EntityManager:
         self.entities.append(entity)
 
     def remove_entity(self, entity):
-        self.entities.remove(entity) 
+        if len(entity.options) > 0:
+            return False
+        
+        self.entities.remove(entity)
+        self.remove_entity_from_options(entity)
+        return True
 
     def update_entities(self, entities):
         self.entities = entities
@@ -132,6 +137,10 @@ class EntityManager:
             if entity.id == id:
                 return entity
         return None
+    
+    def remove_entity_from_options(self, entity):
+        for e in self.entities:
+            e.remove_option(entity)
     
     def create_entity(self):
         return Entity(len(self.entities), 0, 0, 75, 75, self.ui_manager, depth=1)

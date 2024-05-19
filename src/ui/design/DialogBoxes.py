@@ -34,9 +34,10 @@ class ConfirmationDialog:
         rect=pygame.Rect(200, 150, 400, 200),
         manager=ui_manager,
         window_title='Remove Node',
-        action_long_desc='Are you sure you want to proceed? This action cannot be undone.',
-        action_short_name='Proceed',
-        blocking=True
+        action_long_desc='Are you sure you want to remove the node? This action cannot be undone.',
+        action_short_name='Remove',
+        blocking=True,
+        object_id=ObjectID(class_id='@confirmation_dialog', object_id='#remove_node')
         )
 
 class SavePathDialog:
@@ -63,21 +64,33 @@ class OpenGameDialog:
         allowed_suffixes={"json"}
         )
 
-class SavedToast(UIWindow):
-    def __init__(self, ui_manager):
+class Toast(UIWindow):
+    def __init__(self, ui_manager, toast_text, toast_type):
         screen_res = Settings.RESOLUTION
-        WIDTH, HEIGHT = 140, 60
+        HEIGHT = 60
+        WIDTH = len(toast_text) * 15
         padding = 20
         toolbar_height = 40
 
-        super().__init__(pygame.Rect((screen_res[0] - WIDTH - padding, toolbar_height + padding), (WIDTH, HEIGHT)), ui_manager,
-                         window_display_title='Saved',
-                         object_id='#saved_popup',
-                         always_on_top=True,
-                         draggable=False)
+        font = pygame.font.Font("fonts/Roboto-Regular.ttf", 20)  
+        text_width, _ = font.size(toast_text)
         
-        self.icon = UIImage(relative_rect=pygame.Rect((20, HEIGHT/2-10), (17.5, 20)), image_surface=pygame.image.load('static/check-solid.svg'), manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@saved_popup_icon', object_id='#icon'))
-        self.message = UILabel(relative_rect=pygame.Rect((28, 0), (WIDTH-28, HEIGHT)), text='Saved', manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@saved_popup_label', object_id='#message_label'))
+        min_width = 100 
+        max_width = screen_res[0] - 2 * padding 
+        
+        WIDTH = min(max(text_width + 80, min_width), max_width)
+
+        object_id = '#success_toast' if toast_type == 'success' else '#error_toast'
+        image = 'static/check-solid.svg' if toast_type == 'success' else 'static/xmark-solid.svg'
+
+        super().__init__(pygame.Rect((screen_res[0] - WIDTH - padding, toolbar_height + padding), (WIDTH, HEIGHT)), ui_manager,
+                        window_display_title='Toast',
+                        object_id=object_id,
+                        always_on_top=True,
+                        draggable=False)
+        
+        self.icon = UIImage(relative_rect=pygame.Rect((20, HEIGHT/2-10), (17.5, 22.5)), image_surface=pygame.image.load(image), manager=self.ui_manager, container=self, object_id=ObjectID(class_id=f'@{toast_type}_popup_icon', object_id='#icon'))
+        self.message = UILabel(relative_rect=pygame.Rect((28, 0), (WIDTH-28, HEIGHT)), text=toast_text, manager=self.ui_manager, container=self, object_id=ObjectID(class_id=f'@{toast_type}_popup_label', object_id='#message_label'))
 
 class BrowseMediaDialog:
     def __init__(self, ui_manager, id):

@@ -510,7 +510,7 @@
             "dark_bg": "#FFFFFF"
         }
     },
-    "#saved_popup": 
+    "#success_toast": 
     {
         "colours":
         {
@@ -526,7 +526,7 @@
             "text_shadow_size": "0"
         }
     },
-    "@saved_popup_label": 
+    "@success_popup_label": 
     {
         "colours": 
         {
@@ -546,7 +546,42 @@
             "bold": "1"
         }
     },
-
+    "#error_toast": 
+    {
+        "colours":
+        {
+            "dark_bg": "#E50000"
+        },
+        "misc":
+        {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "12",
+            "border_width": "0",
+            "shadow_width": "12",
+            "enable_title_bar": "0",
+            "text_shadow_size": "0"
+        }
+    },
+    "@error_popup_label": 
+    {
+        "colours": 
+        {
+            "normal_text": "#FFFFFF"
+        },
+        "misc":
+        {
+            "text_shadow_size": "0",
+            "border_width": "0",
+            "shadow_width": "0",
+            "text_horiz_alignment": "center"
+        },
+        "font":
+        {
+            "name": "roboto-regular",
+            "size": "20",
+            "bold": "1"
+        }
+    },
 
 
     

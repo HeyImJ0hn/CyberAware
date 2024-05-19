@@ -82,6 +82,7 @@ class ViewController:
         self.dragging_menu = None
         self.open_menu = None
         self.clicked_outside = True
+        self.current_entity = None
 
         self.new_game_dialog = None
         self.media_dialog = None
@@ -119,6 +120,7 @@ class ViewController:
                     entity.toggle_options()
                 elif entity.was_remove_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
                     ConfirmationDialog(self.view.ui_manager)
+                    self.current_entity = entity
 
     def mouse_button_up(self, event):
         if isinstance(self.view, BuildView):
@@ -229,6 +231,16 @@ class ViewController:
             self.media_dialog = None
         elif event.ui_object_id == '#browse_media_dialog.#cancel_button':
             self.media_dialog = None
+        elif event.ui_object_id == '#remove_node.#confirm_button':
+            if self.view.game_manager.remove_entity(self.current_entity):
+                self.active_toast = Toast(self.view.ui_manager, 'Removed node', 'success')
+                self.toast_start_time = pygame.time.get_ticks()
+            else:
+                self.active_toast = Toast(self.view.ui_manager, 'Cannot remove node with connected options', 'error')
+                self.toast_start_time = pygame.time.get_ticks()
+            self.current_entity = None
+        elif event.ui_object_id == '#remove_node.#cancel_button':
+            self.current_entity = None
 
         print(event.ui_object_id)
             
@@ -259,7 +271,7 @@ class ViewController:
             self.view.game_manager.save_game()
             if self.active_toast:
                 self.active_toast.kill()
-            self.active_toast = SavedToast(self.view.ui_manager)
+            self.active_toast = Toast(self.view.ui_manager, 'Saved', 'success')
             self.toast_start_time = pygame.time.get_ticks()
 
     def key_up(self, event):
@@ -464,7 +476,7 @@ class ToolbarControl:
     def save_game(self):
         self.toolbar.view.game_manager.save_game()
         self.toolbar.view.view_controller.toast_start_time = pygame.time.get_ticks()
-        self.toolbar.view.view_controller.active_toast = SavedToast(self.toolbar.view.ui_manager)
+        self.toolbar.view.view_controller.active_toast = Toast(self.toolbar.view.ui_manager, 'Saved', 'success')
 
     def open_game(self):
         self.disable_toolbar()
