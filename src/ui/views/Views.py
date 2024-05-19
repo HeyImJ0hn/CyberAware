@@ -308,6 +308,7 @@ class ViewController:
         entity = event.entity
         menu = event.ui_element
         entity.update_properties(menu.name.get_text(), menu.text.get_text(), menu.notes.get_text())
+        entity.update_options(menu.options)
 
     def quit(self):
         self.view.game_manager.save_settings()

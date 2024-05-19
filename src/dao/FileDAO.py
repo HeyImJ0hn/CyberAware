@@ -13,19 +13,19 @@ class FileDAO:
             os.makedirs(dir)
 
         if not os.path.exists(path):
-            with open(file, 'w') as f:
+            with open(file, 'w', encoding='utf-8') as f:
                 f.write('')
 
     @staticmethod
     def save(json_game, path):
         FileDAO.create(path)
 
-        with open(path, 'w') as f:
+        with open(path, 'w', encoding='utf-8') as f:
             json.dump(json_game, f, indent=4)
 
     @staticmethod
     def load(path):
-        with open(path, 'r') as f:
+        with open(path, 'r', encoding='utf-8') as f:
             game_json = json.load(f)
         return game_json
     
@@ -54,7 +54,7 @@ class FileDAO:
 
         if not os.path.exists(settings_path):
             print('Creating file: ' + settings_path)
-            with open(settings_path, 'w') as f:
+            with open(settings_path, 'w', encoding='utf-8') as f:
                 f.write('') 
 
         return settings_path
@@ -70,7 +70,7 @@ class FileDAO:
         if os.path.getsize(settings_file) == 0:
             return None 
 
-        with open(settings_file, 'r') as f:
+        with open(settings_file, 'r', encoding='utf-8') as f:
             settings = json.load(f)
         return settings
     
@@ -95,3 +95,7 @@ class FileDAO:
         else:
             print('Copying media: ' + source + ' to ' + destination)
             shutil.copy2(source, destination)
+            
+    @staticmethod
+    def get_base_name(file):
+        return os.path.basename(file)

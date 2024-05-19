@@ -19,19 +19,19 @@
             "hidden": false,
             "options": [
                 {
-                    "text": "",
+                    "text": "Opção 1",
                     "entity_id": 1
                 },
                 {
-                    "text": "",
+                    "text": "Opção 2",
                     "entity_id": 2
                 },
                 {
-                    "text": "",
+                    "text": "Opção 3",
                     "entity_id": 8
                 },
                 {
-                    "text": "",
+                    "text": "Responder ao email com os dados do cliente.",
                     "entity_id": 9
                 }
             ]
@@ -50,7 +50,7 @@
             "depth": 1,
             "text": "",
             "notes": "",
-            "media": "",
+            "media": "ping-02.png",
             "hidden": false,
             "options": [
                 {

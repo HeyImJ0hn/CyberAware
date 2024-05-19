@@ -50,11 +50,16 @@ class EntityMenu(UIWindow):
         
         self.width = 240
 
-        super().__init__(pygame.Rect((entity.x + entity.width + 25, entity.y), (self.width, self.height)), 
+        self.x = entity.x + entity.width + 25
+        self.y = entity.y
+
+        super().__init__(pygame.Rect((self.x, self.y), (self.width, self.height)), 
                          ui_manager, 
                          window_display_title='Entity Menu',
                          object_id='#entity_menu',
                          resizable=False)
+        
+        self.options = []
         
         self.setup_ui()
 
@@ -128,11 +133,12 @@ class EntityMenu(UIWindow):
                         container=self, 
                         object_id=ObjectID(class_id='@entity_option_name', object_id='#option_name_label'))
                 
-                UITextEntryLine(relative_rect=pygame.Rect((80, 200 + 30 * i), (100, 20)), 
+                self.options.append(UITextEntryLine(relative_rect=pygame.Rect((80, 200 + 30 * i), (100, 20)), 
                                 manager=self.ui_manager, 
                                 container=self, 
-                                placeholder_text="Texto", 
-                                object_id=ObjectID(class_id='@entity_option_input', object_id='#option_text_input'))
+                                placeholder_text="Texto",
+                                initial_text=option.text,
+                                object_id=ObjectID(class_id='@entity_option_input', object_id='#option_text_input')))
 
     def kill(self):
         event_data = {

@@ -170,6 +170,9 @@ class Entity:
 
         self.centroid = (self.x + self.width/2, self.y + self.height/2)
 
+        self.options_font = pygame.font.Font("fonts/Roboto-Regular.ttf", 20)
+        self.name_font = pygame.font.Font("fonts/Roboto-Bold.ttf", 20)
+
         self.hidden = False
         self.hovered = False
 
@@ -186,17 +189,32 @@ class Entity:
             if not option.entity.hidden:
                 pygame.draw.aaline(screen, (0, 0, 0), self.centroid, option.entity.centroid)
 
+                # Calculate midpoint of the line
+                midpoint_x = (self.centroid[0] + option.entity.centroid[0]) / 2
+                midpoint_y = (self.centroid[1] + option.entity.centroid[1]) / 2
+                
+                # Render the text
+                text = option.text if len(option.text) < 10 else option.text[:10] + "..." 
+                text_surface = self.options_font.render(text, True, (0, 0, 0))  # Assuming each option has a name
+                text_width, text_height = self.options_font.size(text)
+                
+                # Calculate text position to center it on the midpoint
+                text_x = midpoint_x - text_width / 2
+                text_y = midpoint_y - text_height / 2
+                
+                # Blit the text surface at the midpoint
+                screen.blit(text_surface, (text_x, text_y))
+
         if self.menu and self.menu.alive():
             self.body.draw_selected(screen)
         else:
             self.body.draw(screen)
 
-        font = pygame.font.Font(None, 24)
-        text_surface = font.render(self.name, True, (0, 0, 0))
-        text_width, _ = font.size(self.name)
+        text_surface = self.name_font.render(self.name, True, (0, 0, 0))
+        text_width, _ = self.name_font.size(self.name)
         
         text_x = self.body.x + (self.body.width - text_width) / 2
-        text_y = self.body.y + self.body.height/2 - 55
+        text_y = self.body.y + self.body.height/2 - 60
         screen.blit(text_surface, (text_x, text_y))
         
         if self.hovered:
@@ -258,8 +276,14 @@ class Entity:
         self.text = text if text else self.text
         self.notes = notes if notes else self.notes
 
+    def update_options(self, ui_options):
+        for i, option in enumerate(self.options):
+            option.text = ui_options[i].get_text()
+
     def update_media(self, media):
-        self.media = media
+        self.media = FileDAO.get_base_name(media)
+        if self.menu:
+            self.menu.setup_ui()
 
     def open_menu(self):
         self.menu = EntityMenu(self.ui_manager, self)
