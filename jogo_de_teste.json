@@ -5,8 +5,8 @@
             "id": 0,
             "name": "Node 0",
             "coords": [
-                899.5,
-                296.0
+                872.5,
+                317.0
             ],
             "size": [
                 75,
@@ -17,6 +17,11 @@
             "notes": "",
             "media": "",
             "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
+            ],
             "options": [
                 {
                     "text": "Op\u00e7\u00e3o 1",
@@ -40,8 +45,8 @@
             "id": 1,
             "name": "Node 1",
             "coords": [
-                394.5,
-                359.0
+                367.5,
+                380.0
             ],
             "size": [
                 75,
@@ -52,6 +57,11 @@
             "notes": "",
             "media": "ping-02.png",
             "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
+            ],
             "options": [
                 {
                     "text": "",
@@ -67,8 +77,8 @@
             "id": 2,
             "name": "Node 2",
             "coords": [
-                1194.5,
-                239.0
+                1167.5,
+                260.0
             ],
             "size": [
                 75,
@@ -79,6 +89,11 @@
             "notes": "",
             "media": "",
             "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
+            ],
             "options": [
                 {
                     "text": "",
@@ -94,8 +109,8 @@
             "id": 3,
             "name": "Node 3",
             "coords": [
-                459.5,
-                523.0
+                432.5,
+                544.0
             ],
             "size": [
                 75,
@@ -106,6 +121,11 @@
             "notes": "",
             "media": "",
             "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
+            ],
             "options": [
                 {
                     "text": "",
@@ -117,8 +137,8 @@
             "id": 4,
             "name": "Node 4",
             "coords": [
-                287.5,
-                485.0
+                260.5,
+                506.0
             ],
             "size": [
                 75,
@@ -129,14 +149,19 @@
             "notes": "",
             "media": "",
             "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
+            ],
             "options": []
         },
         {
             "id": 5,
             "name": "Node 5",
             "coords": [
-                449.5,
-                696.0
+                423.5,
+                718.0
             ],
             "size": [
                 75,
@@ -147,14 +172,19 @@
             "notes": "",
             "media": "",
             "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
+            ],
             "options": []
         },
         {
             "id": 6,
             "name": "Node 6",
             "coords": [
-                1309.5,
-                452.0
+                1282.5,
+                473.0
             ],
             "size": [
                 75,
@@ -165,14 +195,19 @@
             "notes": "",
             "media": "",
             "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
+            ],
             "options": []
         },
         {
             "id": 7,
             "name": "Node 7",
             "coords": [
-                1407.5,
-                169.0
+                1380.5,
+                190.0
             ],
             "size": [
                 75,
@@ -183,14 +218,19 @@
             "notes": "",
             "media": "",
             "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
+            ],
             "options": []
         },
         {
             "id": 8,
             "name": "Node 8",
             "coords": [
-                888.5,
-                747.0
+                751.5,
+                669.0
             ],
             "size": [
                 75,
@@ -201,14 +241,19 @@
             "notes": "",
             "media": "",
             "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
+            ],
             "options": []
         },
         {
             "id": 9,
             "name": "Node 9",
             "coords": [
-                1029.5,
-                758.0
+                1000.5,
+                751.0
             ],
             "size": [
                 75,
@@ -219,6 +264,11 @@
             "notes": "",
             "media": "",
             "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
+            ],
             "options": []
         }
     ]

@@ -1,5 +1,6 @@
 import pygame
 import pygame_gui
+import colorsys
 from pygame_gui.elements import *
 from pygame_gui.core import ObjectID
 from config.Settings import Settings
@@ -103,3 +104,18 @@ class BrowseMediaDialog:
         object_id=id,
         allowed_suffixes={"png", "jpg", "jpeg", "mp4", "mov", "avi", "wmv", "wav"}
         )
+
+class ColourPickerDialog:
+    def __init__(self, ui_manager, initial_colour=(215, 215, 215)):
+        self.dialog = pygame_gui.windows.UIColourPickerDialog(
+        rect=pygame.Rect(160, 50, 440, 500),
+        manager=ui_manager,
+        window_title='Select Colour',
+        object_id='#colour_picker_dialog',
+        initial_colour=self.rgb_to_hsva(*initial_colour)
+        )
+
+    def rgb_to_hsva(self, r, g, b, alpha=1.0):
+        r_norm, g_norm, b_norm = r / 255.0, g / 255.0, b / 255.0
+        h, s, v = colorsys.rgb_to_hsv(r_norm, g_norm, b_norm)
+        return pygame.Color(h, s, v, alpha)

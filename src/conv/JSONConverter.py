@@ -17,6 +17,7 @@ class JSONConverter:
                 "notes": e.notes,
                 "media": e.media,
                 "hidden": e.hidden,
+                "colour": e.colour,
                 "options": []
             }
 
@@ -51,6 +52,8 @@ class JSONConverter:
             entity.text = e["text"]
             entity.notes = e["notes"]
             entity.media = e["media"]
+            colour = e["colour"]
+            entity.update_colour((colour[0], colour[1], colour[2]))
             entity.hidden = e["hidden"]
 
             for o in e["options"]:

@@ -3,19 +3,20 @@ from pygame_gui.elements import *
 from pygame_gui.core import ObjectID
 
 class EntityBody:
-    def __init__(self, x, y, width, height):
+    def __init__(self, x, y, width, height, colour=(215, 215, 215)):
         self.rect = pygame.Rect(x, y, width, height)
         self.x = x
         self.y = y
         self.width = width
         self.height = height
+        self.colour = colour
 
     def draw(self, screen):
-        pygame.draw.rect(screen, (215, 215, 215), self.rect, border_radius=12)
+        pygame.draw.rect(screen, self.colour, self.rect, border_radius=12)
 
     def draw_selected(self, screen):
         pygame.draw.rect(screen, (74, 153, 248), self.rect, border_radius=12)
-        pygame.draw.rect(screen, (215, 215, 215), pygame.Rect(self.x+4, self.y+4, self.width-8, self.height-8), border_radius=12)
+        pygame.draw.rect(screen, self.colour, pygame.Rect(self.x+4, self.y+4, self.width-8, self.height-8), border_radius=12)
 
 class EntityButton:
     def __init__(self, x, y, width, height, text):

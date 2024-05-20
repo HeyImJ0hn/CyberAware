@@ -108,7 +108,7 @@ class EntityManager:
         entity = None
         if parent:
             depth = parent.depth + 1
-            entity = Entity(len(self.entities), 0, 0, 75, 75, self.ui_manager, depth=depth)
+            entity = Entity(len(self.entities), 0, 0, 75, 75, self.ui_manager, depth=depth, colour=parent.colour)
             PositionManager().set_position(parent, entity, self.entities)
             parent.add_option(entity)
         else:
@@ -150,7 +150,7 @@ class EntityManager:
     
     def fix_entities(self):
         for e in self.entities:
-            e.create_extra_buttons()
+            e.create_buttons()
             for o in e.options:
                 id = o.entity
                 o.entity = self.get_entity_by_id(id)
@@ -161,7 +161,7 @@ class EntityManager:
             entity.ui_manager = ui_manager
 
 class Entity:
-    def __init__(self, id, x, y, width, height, ui_manager, depth=0, name="", text="", notes="", media=""):
+    def __init__(self, id, x, y, width, height, ui_manager, depth=0, name="", text="", notes="", media="", colour=(215, 215, 215)):
         self.id = id
         self.x = x
         self.y = y
@@ -174,6 +174,7 @@ class Entity:
         self.media = media
         self.ui_manager = ui_manager
         self.menu = None
+        self.colour = colour
 
         self.options = []
 
@@ -185,10 +186,8 @@ class Entity:
         self.hidden = False
         self.hovered = False
 
-        self.body = EntityBody(x, y, width, height)
-        self.button_add = EntityButton(x + width, y, width/5, height/5, "+")
-
-        self.create_extra_buttons()
+        self.body = EntityBody(x, y, width, height, colour)
+        self.create_buttons()
 
     def draw(self, screen):
         if self.hidden:
@@ -198,20 +197,16 @@ class Entity:
             if not option.entity.hidden:
                 pygame.draw.aaline(screen, (0, 0, 0), self.centroid, option.entity.centroid)
 
-                # Calculate midpoint of the line
                 midpoint_x = (self.centroid[0] + option.entity.centroid[0]) / 2
                 midpoint_y = (self.centroid[1] + option.entity.centroid[1]) / 2
                 
-                # Render the text
                 text = option.text if len(option.text) < 10 else option.text[:10] + "..." 
-                text_surface = self.options_font.render(text, True, (0, 0, 0))  # Assuming each option has a name
+                text_surface = self.options_font.render(text, True, (0, 0, 0)) 
                 text_width, text_height = self.options_font.size(text)
                 
-                # Calculate text position to center it on the midpoint
                 text_x = midpoint_x - text_width / 2
                 text_y = midpoint_y - text_height / 2
                 
-                # Blit the text surface at the midpoint
                 screen.blit(text_surface, (text_x, text_y))
 
         if self.menu and self.menu.alive():
@@ -230,14 +225,20 @@ class Entity:
             for button in self.buttons:
                 button.draw(screen)
 
-    def create_extra_buttons(self):
-        self.buttons = [self.button_add]
+    def create_buttons(self):
+        self.buttons = []
 
+        self.button_add = EntityButton(self.x + self.width, self.y, self.width/5, self.height/5, "+")
         self.button_remove = EntityButton(self.x + self.width, self.y + self.height/5 + 2, self.width/5, self.height/5, "-")
+
         self.button_hide = EntityButton(self.x - self.width/5 - 2, self.y, self.width/5, self.height/5, "H")
+        self.button_colour = EntityButton(self.x - self.width/5 - 2, self.y + self.height/5 + 2, self.width/5, self.height/5, "C")
+
+        self.buttons.append(self.button_add)
+        self.buttons.append(self.button_hide)
+        self.buttons.append(self.button_colour)
         if self.depth != 0:
             self.buttons.append(self.button_remove)
-        self.buttons.append(self.button_hide)
 
     def move(self, dx, dy):
         self.set_position(self.x + dx, self.y + dy)
@@ -262,6 +263,12 @@ class Entity:
 
         self.button_hide.rect.x = x - 2 - self.width/5
         self.button_hide.rect.y = y
+
+        self.button_colour.x = x - 2 - self.width/5
+        self.button_colour.y = y + self.height/5 + 2
+
+        self.button_colour.rect.x = x - 2 - self.width/5
+        self.button_colour.rect.y = y + self.height/5 + 2
 
         if self.depth != 0:
             self.button_remove.x = x + self.width
@@ -294,6 +301,10 @@ class Entity:
         if self.menu:
             self.menu.setup_ui()
 
+    def update_colour(self, colour):
+        self.colour = colour
+        self.body.colour = colour
+
     def open_menu(self):
         self.menu = EntityMenu(self.ui_manager, self)
 
@@ -308,10 +319,13 @@ class Entity:
         return self.buttons[0].rect.collidepoint(x, y)
     
     def was_hide_button_clicked(self, x, y):
-        return self.buttons[-1].rect.collidepoint(x, y)
+        return self.buttons[1].rect.collidepoint(x, y)
     
     def was_remove_button_clicked(self, x, y):
-        return self.buttons[1].rect.collidepoint(x, y)
+        return self.buttons[-1].rect.collidepoint(x, y)
+    
+    def was_colour_button_clicked(self, x, y):
+        return self.buttons[2].rect.collidepoint(x, y)
     
     def was_menu_clicked(self, x, y):
         if self.menu:

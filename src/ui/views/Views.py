@@ -50,8 +50,10 @@ class View:
                     self.view_controller.window_resize(event)
                 elif event.type == pygame_gui.UI_FILE_DIALOG_PATH_PICKED:
                     self.view_controller.ui_file_dialog_path_picked(event)
-                elif event.type == pygame.USEREVENT + 3000:
+                elif event.type == pygame.USEREVENT + 3000: # Entity menu death event
                     self.view_controller.menu_kill(event)
+                if event.type == pygame_gui.UI_COLOUR_PICKER_COLOUR_PICKED:
+                    self.view_controller.ui_colour_picker_colour_picked(event)
                     
                 self.ui_manager.process_events(event)
 
@@ -85,7 +87,7 @@ class ViewController:
         self.current_entity = None
 
         self.new_game_dialog = None
-        self.media_dialog = None
+        self.active_dialog = None
 
         self.active_toast = None
         self.toast_duration = 2000
@@ -119,8 +121,12 @@ class ViewController:
                 elif entity.was_hide_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
                     entity.toggle_options()
                 elif entity.was_remove_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
-                    ConfirmationDialog(self.view.ui_manager)
+                    self.active_dialog = ConfirmationDialog(self.view.ui_manager)
                     self.current_entity = entity
+                elif entity.was_colour_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
+                    self.active_dialog = ColourPickerDialog(self.view.ui_manager, entity.colour)
+                    self.current_entity = entity
+                    print(self.current_entity)
 
     def mouse_button_up(self, event):
         if isinstance(self.view, BuildView):
@@ -132,7 +138,7 @@ class ViewController:
             for entity in self.view.game_manager.get_entities():
                 if entity.was_menu_clicked(current_pos[0], current_pos[1]) or entity.was_body_clicked(current_pos[0], current_pos[1]) \
                     or entity.was_button_clicked(current_pos[0], current_pos[1]) or entity.was_hide_button_clicked(current_pos[0], current_pos[1]) \
-                    or entity.was_remove_button_clicked(current_pos[0], current_pos[1]):
+                    or entity.was_remove_button_clicked(current_pos[0], current_pos[1]) or entity.was_colour_button_clicked(current_pos[0], current_pos[1]):
                     self.clicked_outside = False
 
                 if self.mouse_pos == current_pos and not self.space_pressed and not entity.hidden:
@@ -145,7 +151,7 @@ class ViewController:
                                 entity.open_menu()
                                 self.open_menu = entity.menu
 
-            if not self.media_dialog:
+            if not self.active_dialog:
                 if self.clicked_outside and self.open_menu:
                     for entity in self.view.game_manager.get_entities():
                         if entity.id == self.open_menu.entity.id:
@@ -187,7 +193,7 @@ class ViewController:
             self.view.game_manager.open_game(event.text)
         elif event.ui_object_id == '#browse_media_dialog':
             self.view.game_manager.submit_media(event.text, self.open_menu.entity)
-            self.media_dialog = None
+            self.active_dialog = None
 
     def ui_button_pressed(self, event):
         if event.ui_object_id == '#new_game_button':
@@ -226,11 +232,11 @@ class ViewController:
                 self.view.toolbar.controller.enable_toolbar()
 
         elif event.ui_object_id == '#entity_menu.#browse_button':
-            self.media_dialog = BrowseMediaDialog(self.view.ui_manager, '#browse_media_dialog')
+            self.active_dialog = BrowseMediaDialog(self.view.ui_manager, '#browse_media_dialog')
         elif event.ui_object_id == '#browse_media_dialog.#ok_button':
-            self.media_dialog = None
+            self.active_dialog = None
         elif event.ui_object_id == '#browse_media_dialog.#cancel_button':
-            self.media_dialog = None
+            self.active_dialog = None
         elif event.ui_object_id == '#remove_node.#confirm_button':
             if self.view.game_manager.remove_entity(self.current_entity):
                 self.active_toast = Toast(self.view.ui_manager, 'Removed node', 'success')
@@ -239,7 +245,13 @@ class ViewController:
                 self.active_toast = Toast(self.view.ui_manager, 'Cannot remove node with connected options', 'error')
                 self.toast_start_time = pygame.time.get_ticks()
             self.current_entity = None
+            self.active_dialog = None
         elif event.ui_object_id == '#remove_node.#cancel_button':
+            self.current_entity = None
+            self.active_dialog = None
+
+        elif event.ui_object_id == '#colour_picker_dialog.#cancel_button':
+            self.active_dialog = None
             self.current_entity = None
 
         print(event.ui_object_id)
@@ -254,7 +266,8 @@ class ViewController:
                 entity.hovered = False
                 current_pos = pygame.mouse.get_pos()
                 if entity.was_button_clicked(current_pos[0], current_pos[1]) or entity.was_body_clicked(current_pos[0], current_pos[1]) \
-                    or entity.was_hide_button_clicked(current_pos[0], current_pos[1]) or entity.was_remove_button_clicked(current_pos[0], current_pos[1]):
+                    or entity.was_hide_button_clicked(current_pos[0], current_pos[1]) or entity.was_remove_button_clicked(current_pos[0], current_pos[1]) \
+                        or entity.was_colour_button_clicked(current_pos[0], current_pos[1]):
                     entity.hovered = True
                     self.hovering_entity = entity
             
@@ -321,6 +334,11 @@ class ViewController:
         menu = event.ui_element
         entity.update_properties(menu.name.get_text(), menu.text.get_text(), menu.notes.get_text())
         entity.update_options(menu.options)
+
+    def ui_colour_picker_colour_picked(self, event):
+        self.current_entity.update_colour((event.colour.r, event.colour.g, event.colour.b))
+        self.active_dialog = None
+        self.current_entity = None
 
     def quit(self):
         self.view.game_manager.save_settings()
