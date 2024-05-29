@@ -94,39 +94,53 @@ class ViewController:
         self.toast_start_time = 0
 
         self.ctrl_pressed = False
+        self.current_entity_option = None
+        self.draw_to_cursor = False
 
         self.view_offset = (0, 0)
 
     def mouse_button_down(self, event):
         if isinstance(self.view, BuildView):
             self.mouse_pos = pygame.mouse.get_pos()
-            for entity in self.view.game_manager.get_entities():
-                if entity.hidden:
-                    continue
-                if entity.was_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
-                        self.view.game_manager.add_entity(entity)
-                        if self.open_menu and self.open_menu.entity.id == entity.id:
-                            self.open_menu.kill()
-                            entity.refresh_menu((self.open_menu.rect.x, self.open_menu.rect.y))
-                            self.open_menu = entity.menu
-                elif entity.was_body_clicked(self.mouse_pos[0], self.mouse_pos[1]):
-                    if not self.dragging_menu:
-                        self.dragging_entity = entity
-                        self.offset_x = entity.body.rect.x - self.mouse_pos[0] 
-                        self.offset_y = entity.body.rect.y - self.mouse_pos[1]
-                elif entity.was_menu_clicked(self.mouse_pos[0], self.mouse_pos[1]):
-                    self.offset_x = entity.menu.rect.x - self.mouse_pos[0]
-                    self.offset_y = entity.menu.rect.y - self.mouse_pos[1]
-                    self.dragging_menu = entity.menu
-                elif entity.was_hide_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
-                    entity.toggle_options()
-                elif entity.was_remove_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
-                    self.active_dialog = ConfirmationDialog(self.view.ui_manager)
-                    self.current_entity = entity
-                elif entity.was_colour_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
-                    self.active_dialog = ColourPickerDialog(self.view.ui_manager, entity.colour)
-                    self.current_entity = entity
-                    print(self.current_entity)
+
+            if not self.active_dialog:
+                for entity in self.view.game_manager.get_entities():
+                    if entity.hidden:
+                        continue
+                    if not self.ctrl_pressed:
+                        if entity.was_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
+                                if len(entity.options) >= entity.max_options:
+                                    if self.active_toast:
+                                        self.active_toast.kill()
+                                    self.active_toast = Toast(self.view.ui_manager, 'Max options reached', 'error')
+                                    self.toast_start_time = pygame.time.get_ticks()
+                                else:
+                                    self.view.game_manager.add_entity(entity)
+                                    if self.open_menu and self.open_menu.entity.id == entity.id:
+                                        self.open_menu.kill()
+                                        entity.refresh_menu((self.open_menu.rect.x, self.open_menu.rect.y))
+                                        self.open_menu = entity.menu
+                        elif entity.was_body_clicked(self.mouse_pos[0], self.mouse_pos[1]):
+                            if not self.dragging_menu:
+                                self.dragging_entity = entity
+                                self.offset_x = entity.body.rect.x - self.mouse_pos[0] 
+                                self.offset_y = entity.body.rect.y - self.mouse_pos[1]
+                        elif entity.was_menu_clicked(self.mouse_pos[0], self.mouse_pos[1]):
+                            self.offset_x = entity.menu.rect.x - self.mouse_pos[0]
+                            self.offset_y = entity.menu.rect.y - self.mouse_pos[1]
+                            self.dragging_menu = entity.menu
+                        elif entity.was_hide_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
+                            entity.toggle_options()
+                        elif entity.was_remove_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
+                            self.active_dialog = ConfirmationDialog(self.view.ui_manager)
+                            self.current_entity = entity
+                        elif entity.was_colour_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
+                            self.active_dialog = ColourPickerDialog(self.view.ui_manager, entity.colour)
+                            self.current_entity = entity
+                    else:
+                        if entity.was_body_clicked(self.mouse_pos[0], self.mouse_pos[1]):
+                            self.current_entity_option = entity
+                            self.draw_to_cursor = True
 
     def mouse_button_up(self, event):
         if isinstance(self.view, BuildView):
@@ -135,30 +149,37 @@ class ViewController:
             self.clicked_outside = True
 
             current_pos = pygame.mouse.get_pos()
-            for entity in self.view.game_manager.get_entities():
-                if entity.was_menu_clicked(current_pos[0], current_pos[1]) or entity.was_body_clicked(current_pos[0], current_pos[1]) \
-                    or entity.was_button_clicked(current_pos[0], current_pos[1]) or entity.was_hide_button_clicked(current_pos[0], current_pos[1]) \
-                    or entity.was_remove_button_clicked(current_pos[0], current_pos[1]) or entity.was_colour_button_clicked(current_pos[0], current_pos[1]):
-                    self.clicked_outside = False
-
-                if self.mouse_pos == current_pos and not self.space_pressed and not entity.hidden:
-                        if entity.was_body_clicked(current_pos[0], current_pos[1]):
-                            if not self.open_menu:
-                                entity.open_menu()
-                                self.open_menu = entity.menu
-                            else:
-                                self.open_menu.kill()
-                                entity.open_menu()
-                                self.open_menu = entity.menu
-
             if not self.active_dialog:
-                if self.clicked_outside and self.open_menu:
-                    for entity in self.view.game_manager.get_entities():
-                        if entity.id == self.open_menu.entity.id:
-                            self.open_menu.kill()
-                            self.open_menu = None
-                            entity.menu = None
-                            break
+                for entity in self.view.game_manager.get_entities():
+                    if self.current_entity_option and self.draw_to_cursor:
+                        if entity.was_body_clicked(current_pos[0], current_pos[1]):
+                            self.current_entity_option.add_option(entity)
+                            self.current_entity_option = None
+                            self.draw_to_cursor = False
+
+                    if entity.was_menu_clicked(current_pos[0], current_pos[1]) or entity.was_body_clicked(current_pos[0], current_pos[1]) \
+                        or entity.was_button_clicked(current_pos[0], current_pos[1]) or entity.was_hide_button_clicked(current_pos[0], current_pos[1]) \
+                        or entity.was_remove_button_clicked(current_pos[0], current_pos[1]) or entity.was_colour_button_clicked(current_pos[0], current_pos[1]):
+                        self.clicked_outside = False
+
+                    if self.mouse_pos == current_pos and not self.space_pressed and not entity.hidden:
+                            if entity.was_body_clicked(current_pos[0], current_pos[1]):
+                                if not self.open_menu:
+                                    entity.open_menu()
+                                    self.open_menu = entity.menu
+                                else:
+                                    self.open_menu.kill()
+                                    entity.open_menu()
+                                    self.open_menu = entity.menu
+
+                if not self.active_dialog:
+                    if self.clicked_outside and self.open_menu:
+                        for entity in self.view.game_manager.get_entities():
+                            if entity.id == self.open_menu.entity.id:
+                                self.open_menu.kill()
+                                self.open_menu = None
+                                entity.menu = None
+                                break
 
             self.mouse_pos = None
 
@@ -173,6 +194,8 @@ class ViewController:
                     self.mouse_pos = mouse_pos
                     for entity in self.view.game_manager.get_entities():
                         entity.move(dx, dy)
+                elif self.ctrl_pressed and self.current_entity_option:
+                    mouse_pos = pygame.mouse.get_pos()
                 else:
                     if self.dragging_entity:
                         mouse_pos = pygame.mouse.get_pos()
@@ -220,11 +243,15 @@ class ViewController:
             self.view.game_manager.path = event.ui_element.ui_container.parent_element.file_path.get_text()
             self.view.game_manager.new_game()
         elif event.ui_object_id == '#new_game_dialog.#cancel_button':
+            self.active_dialog = None
             event.ui_element.ui_container.parent_element.kill()
             self.view.game_manager.game_name = ""
             self.view.game_manager.file_path = ""
-            for b in self.view.buttons:
-                b.enable()
+            if isinstance(self.view, HomeView):
+                for b in self.view.buttons:
+                    b.enable()
+            else:
+                self.view.toolbar.controller.enable_toolbar()
 
         elif event.ui_object_id == '#file_dialog.#cancel_button' or event.ui_object_id == '#file_dialog.#close_button' \
             or event.ui_object_id == '#file_dialog.#ok_button':
@@ -238,6 +265,8 @@ class ViewController:
         elif event.ui_object_id == '#browse_media_dialog.#cancel_button':
             self.active_dialog = None
         elif event.ui_object_id == '#remove_node.#confirm_button':
+            if self.active_toast:
+                self.active_toast.kill()
             if self.view.game_manager.remove_entity(self.current_entity):
                 self.active_toast = Toast(self.view.ui_manager, 'Removed node', 'success')
                 self.toast_start_time = pygame.time.get_ticks()
@@ -254,10 +283,14 @@ class ViewController:
             self.active_dialog = None
             self.current_entity = None
 
+        elif event.ui_object_id == '#open_path_dialog.#cancel_button':
+            self.active_dialog = None
+            self.view.toolbar.controller.enable_toolbar()
+
         print(event.ui_object_id)
             
     def mouse_hover(self):
-        if isinstance(self.view, BuildView):
+        if isinstance(self.view, BuildView) and not self.active_dialog:
             if self.hovering_entity and not self.space_pressed and not self.hovering_entity.hidden:
                 pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
                 self.hovering_entity = None
@@ -293,6 +326,8 @@ class ViewController:
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
         elif event.key == pygame.K_LCTRL:
             self.ctrl_pressed = False
+            self.current_entity_option = None
+            self.draw_to_cursor = False
 
     def window_resize(self, event):
         self.view.resolution = (event.w, event.h)
@@ -366,6 +401,11 @@ class BuildView(View):
             for y in range(start_y, HEIGHT, spacing_y):
                 pygame.draw.circle(self.screen, (240, 240, 240), (x, y), 2)
         
+        if self.view_controller.draw_to_cursor:
+            pygame.draw.aaline(self.screen, (0, 0, 0), self.view_controller.current_entity_option.centroid, pygame.mouse.get_pos())
+        
+        self.game_manager.draw_entities(self.screen)
+
         for entity in self.game_manager.get_entities():
             entity.draw(self.screen)
 
@@ -489,11 +529,16 @@ class ToolbarControl:
 
     def new_game(self):
         self.disable_toolbar()
-        self.toolbar.view.game_manager.new_game()
+        #self.toolbar.view.game_manager.new_game()
+        dialog = NewGameDialog(self.toolbar.view.ui_manager)
+        self.toolbar.view.view_controller.new_game_dialog = dialog
+        self.toolbar.view.view_controller.active_dialog = dialog
 
     def save_game(self):
         self.toolbar.view.game_manager.save_game()
         self.toolbar.view.view_controller.toast_start_time = pygame.time.get_ticks()
+        if self.toolbar.view.view_controller.active_toast:
+            self.toolbar.view.view_controller.active_toast.kill()
         self.toolbar.view.view_controller.active_toast = Toast(self.toolbar.view.ui_manager, 'Saved', 'success')
 
     def open_game(self):

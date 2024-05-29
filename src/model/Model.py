@@ -80,6 +80,9 @@ class GameManager:
     def clear_entities(self):
         return self._entity_manager.clear_entities()
     
+    def draw_entities(self, screen):
+        self._entity_manager.draw_entities(screen)
+    
     def update_resolution(self, resolution):
         self.resolution = resolution
 
@@ -108,11 +111,11 @@ class EntityManager:
         entity = None
         if parent:
             depth = parent.depth + 1
-            entity = Entity(len(self.entities), 0, 0, 75, 75, self.ui_manager, depth=depth, colour=parent.colour)
+            entity = Entity(self.entities[-1].id+1, 0, 0, 75, 75, self.ui_manager, depth=depth, colour=parent.colour)
             PositionManager().set_position(parent, entity, self.entities)
             parent.add_option(entity)
         else:
-            entity = Entity(len(self.entities), self.ui_manager.window_resolution[0]/2-75/2, self.ui_manager.window_resolution[1]/2-75/2, 75, 75, self.ui_manager)
+            entity = Entity(self.entities[-1].id+1, self.ui_manager.window_resolution[0]/2-75/2, self.ui_manager.window_resolution[1]/2-75/2, 75, 75, self.ui_manager)
 
         self.entities.append(entity)
 
@@ -141,6 +144,15 @@ class EntityManager:
     def remove_entity_from_options(self, entity):
         for e in self.entities:
             e.remove_option(entity)
+
+    def draw_entities(self, screen):
+        for entity in self.entities:
+            for option in entity.options:
+                if not option.entity.hidden:
+                    pygame.draw.aaline(screen, (0, 0, 0), entity.centroid, option.entity.centroid)
+
+        for entity in self.entities:
+            entity.draw(screen)
     
     def create_entity(self):
         return Entity(len(self.entities), 0, 0, 75, 75, self.ui_manager, depth=1)
@@ -168,7 +180,7 @@ class Entity:
         self.width = width
         self.height = height
         self.depth = depth
-        self.name = f"Node {id}" if name == "" else name
+        self.name = f"Screen {id}" if name == "" else name
         self.text = text
         self.notes = notes
         self.media = media
@@ -176,6 +188,7 @@ class Entity:
         self.menu = None
         self.colour = colour
 
+        self.max_options = 6
         self.options = []
 
         self.centroid = (self.x + self.width/2, self.y + self.height/2)
@@ -195,7 +208,7 @@ class Entity:
 
         for option in self.options:
             if not option.entity.hidden:
-                pygame.draw.aaline(screen, (0, 0, 0), self.centroid, option.entity.centroid)
+                #pygame.draw.aaline(screen, (0, 0, 0), self.centroid, option.entity.centroid)
 
                 midpoint_x = (self.centroid[0] + option.entity.centroid[0]) / 2
                 midpoint_y = (self.centroid[1] + option.entity.centroid[1]) / 2
@@ -208,6 +221,24 @@ class Entity:
                 text_y = midpoint_y - text_height / 2
                 
                 screen.blit(text_surface, (text_x, text_y))
+
+                dir_x = option.entity.centroid[0] - self.centroid[0]
+                dir_y = option.entity.centroid[1] - self.centroid[1]
+                length = math.sqrt(dir_x ** 2 + dir_y ** 2)
+                unit_dir_x = dir_x / length
+                unit_dir_y = dir_y / length
+
+                arrow_base_x = option.entity.centroid[0] - unit_dir_x * (option.entity.width / 2 + 20)
+                arrow_base_y = option.entity.centroid[1] - unit_dir_y * (option.entity.height / 2 + 20)
+
+                arrow_size = 20
+                angle = math.atan2(dir_y, dir_x)
+                left_wing_x = arrow_base_x - math.cos(angle + math.pi / 6) * arrow_size
+                left_wing_y = arrow_base_y - math.sin(angle + math.pi / 6) * arrow_size
+                right_wing_x = arrow_base_x - math.cos(angle - math.pi / 6) * arrow_size
+                right_wing_y = arrow_base_y - math.sin(angle - math.pi / 6) * arrow_size
+
+                pygame.draw.polygon(screen, (0, 0, 0), [(arrow_base_x, arrow_base_y), (left_wing_x, left_wing_y), (right_wing_x, right_wing_y)])
 
         if self.menu and self.menu.alive():
             self.body.draw_selected(screen)
