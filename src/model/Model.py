@@ -188,6 +188,8 @@ class Entity:
         self.menu = None
         self.colour = colour
 
+        self.final = False
+
         self.max_options = 6
         self.options = []
 
@@ -210,6 +212,7 @@ class Entity:
             if not option.entity.hidden:
                 #pygame.draw.aaline(screen, (0, 0, 0), self.centroid, option.entity.centroid)
 
+                # Texto da opção
                 midpoint_x = (self.centroid[0] + option.entity.centroid[0]) / 2
                 midpoint_y = (self.centroid[1] + option.entity.centroid[1]) / 2
                 
@@ -222,6 +225,7 @@ class Entity:
                 
                 screen.blit(text_surface, (text_x, text_y))
 
+                # Seta
                 dir_x = option.entity.centroid[0] - self.centroid[0]
                 dir_y = option.entity.centroid[1] - self.centroid[1]
                 length = math.sqrt(dir_x ** 2 + dir_y ** 2)
@@ -245,12 +249,24 @@ class Entity:
         else:
             self.body.draw(screen)
 
+        # Nome da Entidade
         text_surface = self.name_font.render(self.name, True, (0, 0, 0))
         text_width, _ = self.name_font.size(self.name)
         
         text_x = self.body.x + (self.body.width - text_width) / 2
         text_y = self.body.y + self.body.height/2 - 60
         screen.blit(text_surface, (text_x, text_y))
+
+        if self.final:
+            # Texto se for "Final"
+            text = "Final"
+            text_surface = self.name_font.render(text, True, (0, 0, 0)) 
+            text_width, _ = self.name_font.size(text)
+            
+            text_x = self.body.x + (self.body.width - text_width) / 2
+            text_y = self.body.y + self.body.height/2 + 40
+            
+            screen.blit(text_surface, (text_x, text_y))
         
         if self.hovered:
             for button in self.buttons:
@@ -318,10 +334,11 @@ class Entity:
             if option.entity.id == entity.id:
                 self.options.remove(option)
 
-    def update_properties(self, name=None, text=None, notes=None):
+    def update_properties(self, name=None, text=None, notes=None, final=False):
         self.name = name if name else self.name
         self.text = text if text else self.text
         self.notes = notes if notes else self.notes
+        self.final = final
 
     def update_options(self, ui_options):
         for i, option in enumerate(self.options):
@@ -374,7 +391,7 @@ class Entity:
             option.entity.toggle()
             if option.entity.options:
                 self.toggle_options(option.entity.options)
-    
+   
 class Option:
     def __init__(self, text, entity):
         self.text = text

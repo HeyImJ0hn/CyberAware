@@ -287,6 +287,10 @@ class ViewController:
             self.active_dialog = None
             self.view.toolbar.controller.enable_toolbar()
 
+        elif event.ui_object_id == '#entity_menu.#final_checkbox':
+            #self.current_entity.final = not self.current_entity.final
+            self.open_menu.final_checkbox.set_text("X" if self.open_menu.final_checkbox.text == "" else "")
+
         print(event.ui_object_id)
             
     def mouse_hover(self):
@@ -367,7 +371,7 @@ class ViewController:
     def menu_kill(self, event):
         entity = event.entity
         menu = event.ui_element
-        entity.update_properties(menu.name.get_text(), menu.text.get_text(), menu.notes.get_text())
+        entity.update_properties(menu.name.get_text(), menu.text.get_text(), menu.notes.get_text(), menu.final_checkbox.text=="X")
         entity.update_options(menu.options)
 
     def ui_colour_picker_colour_picked(self, event):

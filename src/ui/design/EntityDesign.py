@@ -39,7 +39,7 @@ class EntityMenu(UIWindow):
     def __init__(self, ui_manager, entity):
         self.ui_manager = ui_manager
         self.entity = entity
-        base_height = 170
+        base_height = 200
         option_height = 30
         
         if len(entity.options) == 0:
@@ -118,28 +118,43 @@ class EntityMenu(UIWindow):
                                     container=self, 
                                     initial_text=self.entity.notes, 
                                     object_id=ObjectID(class_id='@entity_menu_input', object_id='#notes_input'))
+        
+        UILabel(relative_rect=pygame.Rect((10, 170), (60, 20)), 
+                text="Final", 
+                manager=self.ui_manager, 
+                container=self, 
+                object_id=ObjectID(class_id='@entity_menu_label', object_id='#final_label'))
+
+        self.final_checkbox = UIButton(relative_rect=pygame.Rect((80, 170), (20, 20)),
+                                        manager=self.ui_manager,
+                                        container=self,
+                                        text="",
+                                        object_id=ObjectID(class_id='@entity_menu_checkbox', object_id='#final_checkbox'))
+        
+        self.final_checkbox.set_text("X" if self.entity.final else "")
 
         options = self.entity.options
         if len(options) > 0:
-            UILabel(relative_rect=pygame.Rect((10, 170), (60, 20)), 
+            UILabel(relative_rect=pygame.Rect((10, 200), (60, 20)), 
                     text="Options", 
                     manager=self.ui_manager, 
                     container=self, 
                     object_id=ObjectID(class_id='@entity_menu_label', object_id='#options_label'))
             
             for i, option in enumerate(options):
-                UILabel(relative_rect=pygame.Rect((10, 200 + 30 * i), (60, 20)), 
+                UILabel(relative_rect=pygame.Rect((10, 230 + 30 * i), (60, 20)), 
                         text=option.entity.name, 
                         manager=self.ui_manager, 
                         container=self, 
                         object_id=ObjectID(class_id='@entity_option_name', object_id='#option_name_label'))
                 
-                self.options.append(UITextEntryLine(relative_rect=pygame.Rect((80, 200 + 30 * i), (100, 20)), 
+                self.options.append(UITextEntryLine(relative_rect=pygame.Rect((80, 230 + 30 * i), (100, 20)), 
                                 manager=self.ui_manager, 
                                 container=self, 
                                 placeholder_text="Texto",
                                 initial_text=option.text,
                                 object_id=ObjectID(class_id='@entity_option_input', object_id='#option_text_input')))
+        
 
     def kill(self):
         event_data = {
