@@ -1,6 +1,10 @@
 import pygame
 from pygame_gui.elements import *
 from pygame_gui.core import ObjectID
+from dao.FileDAO import FileDAO
+import cv2
+from PIL import Image
+import os
 
 class EntityBody:
     def __init__(self, x, y, width, height, colour=(215, 215, 215)):
@@ -86,7 +90,7 @@ class EntityMenu(UIWindow):
         self.media = UITextEntryLine(relative_rect=pygame.Rect((80, 40), (120, 20)), 
                                      manager=self.ui_manager, 
                                      container=self, 
-                                     initial_text=self.entity.media, 
+                                     initial_text=FileDAO.get_base_name(self.entity.media), 
                                      object_id=ObjectID(class_id='@entity_menu_input', object_id='#media_input'))
         
         self.browse_button = UIButton(relative_rect=pygame.Rect((200, 40), (20, 20)),
@@ -180,30 +184,119 @@ class EntityMenu(UIWindow):
         return self.rect.collidepoint(x, y)
     
 class PreviewWindow(UIWindow):
-    def __init__(self, ui_manager, entity):
+    def __init__(self, ui_manager, entity, game_name):
         self.ui_manager = ui_manager
         self.entity = entity
-        self.width = 200
-        self.height = 400
+        self.width = 360
+        self.height = 640
         self.x = 10
         self.y = 10
+        self.game_name = game_name
 
         super().__init__(pygame.Rect((self.x, self.y), (self.width, self.height)), 
                          ui_manager, 
                          window_display_title='Preview',
                          object_id='#preview_window',
-                         resizable=False)
+                         resizable=False,
+                         always_on_top=True)
         
         self.setup_ui()
 
     def setup_ui(self):
-        pass
+        # Background
+        image_surface = self.resize_image_to_height(pygame.image.load("static/homeview_bg.png"), self.height)
+        excess_width = image_surface.get_width() - self.width
+        if excess_width > 0:
+            crop_rect = pygame.Rect(excess_width // 2, 0, self.width, self.height)
+            image_surface = image_surface.subsurface(crop_rect)
+        self.background = UIImage(relative_rect=pygame.Rect((0, 0), (self.width, self.height)), 
+                                image_surface=image_surface,
+                                manager=self.ui_manager, 
+                                container=self, 
+                                object_id=ObjectID(class_id='@preview_window_background', object_id='#background_image'))
+        
+        # Media
+        if FileDAO.is_video_file(self.entity.media):
+            path = FileDAO.save_temp_image(self.load_first_frame(self.entity.media))
+            image_surface = pygame.image.load(path)
+            FileDAO.delete_temp_image()
+        elif FileDAO.is_image_file(self.entity.media):
+            image_surface = pygame.image.load(self.entity.media)
+        else:
+            image_surface = None
+
+        if image_surface is not None:
+            aspect_ratio = image_surface.get_width() / image_surface.get_height()
+            if aspect_ratio > 1:
+                image_surface = self.resize_image_to_height(image_surface, self.height)
+                excess_width = image_surface.get_width() - self.width
+                if excess_width > 0:
+                    crop_rect = pygame.Rect(excess_width // 2, 0, self.width, self.height)
+                    image_surface = image_surface.subsurface(crop_rect)
+
+            if self.entity.depth == 0:
+                rect = pygame.Rect((60, 120), (240, 240))
+            else:
+                rect = pygame.Rect((0, 0), (self.width, self.height))
+
+            self.media = UIImage(relative_rect=rect, 
+                                image_surface=image_surface, 
+                                manager=self.ui_manager, 
+                                container=self, 
+                                object_id=ObjectID(class_id='@preview_window_image', object_id='#media_image'))
+        
+        if self.entity.depth == 0:
+            # Game Name
+            self.title = UILabel(relative_rect=pygame.Rect((0, 40), (self.width, 60)), 
+                                text=self.game_name, 
+                                manager=self.ui_manager, 
+                                container=self, 
+                                object_id=ObjectID(class_id='@preview_window_title', object_id='#title_label'))
+        
+        # Text
+        self.text = UILabel(relative_rect=pygame.Rect((20, 20), (self.width, self.height - 80)), 
+                            text=self.entity.text, 
+                            manager=self.ui_manager, 
+                            container=self, 
+                            object_id=ObjectID(class_id='@preview_window_text', object_id='#text_label'))
+
+        if not self.entity.final:        
+            # Options
+            options_vertical_position = self.height - (len(self.entity.options) * 30) - 80
+            for i, option in enumerate(self.entity.options):
+                UIButton(relative_rect=pygame.Rect((200/2-((200/2)/4), options_vertical_position + 40 * i), (200, 30)), 
+                        text=option.text, 
+                        manager=self.ui_manager, 
+                        container=self, 
+                        object_id=ObjectID(class_id='@preview_window_button', object_id='#option_button_' + str(i)))
+        else:
+            UIButton(relative_rect=pygame.Rect((200/2-((200/2)/4), self.height - 80), (200, 30)), 
+                        text="Início", 
+                        manager=self.ui_manager, 
+                        container=self, 
+                        object_id=ObjectID(class_id='@preview_window_button', object_id='#final_button'))
 
     def kill(self):
         super().kill()
 
-    def move(self, dx, dy):
-        self.set_position((self.rect.x + dx, self.rect.y + dy))
-
     def is_inside(self, x, y):
         return self.rect.collidepoint(x, y)
+    
+    def load_first_frame(self, video_path):
+        cap = cv2.VideoCapture(video_path)
+        ret, frame = cap.read()
+        cap.release()
+
+        if ret:
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            img = Image.fromarray(frame)
+            return img
+        else:
+            raise ValueError("Could not read the video file or the video is empty")
+        
+    def resize_image_to_height(self, image_surface, target_height):
+        scale = target_height / image_surface.get_height()
+
+        new_width = int(image_surface.get_width() * scale)
+        new_height = int(image_surface.get_height() * scale)
+        return pygame.transform.smoothscale(image_surface, (new_width, new_height))

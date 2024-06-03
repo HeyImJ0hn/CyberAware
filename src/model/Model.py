@@ -2,7 +2,7 @@ import pygame
 import sys
 import math
 
-from ui.design.EntityDesign import EntityBody, EntityButton, EntityMenu
+from ui.design.EntityDesign import *
 from ui.views.Views import HomeView, BuildView
 from dao.FileDAO import FileDAO
 from conv.JSONConverter import JSONConverter
@@ -99,8 +99,7 @@ class GameManager:
         self.json_converter.settings_to_json()
 
     def submit_media(self, media, entity):
-        FileDAO.copy_media(media, self.game_to_file_name(self.game_name).split(".")[0])
-        entity.update_media(media)
+        entity.update_media(FileDAO.copy_media(media, self.game_to_file_name(self.game_name).split(".")[0]))
 
     def get_parents(self, entity):
         return self._entity_manager.get_parents(entity)
@@ -112,6 +111,9 @@ class GameManager:
         self.path = FileDAO.create_absolute_path(FileDAO.get_dir_name(self.path), self.file_name)
 
         FileDAO.update_game_name(FileDAO.get_file_name_without_extension(self.game_to_file_name(old_name)), FileDAO.get_file_name_without_extension(self.file_name))
+
+    def open_preview_window(self, entity=None):
+        return PreviewWindow(self.view.ui_manager, entity if entity else self._entity_manager.entities[0], self.game_name)
 
 class EntityManager:
     def __init__(self, ui_manager, entities=[]):
@@ -382,7 +384,7 @@ class Entity:
                 return self.options[self.menu.options.index(option)]
 
     def update_media(self, media):
-        self.media = FileDAO.get_base_name(media)
+        self.media = media
         if self.menu:
             self.menu.setup_ui()
 
@@ -407,7 +409,7 @@ class Entity:
         return self.buttons[1].rect.collidepoint(x, y)
     
     def was_remove_button_clicked(self, x, y):
-        return self.buttons[-1].rect.collidepoint(x, y)
+        return self.buttons[-1].rect.collidepoint(x, y) if self.depth != 0 else False
     
     def was_colour_button_clicked(self, x, y):
         return self.buttons[2].rect.collidepoint(x, y)
@@ -428,7 +430,7 @@ class Entity:
             option.entity.toggle()
             if option.entity.options:
                 self.toggle_options(option.entity.options)
-   
+
 class Option:
     def __init__(self, text, entity):
         self.text = text

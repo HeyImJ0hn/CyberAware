@@ -95,7 +95,8 @@ class FileDAO:
         else:
             print('Copying media: ' + source + ' to ' + destination)
             shutil.copy2(source, destination)
-            
+            return os.path.join(destination, os.path.basename(source))
+
     @staticmethod
     def get_base_name(file):
         return os.path.basename(file)
@@ -119,3 +120,40 @@ class FileDAO:
             os.rename(old_game_folder, new_game_folder)
         else:
             print('Directory does not exist: ' + old_game_folder)
+
+    @staticmethod
+    def get_game_folder(game_name):
+        app_folder = FileDAO.get_app_folder()
+        return os.path.join(app_folder, game_name)
+    
+    @staticmethod
+    def save_temp_image(image):
+        temp_folder = os.path.join(FileDAO.get_app_folder(), 'temp')
+        if not os.path.exists(temp_folder):
+            print('Creating directory: ' + temp_folder)
+            os.makedirs(temp_folder)
+
+        temp_image = os.path.join(temp_folder + "temp_image.png")
+        print('Saving temp image: ' + temp_image)
+        image.save(temp_image)
+        return temp_image
+    
+    @staticmethod
+    def delete_temp_image():
+        temp_folder = os.path.join(FileDAO.get_app_folder(), 'temp')
+        temp_image = os.path.join(temp_folder + "temp_image.png")
+        if os.path.exists(temp_image):
+            print('Deleting temp image: ' + temp_image)
+            os.remove(temp_image)
+        else:
+            print('Temp image does not exist: ' + temp_image)
+
+    @staticmethod
+    def is_video_file(path):
+        video_extensions = ['.mp4', '.avi', '.mov', '.mkv']
+        return any(path.endswith(ext) for ext in video_extensions)
+    
+    @staticmethod
+    def is_image_file(path):
+        image_extensions = ['.png', '.jpg', '.jpeg']
+        return any(path.endswith(ext) for ext in image_extensions)

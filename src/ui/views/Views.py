@@ -99,6 +99,8 @@ class ViewController:
 
         self.view_offset = (0, 0)
 
+        self.preview_window = None
+
     def show_toast(self, toast_text, toast_type):
         if self.active_toast:
             self.active_toast.kill()
@@ -233,6 +235,7 @@ class ViewController:
             self.active_dialog = None
 
     def ui_button_pressed(self, event):
+        print(event.ui_object_id)
         if event.ui_object_id == '#new_game_button':
             self.view.controller.new_game()
         elif event.ui_object_id == '#open_game_button':
@@ -246,6 +249,8 @@ class ViewController:
             self.view.toolbar.controller.save_game()
         elif event.ui_object_id == '@toolbar.#toolbar_open_game':
             self.view.toolbar.controller.open_game()
+        elif event.ui_object_id == '@toolbar.#toolbar_preview':
+            self.view.toolbar.controller.enable_preview()
         elif event.ui_object_id == '@toolbar.#toolbar_compile':
             self.view.toolbar.controller.compile()
 
@@ -301,8 +306,11 @@ class ViewController:
             self.view.toolbar.controller.enable_toolbar()
 
         elif event.ui_object_id == '#entity_menu.#final_checkbox':
-            self.open_menu.final_checkbox.set_text("X" if self.open_menu.final_checkbox.text == "" else "")
-            self.show_toast('Set Screen to Final', 'success')
+            if len(self.open_menu.entity.options) == 0:
+                self.open_menu.final_checkbox.set_text("X" if self.open_menu.final_checkbox.text == "" else "")
+                self.show_toast('Set Screen to Final', 'success') if self.open_menu.final_checkbox.text == "X" else self.show_toast('Unset Screen to Final', 'success')
+            else:
+                self.show_toast('Final screen cannot have options', 'error')
         elif event.ui_object_id == '#entity_menu.#option_remove_button':
             option = self.open_menu.entity.get_option_from_menu(event.ui_element)
             if len(self.view.game_manager.get_parents(option.entity)) > 1:
@@ -315,8 +323,21 @@ class ViewController:
             else:
                 self.show_toast('Cannot remove option', 'error')
 
-        print(event.ui_object_id)
-            
+        # Preview Window                
+        elif '#preview_window.#option_button_' in event.ui_object_id:
+            option = int(event.ui_object_id.split('_')[-1])
+            entity = self.preview_window.entity
+            pos = self.preview_window.rect.topleft
+            self.preview_window.kill()
+            self.preview_window = self.view.game_manager.open_preview_window(entity.options[option].entity)
+            self.preview_window.set_position(pos)
+        elif event.ui_object_id == '#preview_window.#final_button':
+            pos = self.preview_window.rect.topleft
+            self.preview_window.kill()
+            self.preview_window = self.view.game_manager.open_preview_window()
+            self.preview_window.set_position(pos)
+
+
     def mouse_hover(self):
         if isinstance(self.view, BuildView) and not self.active_dialog:
             if self.hovering_entity and not self.space_pressed and not self.hovering_entity.hidden and \
@@ -389,7 +410,6 @@ class ViewController:
             self.view.draw_ui()
 
     def ui_text_entry_finished(self, event):
-        print(event.ui_object_id, event.text)
         if event.ui_object_id == '@toolbar.#toolbar_input':
             self.view.game_manager.update_game_name(event.text)
             self.show_toast('Game name updated', 'success')
@@ -514,7 +534,7 @@ class Toolbar:
         button_height = 20
         button_margin = 10
 
-        buttons = [('New Game', '#toolbar_new_game'), ('Save Game', '#toolbar_save_game'), ('Open Game', '#toolbar_open_game'), ('Compile', '#toolbar_compile')]
+        buttons = [('New Game', '#toolbar_new_game'), ('Save Game', '#toolbar_save_game'), ('Open Game', '#toolbar_open_game'), ('Preview App', '#toolbar_preview'), ('Compile', '#toolbar_compile')]
         self.toolbar_buttons = []
 
         for i, (text, object_id) in enumerate(buttons):
@@ -581,3 +601,6 @@ class ToolbarControl:
     def enable_toolbar(self):
         for button in self.toolbar.toolbar_buttons:
             button.enable()
+
+    def enable_preview(self):
+        self.toolbar.view.view_controller.preview_window = self.toolbar.view.game_manager.open_preview_window()

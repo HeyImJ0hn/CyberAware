@@ -15,7 +15,7 @@
             "depth": 0,
             "text": "",
             "notes": "",
-            "media": "",
+            "media": "C:\\Users\\joaot\\CyberAware\\burla_por_email\\pj.jpg",
             "hidden": false,
             "colour": [
                 215,
@@ -42,9 +42,9 @@
                 75
             ],
             "depth": 1,
-            "text": "",
+            "text": "Seleciona a ação correta",
             "notes": "",
-            "media": "video.mp4",
+            "media": "C:\\Users\\joaot\\CyberAware\\burla_por_email\\pexels-tracy-le-blanc-67789-607812.jpg",
             "hidden": false,
             "colour": [
                 215,
@@ -60,6 +60,14 @@
                 {
                     "text": "Ignorar Email",
                     "entity_id": 3
+                },
+                {
+                    "text": "Teste 1",
+                    "entity_id": 8
+                },
+                {
+                    "text": "Teste 2",
+                    "entity_id": 9
                 }
             ]
         },
@@ -87,11 +95,11 @@
             "final": false,
             "options": [
                 {
-                    "text": "",
+                    "text": "Sim",
                     "entity_id": 4
                 },
                 {
-                    "text": "",
+                    "text": "Não",
                     "entity_id": 6
                 }
             ]
@@ -101,7 +109,7 @@
             "name": "Node 3",
             "coords": [
                 1122.5,
-                587.0
+                586.0
             ],
             "size": [
                 75,
@@ -120,7 +128,7 @@
             "final": false,
             "options": [
                 {
-                    "text": "",
+                    "text": "Finalizar",
                     "entity_id": 7
                 }
             ]
@@ -129,8 +137,8 @@
             "id": 4,
             "name": "Node 4",
             "coords": [
-                728.5,
-                738.0
+                733.5,
+                775.0
             ],
             "size": [
                 75,
@@ -146,7 +154,7 @@
                 0,
                 0
             ],
-            "final": false,
+            "final": true,
             "options": []
         },
         {
@@ -170,15 +178,15 @@
                 0,
                 0
             ],
-            "final": false,
+            "final": true,
             "options": []
         },
         {
             "id": 7,
             "name": "Node 7",
             "coords": [
-                1122.5,
-                737.0
+                1120.5,
+                774.0
             ],
             "size": [
                 75,
@@ -193,6 +201,54 @@
                 0,
                 255,
                 0
+            ],
+            "final": true,
+            "options": []
+        },
+        {
+            "id": 8,
+            "name": "Screen 8",
+            "coords": [
+                1428.5,
+                358.0
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 2,
+            "text": "",
+            "notes": "",
+            "media": "",
+            "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
+            ],
+            "final": true,
+            "options": []
+        },
+        {
+            "id": 9,
+            "name": "Screen 9",
+            "coords": [
+                1435.5,
+                501.0
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 2,
+            "text": "",
+            "notes": "",
+            "media": "",
+            "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
             ],
             "final": true,
             "options": []
