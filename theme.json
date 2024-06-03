@@ -381,6 +381,33 @@
             "bold_path": "fonts/Roboto-Bold.ttf"
         }
     },
+    "@entity_option_button":
+    {
+        "colours":
+        {
+            "normal_bg": "#FFFF",
+            "hovered_bg": "#FFFFFF",
+            "selected_bg": "#FFFFFF",
+            "active_bg": "#FFFFFF",
+            "dark_bg": "#050E27",
+            "normal_text": "#FF0000",
+            "hovered_text": "#FF0000",
+            "disabled_text": "#808080",
+            "selected_text": "#FFFFFF",
+            "active_text": "#FF0000"
+        },
+        "misc":
+        {
+            "border_width": "0",
+            "shadow_width": "0"
+        },
+        "font":
+        {
+            "name": "roboto-regular",
+            "size": "30",
+            "bold": "1"
+        }
+    },
     "@entity_menu_button":
     {
         "colours":

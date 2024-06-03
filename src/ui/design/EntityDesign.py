@@ -147,13 +147,20 @@ class EntityMenu(UIWindow):
                         manager=self.ui_manager, 
                         container=self, 
                         object_id=ObjectID(class_id='@entity_option_name', object_id='#option_name_label'))
-                
-                self.options.append(UITextEntryLine(relative_rect=pygame.Rect((80, 230 + 30 * i), (100, 20)), 
+                text = UITextEntryLine(relative_rect=pygame.Rect((80, 230 + 30 * i), (100, 20)), 
                                 manager=self.ui_manager, 
                                 container=self, 
                                 placeholder_text="Texto",
                                 initial_text=option.text,
-                                object_id=ObjectID(class_id='@entity_option_input', object_id='#option_text_input')))
+                                object_id=ObjectID(class_id='@entity_option_input', object_id='#option_text_input'))
+                
+                button = UIButton(relative_rect=pygame.Rect((180, 230 + 30 * i), (20, 20)),
+                        text="-",
+                        manager=self.ui_manager,
+                        container=self,
+                        object_id=ObjectID(class_id='@entity_option_button', object_id='#option_remove_button'))
+                
+                self.options.append((text, button))
         
 
     def kill(self):

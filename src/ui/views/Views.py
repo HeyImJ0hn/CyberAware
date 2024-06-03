@@ -99,6 +99,12 @@ class ViewController:
 
         self.view_offset = (0, 0)
 
+    def show_toast(self, toast_text, toast_type):
+        if self.active_toast:
+            self.active_toast.kill()
+        self.active_toast = Toast(self.view.ui_manager, toast_text, toast_type)
+        self.toast_start_time = pygame.time.get_ticks()
+
     def mouse_button_down(self, event):
         if isinstance(self.view, BuildView):
             self.mouse_pos = pygame.mouse.get_pos()
@@ -114,10 +120,7 @@ class ViewController:
                             self.dragging_menu = entity.menu
                         elif entity.was_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
                                 if len(entity.options) >= entity.max_options:
-                                    if self.active_toast:
-                                        self.active_toast.kill()
-                                    self.active_toast = Toast(self.view.ui_manager, 'Max options reached', 'error')
-                                    self.toast_start_time = pygame.time.get_ticks()
+                                    self.show_toast('Max options reached', 'error')
                                 else:
                                     self.view.game_manager.add_entity(entity)
                                     if self.open_menu and self.open_menu.entity.id == entity.id:
@@ -153,7 +156,18 @@ class ViewController:
                 for entity in self.view.game_manager.get_entities():
                     if self.current_entity_option and self.draw_to_cursor:
                         if entity.was_body_clicked(current_pos[0], current_pos[1]):
-                            self.current_entity_option.add_option(entity)
+                            if self.current_entity_option.final:
+                                self.show_toast('Cannot add to final screen', 'error')
+                            elif entity in self.view.game_manager.get_parents(self.current_entity_option):
+                                self.show_toast('Cannot add parent screen', 'error')
+                            else:
+                                self.current_entity_option.add_option(entity)
+                
+                                if self.open_menu:
+                                    self.open_menu.kill()
+                                    self.current_entity_option.refresh_menu((self.open_menu.rect.x, self.open_menu.rect.y))
+                                    self.open_menu = self.current_entity_option.menu
+            
                             self.current_entity_option = None
                             self.draw_to_cursor = False
 
@@ -265,14 +279,13 @@ class ViewController:
         elif event.ui_object_id == '#browse_media_dialog.#cancel_button':
             self.active_dialog = None
         elif event.ui_object_id == '#remove_node.#confirm_button':
-            if self.active_toast:
-                self.active_toast.kill()
             if self.view.game_manager.remove_entity(self.current_entity):
-                self.active_toast = Toast(self.view.ui_manager, 'Removed node', 'success')
-                self.toast_start_time = pygame.time.get_ticks()
+                self.show_toast('Removed node', 'success')
+                if self.open_menu and self.open_menu.entity.id == self.current_entity.id:
+                    self.open_menu.kill()
+                    self.open_menu = None
             else:
-                self.active_toast = Toast(self.view.ui_manager, 'Cannot remove node with connected options', 'error')
-                self.toast_start_time = pygame.time.get_ticks()
+                self.show_toast('Cannot remove node with connected options', 'error')
             self.current_entity = None
             self.active_dialog = None
         elif event.ui_object_id == '#remove_node.#cancel_button':
@@ -288,8 +301,19 @@ class ViewController:
             self.view.toolbar.controller.enable_toolbar()
 
         elif event.ui_object_id == '#entity_menu.#final_checkbox':
-            #self.current_entity.final = not self.current_entity.final
             self.open_menu.final_checkbox.set_text("X" if self.open_menu.final_checkbox.text == "" else "")
+            self.show_toast('Set Screen to Final', 'success')
+        elif event.ui_object_id == '#entity_menu.#option_remove_button':
+            option = self.open_menu.entity.get_option_from_menu(event.ui_element)
+            if len(self.view.game_manager.get_parents(option.entity)) > 1:
+                self.open_menu.entity.remove_option(option.entity)
+                entity = self.open_menu.entity
+                self.open_menu.kill()
+                entity.refresh_menu((self.open_menu.rect.x, self.open_menu.rect.y))
+                self.open_menu = entity.menu
+                self.show_toast('Removed Option', 'success')
+            else:
+                self.show_toast('Cannot remove option', 'error')
 
         print(event.ui_object_id)
             
@@ -321,10 +345,7 @@ class ViewController:
             self.ctrl_pressed = True
         elif event.key == pygame.K_s and self.ctrl_pressed:
             self.view.game_manager.save_game()
-            if self.active_toast:
-                self.active_toast.kill()
-            self.active_toast = Toast(self.view.ui_manager, 'Saved', 'success')
-            self.toast_start_time = pygame.time.get_ticks()
+            self.show_toast('Saved', 'success')
 
     def key_up(self, event):
         if event.key == pygame.K_SPACE:
@@ -542,10 +563,7 @@ class ToolbarControl:
 
     def save_game(self):
         self.toolbar.view.game_manager.save_game()
-        self.toolbar.view.view_controller.toast_start_time = pygame.time.get_ticks()
-        if self.toolbar.view.view_controller.active_toast:
-            self.toolbar.view.view_controller.active_toast.kill()
-        self.toolbar.view.view_controller.active_toast = Toast(self.toolbar.view.ui_manager, 'Saved', 'success')
+        self.toolbar.view.view_controller.show_toast('Saved', 'success')
 
     def open_game(self):
         self.disable_toolbar()

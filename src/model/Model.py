@@ -102,6 +102,9 @@ class GameManager:
         FileDAO.copy_media(media, self.game_to_file_name(self.game_name).split(".")[0])
         entity.update_media(media)
 
+    def get_parents(self, entity):
+        return self._entity_manager.get_parents(entity)
+
 class EntityManager:
     def __init__(self, ui_manager, entities=[]):
         self.entities = entities
@@ -171,6 +174,14 @@ class EntityManager:
         self.ui_manager = ui_manager
         for entity in self.entities:
             entity.ui_manager = ui_manager
+
+    def get_parents(self, entity):
+        parents = []
+        for e in self.entities:
+            for o in e.options:
+                if o.entity.id == entity.id:
+                    parents.append(e)
+        return parents
 
 class Entity:
     def __init__(self, id, x, y, width, height, ui_manager, depth=0, name="", text="", notes="", media="", colour=(215, 215, 215)):
@@ -341,8 +352,27 @@ class Entity:
         self.final = final
 
     def update_options(self, ui_options):
+        ui_options = [o[0] for o in ui_options]
         for i, option in enumerate(self.options):
-            option.text = ui_options[i].get_text()
+            try:
+                option.text = ui_options[i].get_text()
+            except IndexError:
+                pass
+
+    def remove_option_menu(self, option):
+        toRemove = None
+        for option in self.options:
+            if option.entity.id == option.id:
+                toRemove = option
+
+        if toRemove: 
+            self.options.pop(toRemove)
+
+    def get_option_from_menu(self, button):
+        for option in self.menu.options:
+            if option[1] == button:
+                print(self.menu.options.index(option))
+                return self.options[self.menu.options.index(option)]
 
     def update_media(self, media):
         self.media = FileDAO.get_base_name(media)
