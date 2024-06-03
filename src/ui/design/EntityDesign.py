@@ -168,3 +168,6 @@ class EntityMenu(UIWindow):
 
     def move(self, dx, dy):
         self.set_position((self.rect.x + dx, self.rect.y + dy))
+
+    def is_inside(self, x, y):
+        return self.rect.collidepoint(x, y)

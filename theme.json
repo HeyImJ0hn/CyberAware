@@ -410,6 +410,16 @@
             "bold": "1"
         }
     },
+    "@entity_menu_checkbox":
+    {
+        "colours":
+        {
+            "normal_bg": "#FFFFFF",
+            "normal_text": "#000000",
+            "hovered_bg": "#3B7BC8",
+            "hovered_text": "#FFFFFF"
+        }
+    },
     "#new_game_dialog": 
     {
         "colours":

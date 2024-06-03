@@ -264,7 +264,7 @@ class Entity:
             text_width, _ = self.name_font.size(text)
             
             text_x = self.body.x + (self.body.width - text_width) / 2
-            text_y = self.body.y + self.body.height/2 + 40
+            text_y = self.body.y + self.body.height/2 + 35
             
             screen.blit(text_surface, (text_x, text_y))
         

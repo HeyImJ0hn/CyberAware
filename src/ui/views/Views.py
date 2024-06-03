@@ -108,7 +108,11 @@ class ViewController:
                     if entity.hidden:
                         continue
                     if not self.ctrl_pressed:
-                        if entity.was_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
+                        if entity.was_menu_clicked(self.mouse_pos[0], self.mouse_pos[1]):
+                            self.offset_x = entity.menu.rect.x - self.mouse_pos[0]
+                            self.offset_y = entity.menu.rect.y - self.mouse_pos[1]
+                            self.dragging_menu = entity.menu
+                        elif entity.was_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
                                 if len(entity.options) >= entity.max_options:
                                     if self.active_toast:
                                         self.active_toast.kill()
@@ -120,15 +124,11 @@ class ViewController:
                                         self.open_menu.kill()
                                         entity.refresh_menu((self.open_menu.rect.x, self.open_menu.rect.y))
                                         self.open_menu = entity.menu
-                        elif entity.was_body_clicked(self.mouse_pos[0], self.mouse_pos[1]):
+                        elif entity.was_body_clicked(self.mouse_pos[0], self.mouse_pos[1]) and not (self.open_menu and self.open_menu.is_inside(self.mouse_pos[0], self.mouse_pos[1])): 
                             if not self.dragging_menu:
                                 self.dragging_entity = entity
                                 self.offset_x = entity.body.rect.x - self.mouse_pos[0] 
                                 self.offset_y = entity.body.rect.y - self.mouse_pos[1]
-                        elif entity.was_menu_clicked(self.mouse_pos[0], self.mouse_pos[1]):
-                            self.offset_x = entity.menu.rect.x - self.mouse_pos[0]
-                            self.offset_y = entity.menu.rect.y - self.mouse_pos[1]
-                            self.dragging_menu = entity.menu
                         elif entity.was_hide_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
                             entity.toggle_options()
                         elif entity.was_remove_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
@@ -163,7 +163,7 @@ class ViewController:
                         self.clicked_outside = False
 
                     if self.mouse_pos == current_pos and not self.space_pressed and not entity.hidden:
-                            if entity.was_body_clicked(current_pos[0], current_pos[1]):
+                            if entity.was_body_clicked(current_pos[0], current_pos[1]) and not (self.open_menu and self.open_menu.is_inside(current_pos[0], current_pos[1])):
                                 if not self.open_menu:
                                     entity.open_menu()
                                     self.open_menu = entity.menu
@@ -295,7 +295,8 @@ class ViewController:
             
     def mouse_hover(self):
         if isinstance(self.view, BuildView) and not self.active_dialog:
-            if self.hovering_entity and not self.space_pressed and not self.hovering_entity.hidden:
+            if self.hovering_entity and not self.space_pressed and not self.hovering_entity.hidden and \
+                not (self.open_menu and self.open_menu.is_inside(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])):
                 pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
                 self.hovering_entity = None
 
@@ -305,9 +306,10 @@ class ViewController:
                 if entity.was_button_clicked(current_pos[0], current_pos[1]) or entity.was_body_clicked(current_pos[0], current_pos[1]) \
                     or entity.was_hide_button_clicked(current_pos[0], current_pos[1]) or entity.was_remove_button_clicked(current_pos[0], current_pos[1]) \
                         or entity.was_colour_button_clicked(current_pos[0], current_pos[1]):
-                    entity.hovered = True
-                    self.hovering_entity = entity
-            
+                    if not entity.was_menu_clicked(current_pos[0], current_pos[1]):
+                        entity.hovered = True
+                        self.hovering_entity = entity
+                        
             if not self.hovering_entity and not self.space_pressed:
                 pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
