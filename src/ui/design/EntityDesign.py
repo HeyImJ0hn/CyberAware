@@ -178,3 +178,32 @@ class EntityMenu(UIWindow):
 
     def is_inside(self, x, y):
         return self.rect.collidepoint(x, y)
+    
+class PreviewWindow(UIWindow):
+    def __init__(self, ui_manager, entity):
+        self.ui_manager = ui_manager
+        self.entity = entity
+        self.width = 200
+        self.height = 400
+        self.x = 10
+        self.y = 10
+
+        super().__init__(pygame.Rect((self.x, self.y), (self.width, self.height)), 
+                         ui_manager, 
+                         window_display_title='Preview',
+                         object_id='#preview_window',
+                         resizable=False)
+        
+        self.setup_ui()
+
+    def setup_ui(self):
+        pass
+
+    def kill(self):
+        super().kill()
+
+    def move(self, dx, dy):
+        self.set_position((self.rect.x + dx, self.rect.y + dy))
+
+    def is_inside(self, x, y):
+        return self.rect.collidepoint(x, y)

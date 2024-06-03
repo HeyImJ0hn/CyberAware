@@ -21,7 +21,7 @@ class FileDAO:
         FileDAO.create(path)
 
         with open(path, 'w', encoding='utf-8') as f:
-            json.dump(json_game, f, indent=4)
+            json.dump(json_game, f, indent=4, ensure_ascii=False)
 
     @staticmethod
     def load(path):
@@ -62,7 +62,7 @@ class FileDAO:
     @staticmethod
     def save_settings(settings):
         with open(FileDAO.create_settings_file(), 'w') as f:
-            json.dump(settings, f, indent=4)
+            json.dump(settings, f, indent=4, ensure_ascii=False)
 
     @staticmethod
     def load_settings():
@@ -99,3 +99,23 @@ class FileDAO:
     @staticmethod
     def get_base_name(file):
         return os.path.basename(file)
+    
+    @staticmethod
+    def get_file_name_without_extension(file):
+        return os.path.splitext(os.path.basename(file))[0]
+    
+    @staticmethod
+    def get_dir_name(file):
+        return os.path.dirname(file)
+    
+    @staticmethod
+    def update_game_name(old_name, new_name):
+        app_folder = FileDAO.get_app_folder()
+        old_game_folder = os.path.join(app_folder, old_name)
+        new_game_folder = os.path.join(app_folder, new_name)
+
+        if os.path.exists(old_game_folder):
+            print('Renaming directory: ' + old_game_folder + ' to ' + new_game_folder)
+            os.rename(old_game_folder, new_game_folder)
+        else:
+            print('Directory does not exist: ' + old_game_folder)

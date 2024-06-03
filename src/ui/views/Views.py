@@ -390,6 +390,9 @@ class ViewController:
 
     def ui_text_entry_finished(self, event):
         print(event.ui_object_id, event.text)
+        if event.ui_object_id == '@toolbar.#toolbar_input':
+            self.view.game_manager.update_game_name(event.text)
+            self.show_toast('Game name updated', 'success')
 
     def menu_kill(self, event):
         entity = event.entity
@@ -556,7 +559,6 @@ class ToolbarControl:
 
     def new_game(self):
         self.disable_toolbar()
-        #self.toolbar.view.game_manager.new_game()
         dialog = NewGameDialog(self.toolbar.view.ui_manager)
         self.toolbar.view.view_controller.new_game_dialog = dialog
         self.toolbar.view.view_controller.active_dialog = dialog

@@ -104,6 +104,14 @@ class GameManager:
 
     def get_parents(self, entity):
         return self._entity_manager.get_parents(entity)
+    
+    def update_game_name(self, game_name):
+        old_name = self.game_name
+        self.game_name = game_name
+        self.file_name = self.game_to_file_name(self.game_name)
+        self.path = FileDAO.create_absolute_path(FileDAO.get_dir_name(self.path), self.file_name)
+
+        FileDAO.update_game_name(FileDAO.get_file_name_without_extension(self.game_to_file_name(old_name)), FileDAO.get_file_name_without_extension(self.file_name))
 
 class EntityManager:
     def __init__(self, ui_manager, entities=[]):
@@ -371,7 +379,6 @@ class Entity:
     def get_option_from_menu(self, button):
         for option in self.menu.options:
             if option[1] == button:
-                print(self.menu.options.index(option))
                 return self.options[self.menu.options.index(option)]
 
     def update_media(self, media):
