@@ -326,7 +326,7 @@
             "padding": "2,2"
         }
     },
-    "text_entry_box":
+    "#option_text_input":
     {
         "misc":
         {

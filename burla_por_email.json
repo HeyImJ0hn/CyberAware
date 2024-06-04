@@ -5,8 +5,8 @@
             "id": 0,
             "name": "Início",
             "coords": [
-                931.5,
-                278.0
+                852.5,
+                103.0
             ],
             "size": [
                 75,
@@ -15,7 +15,7 @@
             "depth": 0,
             "text": "",
             "notes": "",
-            "media": "C:\\Users\\joaot\\CyberAware\\burla_por_email\\pj.jpg",
+            "media": "/home/joao/CyberAware/burla_por_email/pj.jpg",
             "hidden": false,
             "colour": [
                 215,
@@ -32,10 +32,10 @@
         },
         {
             "id": 1,
-            "name": "Node 1",
+            "name": "Screen 1",
             "coords": [
-                936.5,
-                454.0
+                852.5,
+                358.0
             ],
             "size": [
                 75,
@@ -43,13 +43,13 @@
             ],
             "depth": 1,
             "text": "Seleciona a ação correta",
-            "notes": "",
-            "media": "C:\\Users\\joaot\\CyberAware\\burla_por_email\\pexels-tracy-le-blanc-67789-607812.jpg",
+            "notes": "teste\nteste ",
+            "media": "/home/joao/CyberAware/burla_por_email/pexels-tracy-le-blanc-67789-607812.jpg",
             "hidden": false,
             "colour": [
-                215,
-                215,
-                215
+                255,
+                216,
+                0
             ],
             "final": false,
             "options": [
@@ -68,15 +68,23 @@
                 {
                     "text": "Teste 2",
                     "entity_id": 9
+                },
+                {
+                    "text": "Morri",
+                    "entity_id": 10
+                },
+                {
+                    "text": "Boas",
+                    "entity_id": 11
                 }
             ]
         },
         {
             "id": 2,
-            "name": "Node 2",
+            "name": "Screen 2",
             "coords": [
-                728.5,
-                588.0
+                605.5,
+                471.0
             ],
             "size": [
                 75,
@@ -106,10 +114,10 @@
         },
         {
             "id": 3,
-            "name": "Node 3",
+            "name": "Screen 3",
             "coords": [
-                1122.5,
-                586.0
+                1130.5,
+                562.0
             ],
             "size": [
                 75,
@@ -118,7 +126,7 @@
             "depth": 2,
             "text": "",
             "notes": "",
-            "media": "C:\\Users\\joaot\\CyberAware\\burla_por_email\\python_YB6OnvtMxW.mp4",
+            "media": "/home/joao/CyberAware/burla_por_email/python_YB6OnvtMxW.mp4",
             "hidden": false,
             "colour": [
                 0,
@@ -135,10 +143,10 @@
         },
         {
             "id": 4,
-            "name": "Node 4",
+            "name": "Screen 4",
             "coords": [
-                733.5,
-                775.0
+                539.5,
+                720.0
             ],
             "size": [
                 75,
@@ -159,10 +167,10 @@
         },
         {
             "id": 6,
-            "name": "Node 6",
+            "name": "Screen 6",
             "coords": [
-                530.5,
-                582.0
+                337.5,
+                551.0
             ],
             "size": [
                 75,
@@ -183,10 +191,10 @@
         },
         {
             "id": 7,
-            "name": "Node 7",
+            "name": "Screen 7",
             "coords": [
-                1120.5,
-                774.0
+                1233.5,
+                746.0
             ],
             "size": [
                 75,
@@ -209,8 +217,8 @@
             "id": 8,
             "name": "Screen 8",
             "coords": [
-                1428.5,
-                358.0
+                1393.5,
+                205.0
             ],
             "size": [
                 75,
@@ -233,8 +241,8 @@
             "id": 9,
             "name": "Screen 9",
             "coords": [
-                1435.5,
-                501.0
+                1394.5,
+                399.0
             ],
             "size": [
                 75,
@@ -251,6 +259,54 @@
                 215
             ],
             "final": true,
+            "options": []
+        },
+        {
+            "id": 10,
+            "name": "Screen 10",
+            "coords": [
+                850.5,
+                572.0
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 2,
+            "text": "",
+            "notes": "",
+            "media": "",
+            "hidden": false,
+            "colour": [
+                255,
+                216,
+                0
+            ],
+            "final": false,
+            "options": []
+        },
+        {
+            "id": 11,
+            "name": "Screen 11",
+            "coords": [
+                614.5,
+                223.0
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 2,
+            "text": "",
+            "notes": "",
+            "media": "",
+            "hidden": false,
+            "colour": [
+                255,
+                216,
+                0
+            ],
+            "final": false,
             "options": []
         }
     ]

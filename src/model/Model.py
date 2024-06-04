@@ -253,10 +253,10 @@ class Entity:
                 unit_dir_x = dir_x / length
                 unit_dir_y = dir_y / length
 
-                arrow_base_x = option.entity.centroid[0] - unit_dir_x * (option.entity.width / 2 + 20)
-                arrow_base_y = option.entity.centroid[1] - unit_dir_y * (option.entity.height / 2 + 20)
+                arrow_base_x = option.entity.centroid[0] - unit_dir_x * (option.entity.width / 2 + 30)
+                arrow_base_y = option.entity.centroid[1] - unit_dir_y * (option.entity.height / 2 + 30)
 
-                arrow_size = 20
+                arrow_size = 15
                 angle = math.atan2(dir_y, dir_x)
                 left_wing_x = arrow_base_x - math.cos(angle + math.pi / 6) * arrow_size
                 left_wing_y = arrow_base_y - math.sin(angle + math.pi / 6) * arrow_size
