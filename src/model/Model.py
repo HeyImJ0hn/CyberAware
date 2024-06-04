@@ -256,7 +256,7 @@ class Entity:
                 arrow_base_x = option.entity.centroid[0] - unit_dir_x * (option.entity.width / 2 + 30)
                 arrow_base_y = option.entity.centroid[1] - unit_dir_y * (option.entity.height / 2 + 30)
 
-                arrow_size = 15
+                arrow_size = 12
                 angle = math.atan2(dir_y, dir_x)
                 left_wing_x = arrow_base_x - math.cos(angle + math.pi / 6) * arrow_size
                 left_wing_y = arrow_base_y - math.sin(angle + math.pi / 6) * arrow_size
@@ -438,7 +438,7 @@ class Option:
 
 class PositionManager:
     def set_position(self, parent, entity, entities):
-        radius = 150
+        radius = 200
         correct_pos = False
 
         while not correct_pos:

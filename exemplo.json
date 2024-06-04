@@ -1,12 +1,12 @@
 {
-    "name": "Burla por Email",
+    "name": "Exemplo",
     "entities": [
         {
             "id": 0,
             "name": "Início",
             "coords": [
-                829.5,
-                196.0
+                806.5,
+                112.0
             ],
             "size": [
                 75,
@@ -15,7 +15,242 @@
             "depth": 0,
             "text": "",
             "notes": "",
-            "media": "/home/joao/CyberAware/burla_por_email/pj.jpg",
+            "media": "",
+            "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
+            ],
+            "final": false,
+            "options": [
+                {
+                    "text": "Começar",
+                    "entity_id": 8
+                }
+            ]
+        },
+        {
+            "id": 1,
+            "name": "Screen 1",
+            "coords": [
+                811.5,
+                534.0
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 1,
+            "text": "Pergunta Phising 1",
+            "notes": "",
+            "media": "",
+            "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
+            ],
+            "final": false,
+            "options": [
+                {
+                    "text": "Sim",
+                    "entity_id": 2
+                },
+                {
+                    "text": "Não",
+                    "entity_id": 3
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "name": "Screen 2",
+            "coords": [
+                666.5,
+                680.0
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 2,
+            "text": "",
+            "notes": "",
+            "media": "",
+            "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
+            ],
+            "final": false,
+            "options": [
+                {
+                    "text": "",
+                    "entity_id": 4
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "name": "Screen 3",
+            "coords": [
+                976.5,
+                674.0
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 2,
+            "text": "",
+            "notes": "",
+            "media": "",
+            "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
+            ],
+            "final": false,
+            "options": [
+                {
+                    "text": "",
+                    "entity_id": 4
+                }
+            ]
+        },
+        {
+            "id": 4,
+            "name": "Screen 4",
+            "coords": [
+                826.5,
+                851.0
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 3,
+            "text": "",
+            "notes": "",
+            "media": "",
+            "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
+            ],
+            "final": false,
+            "options": [
+                {
+                    "text": "",
+                    "entity_id": 5
+                },
+                {
+                    "text": "",
+                    "entity_id": 6
+                }
+            ]
+        },
+        {
+            "id": 5,
+            "name": "Screen 5",
+            "coords": [
+                688.5,
+                1007.0
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 4,
+            "text": "",
+            "notes": "",
+            "media": "",
+            "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
+            ],
+            "final": false,
+            "options": [
+                {
+                    "text": "",
+                    "entity_id": 7
+                }
+            ]
+        },
+        {
+            "id": 6,
+            "name": "Screen 6",
+            "coords": [
+                968.5,
+                1009.0
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 4,
+            "text": "",
+            "notes": "",
+            "media": "",
+            "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
+            ],
+            "final": false,
+            "options": [
+                {
+                    "text": "",
+                    "entity_id": 7
+                }
+            ]
+        },
+        {
+            "id": 7,
+            "name": "Screen 7",
+            "coords": [
+                824.5,
+                1186.0
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 5,
+            "text": "",
+            "notes": "",
+            "media": "",
+            "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
+            ],
+            "final": true,
+            "options": []
+        },
+        {
+            "id": 8,
+            "name": "Introdução",
+            "coords": [
+                809.5,
+                327.0
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 1,
+            "text": "",
+            "notes": "",
+            "media": "",
             "hidden": false,
             "colour": [
                 215,
@@ -29,229 +264,6 @@
                     "entity_id": 1
                 }
             ]
-        },
-        {
-            "id": 1,
-            "name": "Screen 1",
-            "coords": [
-                829.5,
-                451.0
-            ],
-            "size": [
-                75,
-                75
-            ],
-            "depth": 1,
-            "text": "Seleciona a ação correta",
-            "notes": "teste\nteste ",
-            "media": "/home/joao/CyberAware/burla_por_email/pexels-tracy-le-blanc-67789-607812.jpg",
-            "hidden": false,
-            "colour": [
-                255,
-                216,
-                0
-            ],
-            "final": false,
-            "options": [
-                {
-                    "text": "Responder ao email",
-                    "entity_id": 2
-                },
-                {
-                    "text": "Ignorar Email",
-                    "entity_id": 3
-                },
-                {
-                    "text": "Teste 1",
-                    "entity_id": 8
-                },
-                {
-                    "text": "Teste 2",
-                    "entity_id": 9
-                }
-            ]
-        },
-        {
-            "id": 2,
-            "name": "Screen 2",
-            "coords": [
-                582.5,
-                564.0
-            ],
-            "size": [
-                75,
-                75
-            ],
-            "depth": 2,
-            "text": "",
-            "notes": "",
-            "media": "",
-            "hidden": false,
-            "colour": [
-                255,
-                0,
-                0
-            ],
-            "final": false,
-            "options": [
-                {
-                    "text": "Sim",
-                    "entity_id": 4
-                },
-                {
-                    "text": "Não",
-                    "entity_id": 6
-                }
-            ]
-        },
-        {
-            "id": 3,
-            "name": "Screen 3",
-            "coords": [
-                1107.5,
-                655.0
-            ],
-            "size": [
-                75,
-                75
-            ],
-            "depth": 2,
-            "text": "",
-            "notes": "",
-            "media": "/home/joao/CyberAware/burla_por_email/python_YB6OnvtMxW.mp4",
-            "hidden": false,
-            "colour": [
-                0,
-                255,
-                0
-            ],
-            "final": false,
-            "options": [
-                {
-                    "text": "Finalizar",
-                    "entity_id": 7
-                }
-            ]
-        },
-        {
-            "id": 4,
-            "name": "Screen 4",
-            "coords": [
-                516.5,
-                813.0
-            ],
-            "size": [
-                75,
-                75
-            ],
-            "depth": 3,
-            "text": "",
-            "notes": "",
-            "media": "",
-            "hidden": false,
-            "colour": [
-                255,
-                0,
-                0
-            ],
-            "final": true,
-            "options": []
-        },
-        {
-            "id": 6,
-            "name": "Screen 6",
-            "coords": [
-                314.5,
-                644.0
-            ],
-            "size": [
-                75,
-                75
-            ],
-            "depth": 3,
-            "text": "",
-            "notes": "",
-            "media": "",
-            "hidden": false,
-            "colour": [
-                255,
-                0,
-                0
-            ],
-            "final": true,
-            "options": []
-        },
-        {
-            "id": 7,
-            "name": "Screen 7",
-            "coords": [
-                1210.5,
-                839.0
-            ],
-            "size": [
-                75,
-                75
-            ],
-            "depth": 3,
-            "text": "",
-            "notes": "",
-            "media": "",
-            "hidden": false,
-            "colour": [
-                0,
-                255,
-                0
-            ],
-            "final": true,
-            "options": []
-        },
-        {
-            "id": 8,
-            "name": "Screen 8",
-            "coords": [
-                1370.5,
-                298.0
-            ],
-            "size": [
-                75,
-                75
-            ],
-            "depth": 2,
-            "text": "",
-            "notes": "",
-            "media": "",
-            "hidden": false,
-            "colour": [
-                215,
-                215,
-                215
-            ],
-            "final": true,
-            "options": []
-        },
-        {
-            "id": 9,
-            "name": "Screen 9",
-            "coords": [
-                1371.5,
-                492.0
-            ],
-            "size": [
-                75,
-                75
-            ],
-            "depth": 2,
-            "text": "",
-            "notes": "",
-            "media": "",
-            "hidden": false,
-            "colour": [
-                215,
-                215,
-                215
-            ],
-            "final": true,
-            "options": []
         }
     ]
 }
