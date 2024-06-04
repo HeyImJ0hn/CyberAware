@@ -303,7 +303,8 @@ class ViewController:
 
         elif event.ui_object_id == '#open_path_dialog.#cancel_button':
             self.active_dialog = None
-            self.view.toolbar.controller.enable_toolbar()
+            if isinstance(self.view, BuildView):
+                self.view.toolbar.controller.enable_toolbar()
 
         elif event.ui_object_id == '#entity_menu.#final_checkbox':
             if len(self.open_menu.entity.options) == 0:

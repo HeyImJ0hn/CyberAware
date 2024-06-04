@@ -128,7 +128,7 @@ class EntityManager:
             PositionManager().set_position(parent, entity, self.entities)
             parent.add_option(entity)
         else:
-            entity = Entity(self.entities[-1].id+1, self.ui_manager.window_resolution[0]/2-75/2, self.ui_manager.window_resolution[1]/2-75/2, 75, 75, self.ui_manager)
+            entity = Entity(0, self.ui_manager.window_resolution[0]/2-75/2, self.ui_manager.window_resolution[1]/2-75/2, 75, 75, self.ui_manager)
 
         self.entities.append(entity)
 
