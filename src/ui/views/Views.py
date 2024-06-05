@@ -81,9 +81,7 @@ class ViewController:
         self.space_pressed = False
         self.dragging_entity = None
         self.hovering_entity = None
-        self.dragging_menu = None
         self.open_menu = None
-        self.clicked_outside = True
         self.current_entity = None
 
         self.new_game_dialog = None
@@ -117,9 +115,7 @@ class ViewController:
                         continue
                     if not self.ctrl_pressed:
                         if entity.was_menu_clicked(self.mouse_pos[0], self.mouse_pos[1]):
-                            self.offset_x = entity.menu.rect.x - self.mouse_pos[0]
-                            self.offset_y = entity.menu.rect.y - self.mouse_pos[1]
-                            self.dragging_menu = entity.menu
+                            pass
                         elif entity.was_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
                                 if len(entity.options) >= entity.max_options:
                                     self.show_toast('Max options reached', 'error')
@@ -130,10 +126,9 @@ class ViewController:
                                         entity.refresh_menu((self.open_menu.rect.x, self.open_menu.rect.y))
                                         self.open_menu = entity.menu
                         elif entity.was_body_clicked(self.mouse_pos[0], self.mouse_pos[1]) and not (self.open_menu and self.open_menu.is_inside(self.mouse_pos[0], self.mouse_pos[1])): 
-                            if not self.dragging_menu:
-                                self.dragging_entity = entity
-                                self.offset_x = entity.body.rect.x - self.mouse_pos[0] 
-                                self.offset_y = entity.body.rect.y - self.mouse_pos[1]
+                            self.dragging_entity = entity
+                            self.offset_x = entity.body.rect.x - self.mouse_pos[0] 
+                            self.offset_y = entity.body.rect.y - self.mouse_pos[1]
                         elif entity.was_hide_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
                             entity.toggle_options()
                         elif entity.was_remove_button_clicked(self.mouse_pos[0], self.mouse_pos[1]):
@@ -150,8 +145,6 @@ class ViewController:
     def mouse_button_up(self, event):
         if isinstance(self.view, BuildView):
             self.dragging_entity = None
-            self.dragging_menu = None
-            self.clicked_outside = True
 
             current_pos = pygame.mouse.get_pos()
             if not self.active_dialog:
@@ -173,11 +166,6 @@ class ViewController:
                             self.current_entity_option = None
                             self.draw_to_cursor = False
 
-                    if entity.was_menu_clicked(current_pos[0], current_pos[1]) or entity.was_body_clicked(current_pos[0], current_pos[1]) \
-                        or entity.was_button_clicked(current_pos[0], current_pos[1]) or entity.was_hide_button_clicked(current_pos[0], current_pos[1]) \
-                        or entity.was_remove_button_clicked(current_pos[0], current_pos[1]) or entity.was_colour_button_clicked(current_pos[0], current_pos[1]):
-                        self.clicked_outside = False
-
                     if self.mouse_pos == current_pos and not self.space_pressed and not entity.hidden:
                             if entity.was_body_clicked(current_pos[0], current_pos[1]) and not (self.open_menu and self.open_menu.is_inside(current_pos[0], current_pos[1])):
                                 if not self.open_menu:
@@ -187,15 +175,6 @@ class ViewController:
                                     self.open_menu.kill()
                                     entity.open_menu()
                                     self.open_menu = entity.menu
-
-                if not self.active_dialog:
-                    if self.clicked_outside and self.open_menu:
-                        for entity in self.view.game_manager.get_entities():
-                            if entity.id == self.open_menu.entity.id:
-                                self.open_menu.kill()
-                                self.open_menu = None
-                                entity.menu = None
-                                break
 
             self.mouse_pos = None
 
@@ -218,11 +197,6 @@ class ViewController:
                         dx = mouse_pos[0] + self.offset_x - self.dragging_entity.body.rect.x
                         dy = mouse_pos[1] + self.offset_y - self.dragging_entity.body.rect.y
                         self.dragging_entity.move(dx, dy)
-                    elif self.dragging_menu:
-                        mouse_pos = pygame.mouse.get_pos()
-                        dx = mouse_pos[0] + self.offset_x - self.dragging_menu.rect.x
-                        dy = mouse_pos[1] + self.offset_y - self.dragging_menu.rect.y
-                        self.dragging_menu.move(dx, dy)
 
     def ui_file_dialog_path_picked(self, event):
         if event.ui_object_id == '#save_path_dialog':
