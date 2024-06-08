@@ -44,7 +44,7 @@ class EntityMenu(UIWindow):
         self.ui_manager = ui_manager
         self.entity = entity
         base_height = 315
-        option_height = 30
+        option_height = 40
         
         if len(entity.options) == 0:
             self.height = base_height
@@ -56,7 +56,19 @@ class EntityMenu(UIWindow):
         self.width = 355
 
         self.x = entity.x + entity.width + 25
-        self.y = entity.y
+        self.y = entity.y - self.height/2 + entity.height/2
+
+        w_size = pygame.display.get_window_size()
+
+        if self.y < 0:
+            self.y = 0
+        elif self.y + self.height > w_size[1]:
+            self.y = w_size[1] - self.height
+        
+        if self.x < 0:
+            self.x = 0
+        elif self.x + self.width > w_size[0]:
+            self.x = w_size[0] - self.width
 
         super().__init__(pygame.Rect((self.x, self.y), (self.width, self.height)), 
                          ui_manager, 
@@ -151,14 +163,14 @@ class EntityMenu(UIWindow):
                         manager=self.ui_manager, 
                         container=self, 
                         object_id=ObjectID(class_id='@entity_option_name', object_id='#option_name_label'))
-                text = UITextEntryLine(relative_rect=pygame.Rect((90, 320 + 40 * i), (160, 30)), 
+                text = UITextEntryLine(relative_rect=pygame.Rect((90, 320 + 40 * i), (230, 30)), 
                                 manager=self.ui_manager, 
                                 container=self, 
                                 placeholder_text="Texto",
                                 initial_text=option.text,
                                 object_id=ObjectID(class_id='@entity_option_input', object_id='#option_text_input'))
                 
-                button = UIButton(relative_rect=pygame.Rect((250, 320 + 40 * i), (30, 30)),
+                button = UIButton(relative_rect=pygame.Rect((310, 320 + 40 * i), (30, 30)),
                         text="-",
                         manager=self.ui_manager,
                         container=self,

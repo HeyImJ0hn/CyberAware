@@ -206,6 +206,8 @@ class ViewController:
             self.view.game_manager.open_game(event.text)
         elif event.ui_object_id == '#browse_media_dialog':
             self.view.game_manager.submit_media(event.text, self.open_menu.entity)
+            self.open_menu.kill()
+            self.open_menu.entity.refresh_menu((self.open_menu.rect.x, self.open_menu.rect.y))
             self.active_dialog = None
 
     def ui_button_pressed(self, event):
@@ -275,10 +277,13 @@ class ViewController:
             self.active_dialog = None
             self.current_entity = None
 
-        elif event.ui_object_id == '#open_path_dialog.#cancel_button':
+        elif event.ui_object_id == '#open_path_dialog.#cancel_button' or event.ui_object_id == '#open_path_dialog.#close_button':
             self.active_dialog = None
             if isinstance(self.view, BuildView):
                 self.view.toolbar.controller.enable_toolbar()
+            elif isinstance(self.view, HomeView):
+                for b in self.view.buttons:
+                    b.enable()
 
         elif event.ui_object_id == '#entity_menu.#final_checkbox':
             if len(self.open_menu.entity.options) == 0:
@@ -394,6 +399,8 @@ class ViewController:
         menu = event.ui_element
         entity.update_properties(menu.name.get_text(), menu.text.get_text(), menu.notes.get_text(), menu.final_checkbox.text=="X")
         entity.update_options(menu.options)
+        entity.menu = None
+        self.open_menu = None
 
     def ui_colour_picker_colour_picked(self, event):
         self.current_entity.update_colour((event.colour.r, event.colour.g, event.colour.b))
@@ -486,6 +493,8 @@ class HomeViewControl:
 
     def open_game(self):
         OpenGameDialog(self.view.ui_manager, '#open_path_dialog')
+        for b in self.view.buttons:
+            b.disable()
 
     def quit(self):
         self.view.view_controller.quit()
