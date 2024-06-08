@@ -308,7 +308,8 @@
         "colours":
         {
             "normal_text": "#000000",
-            "dark_bg": "#d9d9d9"
+            "dark_bg": "#d9d9d9",
+            "text_cursor": "#000000"
         },
         "misc":
         {
@@ -327,24 +328,48 @@
             "bold_path": "fonts/Roboto-Bold.ttf"
         }
     },
-    "@entity_menu_input.#text_input":
+    "#text_input":
     {
+        "colours":
+        {
+            "text_cursor": "#000000"
+        },
         "misc":
         {
             "text_shadow_size": "0",
             "border_width": "0",
             "shadow_width": "0",
-            "padding": "2,2"
+            "padding": "2,2",
+            "text_horiz_alignment": "left"
+        }
+    },
+    "#notes_input":
+    {
+        "colours":
+        {
+            "text_cursor": "#000000"
+        },
+        "misc":
+        {
+            "text_shadow_size": "0",
+            "border_width": "0",
+            "shadow_width": "0",
+            "padding": "2,2",
+            "text_horiz_alignment": "left"
         }
     },
     "#option_text_input":
     {
+        "colours":
+        {
+            "text_cursor": "#000000"
+        },
         "misc":
         {
             "text_shadow_size": "0",
             "border_width": "0",
             "shadow_width": "0",
-            "padding": "2,2"
+            "padding": "4,4"
         }
     },
     "@entity_option_name": 
@@ -374,7 +399,8 @@
         "colours":
         {
             "normal_text": "#000000",
-            "dark_bg": "#d9d9d9"
+            "dark_bg": "#d9d9d9",
+            "text_cursor": "#000000"
         },
         "misc":
         {
@@ -697,20 +723,36 @@
     {
         "colours":
         {
-            "normal_text": "#FFFFFF"
+            "normal_text": "#FFFFFF",
+            "dark_bg": "#FFFFFF00",
+            "normal_border": "#FFFFFF00",
+            "hovered_bg": "#FFFFFF00",
+            "active_border": "#FFFFFF00",
+            "selected_bg": "#FFFFFF00",
+            "selected_border": "#FFFFFF00",
+            "hovered_border": "#FFFFFF00"
         },
         "misc":
         {
-            "text_shadow_size": "1",
-            "border_width": "0",
             "shadow_width": "0",
+            "border_width": "0"
+        }
+    },
+    "#preview_text_box":
+    {
+        "misc":
+        {
             "text_horiz_alignment": "left",
-            "text_vert_alignment": "top"
+            "text_vert_alignment": "top",
+            "padding": "10, 10",
+            "text_shadow": "122",
+            "text_shadow_size": "12",
+            "text_shadow_offset": "1,1"
         },
         "font":
         {
             "name": "roboto-regular",
-            "size": "18",
+            "size": "16",
             "bold": "0"
         }
     },
@@ -866,7 +908,7 @@
         "prototype": "#default_shape_style",
         "misc":
         {
-            "padding": "2,2"
+            "padding": "4,4"
         }
     },
     "tool_tip":

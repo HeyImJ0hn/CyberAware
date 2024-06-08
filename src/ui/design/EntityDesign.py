@@ -266,11 +266,11 @@ class PreviewWindow(UIWindow):
                                 object_id=ObjectID(class_id='@preview_window_title', object_id='#title_label'))
         
         # Text
-        self.text = UILabel(relative_rect=pygame.Rect((20, 20), (self.width, self.height - 80)), 
-                            text=self.entity.text, 
+        self.text = UITextBox(relative_rect=pygame.Rect((0, 0), (self.width, self.height - len(self.entity.options) * 30 - 80)), 
+                            html_text=self.entity.text, 
                             manager=self.ui_manager, 
                             container=self, 
-                            object_id=ObjectID(class_id='@preview_window_text', object_id='#text_label'))
+                            object_id=ObjectID(class_id='@preview_window_text', object_id='#preview_text_box'))
 
         if not self.entity.final:        
             # Options

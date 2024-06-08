@@ -34,7 +34,7 @@
             "id": 1,
             "name": "Screen 1",
             "coords": [
-                941.5,
+                940.5,
                 427.0
             ],
             "size": [
@@ -42,7 +42,7 @@
                 75
             ],
             "depth": 1,
-            "text": "Seleciona a ação correta\n\nteste",
+            "text": "Neste jogo, serás desafiado a usar o teu conhecimento e intuição para identificar possíveis\nburlas digitais. A internet pode ser um lugar perigoso, repleto de esquemas que procuram enganar\nos mais desatentos. Desde emails suspeitos a links fraudulentos, precisas de estar atento a todos \nos detalhes. Vais enfrentar uma série de exercícios que simulam situações reais.\n\nLembra-te, a tua segurança online depende da tua capacidade de identificar o que é verdadeiro e\no que é uma burla. Vamos começar!",
             "notes": "teste\nteste ",
             "media": "C:\\Users\\joaot\\CyberAware\\burla_por_email\\pexels-tracy-le-blanc-67789-607812.jpg",
             "hidden": false,
