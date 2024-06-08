@@ -5,8 +5,8 @@
             "id": 0,
             "name": "Início",
             "coords": [
-                829.5,
-                196.0
+                941.5,
+                172.0
             ],
             "size": [
                 75,
@@ -15,7 +15,7 @@
             "depth": 0,
             "text": "",
             "notes": "",
-            "media": "/home/joao/CyberAware/burla_por_email/pj.jpg",
+            "media": "C:\\Users\\joaot\\CyberAware\\burla_por_email\\pj.jpg",
             "hidden": false,
             "colour": [
                 215,
@@ -34,17 +34,17 @@
             "id": 1,
             "name": "Screen 1",
             "coords": [
-                829.5,
-                451.0
+                941.5,
+                427.0
             ],
             "size": [
                 75,
                 75
             ],
             "depth": 1,
-            "text": "Seleciona a ação correta",
+            "text": "Seleciona a ação correta\n\nteste",
             "notes": "teste\nteste ",
-            "media": "/home/joao/CyberAware/burla_por_email/pexels-tracy-le-blanc-67789-607812.jpg",
+            "media": "C:\\Users\\joaot\\CyberAware\\burla_por_email\\pexels-tracy-le-blanc-67789-607812.jpg",
             "hidden": false,
             "colour": [
                 255,
@@ -75,8 +75,8 @@
             "id": 2,
             "name": "Screen 2",
             "coords": [
-                582.5,
-                564.0
+                694.5,
+                540.0
             ],
             "size": [
                 75,
@@ -108,8 +108,8 @@
             "id": 3,
             "name": "Screen 3",
             "coords": [
-                1107.5,
-                655.0
+                1219.5,
+                631.0
             ],
             "size": [
                 75,
@@ -137,8 +137,8 @@
             "id": 4,
             "name": "Screen 4",
             "coords": [
-                516.5,
-                813.0
+                628.5,
+                789.0
             ],
             "size": [
                 75,
@@ -161,8 +161,8 @@
             "id": 6,
             "name": "Screen 6",
             "coords": [
-                314.5,
-                644.0
+                426.5,
+                620.0
             ],
             "size": [
                 75,
@@ -185,8 +185,8 @@
             "id": 7,
             "name": "Screen 7",
             "coords": [
-                1210.5,
-                839.0
+                1322.5,
+                815.0
             ],
             "size": [
                 75,
@@ -209,8 +209,8 @@
             "id": 8,
             "name": "Screen 8",
             "coords": [
-                1370.5,
-                298.0
+                1482.5,
+                274.0
             ],
             "size": [
                 75,
@@ -233,8 +233,8 @@
             "id": 9,
             "name": "Screen 9",
             "coords": [
-                1371.5,
-                492.0
+                1483.5,
+                468.0
             ],
             "size": [
                 75,

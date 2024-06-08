@@ -385,8 +385,8 @@ class Entity:
 
     def update_media(self, media):
         self.media = media
-        if self.menu:
-            self.menu.setup_ui()
+        #if self.menu:
+        #    self.menu.setup_ui()
 
     def update_colour(self, colour):
         self.colour = colour
