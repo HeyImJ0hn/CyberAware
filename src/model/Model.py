@@ -77,6 +77,9 @@ class GameManager:
     def get_entities(self):
         return self._entity_manager.entities
     
+    def get_entity(self, id):
+        return self._entity_manager.get_entity_by_id(id)
+    
     def clear_entities(self):
         return self._entity_manager.clear_entities()
     
