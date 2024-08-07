@@ -1,5 +1,6 @@
 import pygame
 import pygame_gui
+from pygame._sdl2 import Window
 from pygame_gui.elements import UIButton, UILabel, UIScrollingContainer, UISelectionList
 from pygame_gui.core import ObjectID
 from config.Settings import *
@@ -10,8 +11,8 @@ from ui.views.view_types import ViewType
 class View:
     def __init__(self, game_manager):
         self.game_manager = game_manager
-        self.resolution = Settings.RESOLUTION
-        self.screen = pygame.display.set_mode(self.resolution, pygame.RESIZABLE | pygame.SRCALPHA)
+        self.resolution = (800, 600) if self.type == ViewType.HOME else Settings.RESOLUTION
+        self.screen = pygame.display.set_mode(self.resolution, pygame.SRCALPHA if self.type == ViewType.HOME else pygame.RESIZABLE | pygame.SRCALPHA)
 
         self.ui_manager = pygame_gui.UIManager(self.resolution, 'theme.json')
         pygame.display.set_caption("CyberAware - Plataforma")
@@ -71,9 +72,16 @@ class View:
 
 class BuildView(View):
     def __init__(self, game_manager):
-        super().__init__(game_manager)
         self.type = ViewType.BUILD
-
+        super().__init__(game_manager)
+        
+        self.ui_manager.set_window_resolution(self.resolution)
+        
+        WIDTH, HEIGHT = self.resolution
+        
+        window = Window.from_display_module()
+        window.position = (5, 35)
+        
         self.toolbar = Toolbar(self)
 
     def render(self):
@@ -106,8 +114,8 @@ class BuildView(View):
 
 class HomeView(View):
     def __init__(self, game_manager):
-        super().__init__(game_manager)
         self.type = ViewType.HOME
+        super().__init__(game_manager)
 
         self.game_manager = game_manager
 
@@ -115,8 +123,6 @@ class HomeView(View):
         
         self.bg_colour = (47, 51, 61)
         self.list_bg_colour = (40, 44, 52)
-
-        #self.bg = pygame.image.load('static/homeview_bg.png')
 
         self.draw_ui()
 
@@ -137,7 +143,7 @@ class HomeView(View):
         
         # Left side
         self.title = UILabel(pygame.Rect((0, title_y), (WIDTH*0.25, 50)), text='CyberAware', object_id='#title', manager=self.ui_manager)
-        self.subtitle = UILabel(pygame.Rect((35, subtitle_y), (WIDTH*0.25, 50)), text='Plataforma', object_id='#subtitle', manager=self.ui_manager)
+        self.subtitle = UILabel(pygame.Rect((15, subtitle_y), (WIDTH*0.25, 50)), text='Plataforma', object_id='#subtitle', manager=self.ui_manager)
         
         self.new_button = UIButton(pygame.Rect((left_size / 2 - button_width/2, new_button_y), (button_width, button_height)), 
                                    text='New Game', 
@@ -164,34 +170,8 @@ class HomeView(View):
                                     manager=self.ui_manager,
                                     )
 
-        '''
-        scrolling_container = UIScrollingContainer(pygame.Rect((0 + WIDTH*0.25, 0, WIDTH - WIDTH*0.25, HEIGHT)), 
-                                                   allow_scroll_x=False,
-                                                   should_grow_automatically=False,
-                                                   manager=self.ui_manager)
-        '''
-
-        '''
-        label_width = 400
-        button_width = 240
-        button_height = 50
-
-        self.title = UILabel(relative_rect=pygame.Rect((WIDTH/2 - label_width/2, HEIGHT/2 - 400/2), (label_width, 100)), text='CyberAware', object_id='#title', manager=self.ui_manager)
-        self.subtitle = UILabel(relative_rect=pygame.Rect((WIDTH/2 - label_width/2 + 30, HEIGHT/2 - 400/2+45), (label_width, 100)), text='Plataforma', object_id='#subtitle', manager=self.ui_manager)
-
-        self.new_button = UIButton(relative_rect=pygame.Rect((WIDTH/2 - button_width/2, HEIGHT/2 - 400/2+200), (button_width, button_height)), 
-                                   text='NEW GAME', object_id=ObjectID(class_id='@main_menu_button', object_id='#new_game_button'), manager=self.ui_manager)
-        self.open_button = UIButton(relative_rect=pygame.Rect((WIDTH/2 - button_width/2, HEIGHT/2 - 400/2+275), (button_width, button_height)), 
-                                    text='OPEN GAME', object_id=ObjectID(class_id='@main_menu_button', object_id='#open_game_button'), manager=self.ui_manager)
-        self.quit_button = UIButton(relative_rect=pygame.Rect((WIDTH/2 - button_width/2, HEIGHT/2 - 400/2+350), (button_width, button_height)), 
-                                    text='QUIT', object_id=ObjectID(class_id='@main_menu_button', object_id='#quit_button'), manager=self.ui_manager)
-        
-        self.buttons = [self.new_button, self.open_button, self.quit_button]
-        '''
-        
     def render(self):
         super().render()
         self.screen.fill(self.bg_colour)
         pygame.draw.rect(self.screen, self.list_bg_colour, (self.resolution[0]*0.25, 0, self.resolution[0] - self.resolution[0]*0.25, self.resolution[1]))
-        #self.screen.blit(self.bg, (0, 0))
         self.update_display()
