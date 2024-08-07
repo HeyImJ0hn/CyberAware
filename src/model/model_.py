@@ -2,10 +2,10 @@ import pygame
 import sys
 import math
 
-from ui.design.EntityDesign import *
-from ui.views.Views import HomeView, BuildView
-from dao.FileDAO import FileDAO
-from conv.JSONConverter import JSONConverter
+from src.ui.design.entity_design import EntityBody, EntityButton, PreviewWindow, EntityMenu
+from ui.views.views import HomeView, BuildView
+from src.dao.file_dao import FileDAO
+from src.conv.json_converter import JSONConverter
 from config.Settings import Settings
 
 class GameManager:
@@ -388,8 +388,6 @@ class Entity:
 
     def update_media(self, media):
         self.media = media
-        #if self.menu:
-        #    self.menu.setup_ui()
 
     def update_colour(self, colour):
         self.colour = colour
@@ -460,7 +458,6 @@ class PositionManager:
                 if correct_pos:
                     break
             radius *= 1.8
-        
             
     def dist(self, pos_a, pos_b):
         x = pos_a[0] - pos_b[0]
