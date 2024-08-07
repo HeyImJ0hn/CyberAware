@@ -1,4 +1,4 @@
-from src.dao.file_dao import FileDAO
+from dao.file_dao import FileDAO
 from config.Settings import Settings
 
 class JSONConverter:
