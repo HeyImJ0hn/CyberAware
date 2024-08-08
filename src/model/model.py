@@ -6,7 +6,7 @@ from ui.design.entity_design import EntityBody, EntityButton, PreviewWindow, Ent
 from ui.views.views import HomeView, BuildView
 from dao.file_dao import FileDAO
 from conv.json_converter import JSONConverter
-from config.Settings import Settings
+from config.settings import Settings
 
 class GameManager:
     def __init__(self):
