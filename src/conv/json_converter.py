@@ -65,13 +65,16 @@ class JSONConverter:
 
         return (name, entities)
     
+    def name_from_json(self, path):
+        json = FileDAO.load(path)
+        return json["name"]
+    
     def settings_to_json(self):
         FileDAO.save_settings({
             "VERSION": Settings.VERSION,
             "RESOLUTION": Settings.RESOLUTION,
-            "FULLSCREEN": Settings.FULLSCREEN,
-            "POSITION": Settings.POSITION,
-            "FIRST_RUN": Settings.FIRST_RUN
+            "FIRST_RUN": Settings.FIRST_RUN,
+            "RECENT_FILES": Settings.RECENT_FILES
         })
     
     def settings_from_json(self):
@@ -80,9 +83,8 @@ class JSONConverter:
         if json:
             Settings.VERSION = json["VERSION"]
             Settings.RESOLUTION = json["RESOLUTION"]
-            Settings.FULLSCREEN = json["FULLSCREEN"]
-            Settings.POSITION = json["POSITION"]
             Settings.FIRST_RUN = json["FIRST_RUN"]
+            Settings.RECENT_FILES = json["RECENT_FILES"]
         
 
         

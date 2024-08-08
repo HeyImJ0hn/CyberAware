@@ -157,3 +157,7 @@ class FileDAO:
     def is_image_file(path):
         image_extensions = ['.png', '.jpg', '.jpeg']
         return any(path.endswith(ext) for ext in image_extensions)
+    
+    @staticmethod
+    def does_path_exist(path):
+        return os.path.exists(path)

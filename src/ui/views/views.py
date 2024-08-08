@@ -162,10 +162,15 @@ class HomeView(View):
         
         
         # Right side
+        recent_files = self.game_manager.recent_files
+        recent_list = []
+        for file in recent_files:
+            recent_list.append((self.game_manager.game_name_from_path(file), file))
+        
         self.recent_label = UILabel(pygame.Rect((WIDTH*0.25, 0), (WIDTH - WIDTH*0.25, 50)), text='Recent Games', object_id='#recent_label', manager=self.ui_manager)
 
         self.list = UISelectionList(pygame.Rect((WIDTH*0.25, 50), (WIDTH - WIDTH*0.25, HEIGHT)), 
-                                    item_list=[('Game 1 Title', 'game_1'), ('Game 2 Title', 'game_2'), ('Game 3 Title', 'game_3')],
+                                    item_list=recent_list,
                                     object_id=ObjectID(class_id='@main_menu_list', object_id='#recent_list'),
                                     manager=self.ui_manager,
                                     )

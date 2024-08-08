@@ -18,12 +18,15 @@ class GameManager:
         if Settings.FIRST_RUN:
             Settings.FIRST_RUN = False
             self.save_settings()
-        
-        self.view = HomeView(self)
+            
+        self.recent_files = Settings.RECENT_FILES
 
         self.game_name = ""
         self.path = None
+        
+        self.check_recent_files()
 
+        self.view = HomeView(self)
         self._entity_manager = EntityManager(self.view.ui_manager)
 
     def run(self):
@@ -46,7 +49,11 @@ class GameManager:
     def load_game(self, path):
         self.game_name, entities = self.json_converter.game_from_json(self, path)
         self.path = path
+        self.update_recent_files()
         self._entity_manager.update_entities(entities)
+        
+    def game_name_from_path(self, path):
+        return self.json_converter.name_from_json(path)
 
     def open_game(self, path):
         self.load_game(path)
@@ -55,6 +62,7 @@ class GameManager:
         self.view.run()
 
     def save_game(self):
+        self.update_recent_files()
         json = self.json_converter.game_to_json(self)
         FileDAO.save(json, self.path)
 
@@ -117,6 +125,21 @@ class GameManager:
 
     def open_preview_window(self, entity=None):
         return PreviewWindow(self.view.ui_manager, entity if entity else self._entity_manager.entities[0], self.game_name)
+    
+    def update_recent_files(self):
+        for i, file in enumerate(self.recent_files):
+            if file == self.path:
+                self.recent_files.pop(i)
+        self.recent_files.insert(0, self.path)
+        Settings.RECENT_FILES = self.recent_files
+        self.save_settings()
+        
+    def check_recent_files(self):
+        for i, file in enumerate(self.recent_files):
+            if not FileDAO.does_path_exist(file):
+                self.recent_files.pop(i)
+        Settings.RECENT_FILES = self.recent_files
+        self.save_settings()
 
 class EntityManager:
     def __init__(self, ui_manager, entities=[]):

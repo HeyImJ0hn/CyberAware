@@ -3,7 +3,7 @@ import pygame_gui
 import colorsys
 from pygame_gui.elements import *
 from pygame_gui.core import ObjectID
-from config.Settings import Settings
+from config.settings import Settings
 
 class NewGameDialog(UIWindow):
     def __init__(self, ui_manager, game_name="", file_path=""):
@@ -67,6 +67,7 @@ class OpenGameDialog:
 
 class Toast(UIWindow):
     def __init__(self, ui_manager, toast_text, toast_type):
+        self.shape_corner_radius = 24
         screen_res = Settings.RESOLUTION
         HEIGHT = 60
         WIDTH = len(toast_text) * 15

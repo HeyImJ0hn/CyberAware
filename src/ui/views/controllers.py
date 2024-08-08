@@ -141,7 +141,9 @@ class ViewController:
             self.handle_preview_window_final_button()
         elif event.ui_object_id == '#new_game_dialog.#cancel_button':
             self.cancel_new_game(event)
-            
+        elif event.ui_object_id.startswith('#recent_list.'):
+            self.handle_open_game_from_list(event)
+    
     def mouse_hover(self):
         if not self.view.type == ViewType.BUILD or self.active_dialog:
             return
@@ -240,6 +242,10 @@ class ViewController:
     ##########################
     #### Helper functions ####
     ##########################
+    def handle_open_game_from_list(self, event):
+        game_path = event.ui_object_id.split('#recent_list.')[1]
+        self.game_manager.open_game(game_path)
+    
     def handle_no_ctrl(self, entity, mouse_x, mouse_y):
         if entity.was_menu_clicked(mouse_x, mouse_y):
             return
