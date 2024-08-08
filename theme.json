@@ -136,10 +136,10 @@
     {
         "colours":
         {
-            "normal_bg": "#4A99F8",
-            "hovered_bg": "#3B7BC8",
-            "selected_bg": "#4A99F8",
-            "active_bg": "#4A99F8",
+            "normal_bg": "#383e49",
+            "hovered_bg": "#5f646d",
+            "selected_bg": "#afb1b6",
+            "active_bg": "#afb1b6",
             "dark_bg": "#050E27",
             "normal_text": "#FFFFFF",
             "hovered_text": "#FFFFFF",
@@ -150,39 +150,28 @@
         "misc":
         {
             "shape": "rounded_rectangle",
-            "shape_corner_radius": "23",
+            "shape_corner_radius": "6",
             "border_width": "0"
         },
         "font":
         {
-            "name": "roboto-special",
+            "name": "roboto-regular",
             "size": "14",
-            "bold": "1",
+            "bold": "0",
             "regular_path": "fonts/Roboto-Thin.ttf",
             "bold_path": "fonts/Roboto-Black.ttf"
-        }
-    },
-    "#quit_button": 
-    {
-        "colours":
-        {
-            "normal_bg": "#050E27",
-            "hovered_bg": "#0A1A48",
-            "selected_bg": "#050E27",
-            "active_bg": "#050E27",
-            "dark_bg": "#050E27"
         }
     },
     "#title":
     {
         "colours":
         {
-            "normal_text": "#050E27"
+            "normal_text": "#FFFFFF"
         },
         "font":
         {
             "name": "roboto-special",
-            "size": "64",
+            "size": "32",
             "bold": "1",
             "regular_path": "fonts/Roboto-Thin.ttf",
             "bold_path": "fonts/Roboto-Black.ttf"
@@ -197,12 +186,12 @@
     {
         "colours":
         {
-            "normal_text": "#050E27"
+            "normal_text": "#4196fd"
         },
         "font":
         {
-            "name": "roboto-special",
-            "size": "32",
+            "name": "roboto-regular",
+            "size": "16",
             "regular_path": "fonts/Roboto-Thin.ttf",
             "bold_path": "fonts/Roboto-Black.ttf"
         },
@@ -211,6 +200,53 @@
             "text_shadow_size": "0",
             "text_horiz_alignment": "left"
 
+        }
+    },
+    "#recent_list": {
+        "colours":
+        {
+            "dark_bg": "#282c34"
+        },
+        "misc":
+        {
+            "border_width": "0",
+            "shadow_width": "0",
+            "list_item_height": "30"
+        }
+    },
+    "#recent_list.@selection_list_item":
+    {
+        "colours":
+        {
+            "normal_bg": "#282c34",
+            "selected_bg": "#2f333d",
+            "hovered_bg": "#2f333d"
+        },
+        "misc": 
+        {
+            "shape": "rectangle",
+            "text_horiz_alignment": "left",
+            "text_vert_alignment": "center",
+            "text_horiz_alignment_padding": "30"
+        }
+    },
+    "#recent_label":
+    {
+        "colours":
+        {
+            "normal_text": "#FFFFFF"
+        },
+        "font":
+        {
+            "name": "roboto-regular",
+            "size": "16",
+            "bold": "1",
+            "regular_path": "fonts/Roboto-Regular.ttf",
+            "bold_path": "fonts/Roboto-Bold.ttf"
+        },
+        "misc":
+        {
+            "text_shadow_size": "0"
         }
     },
     "#entity_menu": 

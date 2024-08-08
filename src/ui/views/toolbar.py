@@ -1,4 +1,4 @@
-from src.ui.design.dialog_boxes import UIAutoResizingContainer, UIButton, ObjectID, UITextEntryLine, NewGameDialog, OpenGameDialog
+from ui.design.dialog_boxes import UIAutoResizingContainer, UIButton, ObjectID, UITextEntryLine, NewGameDialog, OpenGameDialog
 import pygame
 
 class Toolbar:

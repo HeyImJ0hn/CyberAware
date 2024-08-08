@@ -1,4 +1,4 @@
-from src.ui.design.dialog_boxes import *
+from ui.design.dialog_boxes import *
 from ui.views.view_types import ViewType
 import sys
 
@@ -115,7 +115,6 @@ class ViewController:
             '@toolbar.#toolbar_compile': self.handle_toolbar_action('compile'),
             '#new_game_dialog.#browse_button': self.browse_new_game_path,
             '#new_game_dialog.#create_button': self.create_new_game,
-            '#new_game_dialog.#cancel_button': self.cancel_new_game,
             '#entity_menu.#browse_button': self.browse_media,
             '#browse_media_dialog.#ok_button': self.clear_active_dialog,
             '#browse_media_dialog.#cancel_button': self.clear_active_dialog,
@@ -140,6 +139,8 @@ class ViewController:
             self.handle_preview_window_option_button(event)
         elif event.ui_object_id == '#preview_window.#final_button':
             self.handle_preview_window_final_button()
+        elif event.ui_object_id == '#new_game_dialog.#cancel_button':
+            self.cancel_new_game(event)
             
     def mouse_hover(self):
         if not self.view.type == ViewType.BUILD or self.active_dialog:
@@ -372,9 +373,10 @@ class ViewController:
         self.game_manager.path = file_path
         self.game_manager.new_game()
 
-    def cancel_new_game(self):
+    def cancel_new_game(self, event):
         self.active_dialog = None
-        self.kill_ui_element('#new_game_dialog')
+        #self.kill_ui_element('#new_game_dialog')
+        event.ui_element.ui_container.parent_element.kill()
         self.game_manager.game_name = ""
         self.game_manager.file_path = ""
         self.enable_home_or_toolbar_buttons()

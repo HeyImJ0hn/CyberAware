@@ -1,7 +1,7 @@
 import pygame
 from pygame_gui.elements import *
 from pygame_gui.core import ObjectID
-from src.dao.file_dao import FileDAO
+from dao.file_dao import FileDAO
 import cv2
 from PIL import Image
 import os

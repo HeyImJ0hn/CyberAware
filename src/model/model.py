@@ -2,10 +2,10 @@ import pygame
 import sys
 import math
 
-from src.ui.design.entity_design import EntityBody, EntityButton, PreviewWindow, EntityMenu
+from ui.design.entity_design import EntityBody, EntityButton, PreviewWindow, EntityMenu
 from ui.views.views import HomeView, BuildView
-from src.dao.file_dao import FileDAO
-from src.conv.json_converter import JSONConverter
+from dao.file_dao import FileDAO
+from conv.json_converter import JSONConverter
 from config.Settings import Settings
 
 class GameManager:
