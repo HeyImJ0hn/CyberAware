@@ -1,5 +1,5 @@
 from dao.file_dao import FileDAO
-from config.Settings import Settings
+from config.settings import Settings
 
 class JSONConverter:
     def game_to_json(self, game_manager):

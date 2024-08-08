@@ -3,7 +3,7 @@ import pygame_gui
 from pygame._sdl2 import Window
 from pygame_gui.elements import UIButton, UILabel, UIScrollingContainer, UISelectionList
 from pygame_gui.core import ObjectID
-from config.Settings import *
+from config.settings import *
 from ui.views.controllers import ViewController, HomeViewControl
 from ui.views.toolbar import Toolbar
 from ui.views.view_types import ViewType
