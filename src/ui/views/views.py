@@ -61,7 +61,7 @@ class View:
         self.ui_manager.update(self.UI_REFRESH_RATE)
         self.screen.fill((255, 255, 255))
 
-        if self.view_controller.active_toast:
+        if self.view_controller.active_toast and not self.view_controller.compilling:
             current_time = pygame.time.get_ticks()
             if current_time - self.view_controller.toast_start_time >= self.view_controller.toast_duration:
                 self.view_controller.active_toast.kill()
@@ -77,8 +77,6 @@ class BuildView(View):
         super().__init__(game_manager)
         
         self.ui_manager.set_window_resolution(self.resolution)
-        
-        WIDTH, HEIGHT = self.resolution
         
         window = Window.from_display_module()
         window.position = (5, 35)
@@ -110,6 +108,9 @@ class BuildView(View):
             entity.draw(self.screen)
 
         self.toolbar.draw(self.screen)
+        
+        if self.game_manager.finished_compiling:
+            self.view_controller.handle_compilation_finish()
 
         self.update_display()
 

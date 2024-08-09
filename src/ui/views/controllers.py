@@ -1,5 +1,6 @@
 from ui.design.dialog_boxes import *
 from ui.views.view_types import ViewType
+from ui.design.toast_type import ToastType
 import sys
 
 class ViewController:
@@ -30,6 +31,8 @@ class ViewController:
         self.view_offset = (0, 0)
 
         self.preview_window = None
+        
+        self.compilling = False
         
     def show_toast(self, toast_text, toast_type):
         if self.active_toast:
@@ -121,7 +124,8 @@ class ViewController:
             '#remove_node.#confirm_button': self.confirm_remove_node,
             '#remove_node.#cancel_button': self.cancel_remove_node,
             '#colour_picker_dialog.#cancel_button': self.cancel_colour_picker,
-            '#colour_picker_dialog.#close_button': self.cancel_colour_picker
+            '#colour_picker_dialog.#close_button': self.cancel_colour_picker,
+            '#logger_window.#logger_dismiss_button': self.clear_active_dialog
         }
 
         file_dialog_buttons = {'#file_dialog.#cancel_button', '#file_dialog.#close_button', '#file_dialog.#ok_button',
@@ -210,7 +214,7 @@ class ViewController:
     def ui_text_entry_finished(self, event):
         if event.ui_object_id == '@toolbar.#toolbar_input':
             self.game_manager.update_game_name(event.text)
-            self.show_toast('Game name updated', 'success')
+            self.show_toast('Game name updated', ToastType.SUCCESS)
 
     def menu_kill(self, event):
         entity = event.entity
@@ -242,6 +246,14 @@ class ViewController:
     ##########################
     #### Helper functions ####
     ##########################
+    def handle_compilation_finish(self):
+        self.compilling = False
+        self.active_dialog.log.set_text("".join(self.game_manager.compilation_logs))
+        self.active_dialog.button.enable()
+        self.game_manager.finished_compiling = False
+        self.game_manager.compilation_logs = []
+        self.show_toast('Compilation finished', ToastType.SUCCESS)
+    
     def handle_open_game_from_list(self, event):
         game_path = event.ui_object_id.split('#recent_list.')[1]
         self.game_manager.open_game(game_path)
@@ -286,11 +298,11 @@ class ViewController:
         entity_option = self.game_manager.get_entity(self.current_entity_option_id)
         
         if entity_option.final:
-            self.show_toast('Cannot add to final screen', 'error')
+            self.show_toast('Cannot add to final screen', ToastType.ERROR)
         elif entity in self.game_manager.get_parents(entity_option):
-            self.show_toast('Cannot add parent screen', 'error')
+            self.show_toast('Cannot add parent screen', ToastType.ERROR)
         elif any(option.entity.id == entity.id for option in entity_option.options):
-            self.show_toast('Option already exists', 'error')
+            self.show_toast('Option already exists', ToastType.ERROR)
         else:
             entity_option.add_option(entity)
             self.refresh_menu(entity_option)
@@ -322,7 +334,7 @@ class ViewController:
             
     def handle_button_click(self, entity):
         if len(entity.options) >= entity.max_options:
-            self.show_toast('Max options reached', 'error')
+            self.show_toast('Max options reached', ToastType.ERROR)
         else:
             self.game_manager.add_entity(entity)
             if self.open_menu and self.open_menu.entity.id == entity.id:
@@ -394,11 +406,11 @@ class ViewController:
         entity = self.game_manager.get_entity(self.current_entity_id)
         
         if self.game_manager.remove_entity(entity):
-            self.show_toast('Removed node', 'success')
+            self.show_toast('Removed node', ToastType.SUCCESS)
             if self.open_menu and self.open_menu.entity.id == self.current_entity_id:
                 self.open_menu.kill()
         else:
-            self.show_toast('Cannot remove node with connected options', 'error')
+            self.show_toast('Cannot remove node with connected options', ToastType.ERROR)
         self.current_entity_id = None
         self.active_dialog = None
 
@@ -427,9 +439,9 @@ class ViewController:
     def toggle_final_checkbox(self):
         if len(self.open_menu.entity.options) == 0:
             self.open_menu.final_checkbox.set_text("X" if self.open_menu.final_checkbox.text == "" else "")
-            self.show_toast('Set Screen to Final', 'success') if self.open_menu.final_checkbox.text == "X" else self.show_toast('Unset Screen to Final', 'success')
+            self.show_toast('Set Screen to Final', ToastType.SUCCESS) if self.open_menu.final_checkbox.text == "X" else self.show_toast('Unset Screen to Final', ToastType.SUCCESS)
         else:
-            self.show_toast('Final screen cannot have options', 'error')
+            self.show_toast('Final screen cannot have options', ToastType.ERROR)
 
     def remove_entity_option(self, ui_element):
         option = self.open_menu.entity.get_option_from_menu(ui_element)
@@ -437,9 +449,9 @@ class ViewController:
             self.open_menu.entity.remove_option(option.entity)
             entity = self.open_menu.entity
             self.refresh_menu(entity)
-            self.show_toast('Removed Option', 'success')
+            self.show_toast('Removed Option', ToastType.SUCCESS)
         else:
-            self.show_toast('Cannot remove option', 'error')
+            self.show_toast('Cannot remove option', ToastType.ERROR)
 
     def handle_preview_window_option_button(self, event):
         entity = self.preview_window.entity
@@ -458,6 +470,8 @@ class ViewController:
         self.active_dialog = dialog
 
     def clear_active_dialog(self):
+        if self.active_dialog.alive():
+            self.active_dialog.kill()
         self.active_dialog = None
 
     def get_ui_element_text(self, element_id):
@@ -500,7 +514,7 @@ class ViewController:
     def handle_save_key_down(self, event):
         if self.ctrl_pressed:
             self.view.game_manager.save_game()
-            self.show_toast('Saved', 'success')
+            self.show_toast('Saved', ToastType.SUCCESS)
             
     def handle_space_key_up(self, event):
         self.space_pressed = False

@@ -1,9 +1,10 @@
 import os
+from dao.gradle_con import GradleCon
 
 class KotlinConverter:
     
     @staticmethod
-    def convert_to_kotlin(game):
+    def convert_to_kotlin(game, logger):
         game_name = game.game_name
         entities = game.get_entities()
         entities = []
@@ -110,9 +111,9 @@ dependencyResolutionManagement {{
 rootProject.name = "{game_name}"
 include(":app")
         '''
-        file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'settings.gradle.kts')
-        with open(file_path, 'w') as file:
-            file.write(settings_file)
+        #file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'settings.gradle.kts')
+        #with open(file_path, 'w') as file:
+        #    file.write(settings_file)
         
         
         
@@ -195,6 +196,9 @@ dependencies {{
     implementation("androidx.media3:media3-ui:1.3.1")
 }}'''    
 
-        file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'build.gradle.kts')
-        with open(file_path, 'w') as file:
-            file.write(build_file)
+        #file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'build.gradle.kts')
+        #with open(file_path, 'w') as file:
+        #    file.write(build_file)
+            
+        
+        GradleCon.compile(logger)

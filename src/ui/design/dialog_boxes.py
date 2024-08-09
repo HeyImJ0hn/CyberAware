@@ -4,6 +4,8 @@ import colorsys
 from pygame_gui.elements import *
 from pygame_gui.core import ObjectID
 from config.settings import Settings
+from ui.design.toast_type import ToastType
+from pygame_gui.windows import UIMessageWindow
 
 class NewGameDialog(UIWindow):
     def __init__(self, ui_manager, game_name="", file_path=""):
@@ -66,7 +68,7 @@ class OpenGameDialog:
         )
 
 class Toast(UIWindow):
-    def __init__(self, ui_manager, toast_text, toast_type):
+    def __init__(self, ui_manager, toast_text, toast_type: ToastType):
         self.shape_corner_radius = 24
         screen_res = Settings.RESOLUTION
         HEIGHT = 60
@@ -81,9 +83,9 @@ class Toast(UIWindow):
         max_width = screen_res[0] - 2 * padding 
         
         WIDTH = min(max(text_width + 80, min_width), max_width)
-
-        object_id = '#success_toast' if toast_type == 'success' else '#error_toast'
-        image = 'static/check-solid.svg' if toast_type == 'success' else 'static/xmark-solid.svg'
+        
+        object_id = '#success_toast' if toast_type == ToastType.SUCCESS else '#error_toast' if toast_type == ToastType.ERROR else '#info_toast'
+        image = 'static/check-solid.svg' if toast_type == ToastType.SUCCESS else 'static/xmark-solid.svg' if toast_type == ToastType.ERROR else 'static/info-solid.svg'
 
         super().__init__(pygame.Rect((screen_res[0] - WIDTH - padding, toolbar_height + padding), (WIDTH, HEIGHT)), ui_manager,
                         window_display_title='Toast',
@@ -91,8 +93,11 @@ class Toast(UIWindow):
                         always_on_top=True,
                         draggable=False)
         
-        self.icon = UIImage(relative_rect=pygame.Rect((20, HEIGHT/2-10), (17.5, 22.5)), image_surface=pygame.image.load(image), manager=self.ui_manager, container=self, object_id=ObjectID(class_id=f'@{toast_type}_popup_icon', object_id='#icon'))
-        self.message = UILabel(relative_rect=pygame.Rect((28, 0), (WIDTH-28, HEIGHT)), text=toast_text, manager=self.ui_manager, container=self, object_id=ObjectID(class_id=f'@{toast_type}_popup_label', object_id='#message_label'))
+        icon_pos = (16, HEIGHT/2-10) if toast_type == ToastType.INFO else (20, HEIGHT/2-10)
+        icon_size = (22.5*1.2, 18.5*1.2) if toast_type == ToastType.INFO else (17.5, 22.5)
+        
+        self.icon = UIImage(relative_rect=pygame.Rect(icon_pos, icon_size), image_surface=pygame.image.load(image), manager=self.ui_manager, container=self, object_id=ObjectID(class_id=f'@{toast_type.name.lower()}_popup_icon', object_id='#icon'))
+        self.message = UILabel(relative_rect=pygame.Rect((28, 0), (WIDTH-28, HEIGHT)), text=toast_text, manager=self.ui_manager, container=self, object_id=ObjectID(class_id=f'@{toast_type.name.lower()}_popup_label', object_id='#message_label'))
 
 class BrowseMediaDialog:
     def __init__(self, ui_manager, id):
@@ -120,3 +125,30 @@ class ColourPickerDialog:
         r_norm, g_norm, b_norm = r / 255.0, g / 255.0, b / 255.0
         h, s, v = colorsys.rgb_to_hsv(r_norm, g_norm, b_norm)
         return pygame.Color(h, s, v, alpha)
+    
+class LoggerWindow(UIWindow):
+    def __init__(self, ui_manager):
+        WIDTH, HEIGHT = 800, 600
+        super().__init__(pygame.Rect((ui_manager.window_resolution[0]/2-WIDTH/2, ui_manager.window_resolution[1]/2-HEIGHT/2), (WIDTH, HEIGHT)), ui_manager,
+                         window_display_title='Logger',
+                         object_id='#logger_window',
+                         always_on_top=True,
+                         resizable=False)
+        
+        self.log = UITextBox(
+            relative_rect=pygame.Rect((10, 10), (WIDTH-20, HEIGHT-80)),
+            manager=self.ui_manager,
+            html_text="",
+            container=self,
+            object_id=ObjectID(class_id='@logger_window', object_id='#log')
+        )
+        
+        self.button = UIButton(relative_rect=pygame.Rect((WIDTH-100, HEIGHT-70), (90, 30)), 
+                 text="Dismiss", 
+                 manager=self.ui_manager, 
+                 container=self,
+                 object_id=ObjectID(class_id='@logger_window_button', object_id='#logger_dismiss_button'))
+        
+        self.button.disable()
+        
+        

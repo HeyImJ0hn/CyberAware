@@ -1,26 +1,69 @@
 import subprocess
 import os
 import platform
+import threading
+import sys
+import time
 
 class GradleCon:
     def generate_key(game):
         pass
 
-    def compile(game):
-        android_project_dir = os.path.join(os.getcwd(), 'android')
+    def compile(logger):
+        def run_gradle_build():
+            android_project_dir = os.path.join(os.getcwd(), 'android')
 
-        # TODO -> Signed APK em vez de debug
-        if platform.system() == "Windows":
-            gradle_command = 'gradlew.bat assembleDebug'
-        else:
-            gradle_command = './gradlew assembleDebug'
+            if platform.system() == "Windows":
+                gradle_command = 'gradlew.bat assembleDebug'
+            else:
+                gradle_command = './gradlew assembleDebug'
 
-        gradle_wrapper = os.path.join(android_project_dir, gradle_command.split()[0])
-        if not os.path.exists(gradle_wrapper):
-            raise FileNotFoundError(f"{gradle_command.split()[0]} not found in the project directory.")
+            gradle_wrapper = os.path.join(android_project_dir, gradle_command.split()[0])
+            if not os.path.exists(gradle_wrapper):
+                print(f"{gradle_command.split()[0]} not found in the project directory.")
+                logger.log(f"{gradle_command.split()[0]} not found in the project directory.<br>")
+                return
 
-        try:
-            process = subprocess.run(gradle_command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=android_project_dir)
-            print("Build output:\n", process.stdout.decode())
-        except subprocess.CalledProcessError as e:
-            print("Error occurred while building the APK:\n", e.stderr.decode())
+            print(f"Running command: {gradle_command}")
+            logger.log(f"Running command: {gradle_command}<br>")
+
+            start_time = time.time()
+
+            try:
+                process = subprocess.Popen(
+                    gradle_command,
+                    shell=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    cwd=android_project_dir,
+                    text=True  
+                )
+
+                print(f"Process ID: {process.pid}")
+                logger.log(f"Process ID: {process.pid}<br>")
+
+                for line in process.stdout:
+                    print(f"{time.strftime('%H:%M:%S')} - {line}", end='')
+                    logger.log(f"{time.strftime('%H:%M:%S')} - {line}")
+
+                for line in process.stderr:
+                    print(f"{time.strftime('%H:%M:%S')} - ERROR: {line}", end='', file=sys.stderr) 
+                    logger.log(f"{time.strftime('%H:%M:%S')} - ERROR: {line}")
+
+                process.wait()
+
+                exit_code = process.returncode
+                end_time = time.time()
+                duration = end_time - start_time 
+
+                print(f"Build process finished with exit code {exit_code}.")
+                print(f"Build duration: {duration:.2f} seconds.")
+                logger.log(f"Build process finished with exit code {exit_code}.<br>")
+                logger.log(f"Build duration: {duration:.2f} seconds.<br>")
+
+            except Exception as e:
+                print(f"Error occurred while building the APK: {e}")
+                logger.log(f"Error occurred while building the APK: {e}<br>")
+
+        build_thread = threading.Thread(target=run_gradle_build)
+        build_thread.start()

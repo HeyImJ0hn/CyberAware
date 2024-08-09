@@ -7,6 +7,8 @@ from ui.views.views import HomeView, BuildView
 from dao.file_dao import FileDAO
 from conv.json_converter import JSONConverter
 from config.settings import Settings
+from conv.kotlin_converter import KotlinConverter
+from model.logger import Logger
 
 class GameManager:
     def __init__(self):
@@ -14,7 +16,9 @@ class GameManager:
 
         self.json_converter = JSONConverter()
         self.json_converter.settings_from_json()
-
+        
+        self.logger = Logger(self)
+        
         if Settings.FIRST_RUN:
             Settings.FIRST_RUN = False
             self.save_settings()
@@ -28,6 +32,9 @@ class GameManager:
 
         self.view = HomeView(self)
         self._entity_manager = EntityManager(self.view.ui_manager)
+        
+        self.finished_compiling = False
+        self.compilation_logs = []
 
     def run(self):
         self.view.run()
@@ -67,7 +74,7 @@ class GameManager:
         FileDAO.save(json, self.path)
 
     def compile(self):
-        pass
+        KotlinConverter.convert_to_kotlin(self, self.logger)
 
     def quit(self):
         pygame.quit()
