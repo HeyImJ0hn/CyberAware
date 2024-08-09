@@ -7,7 +7,6 @@ class GradleCon:
         pass
 
     def compile(game):
-
         android_project_dir = os.path.join(os.getcwd(), 'android')
 
         # TODO -> Signed APK em vez de debug

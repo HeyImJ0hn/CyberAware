@@ -1,18 +1,19 @@
 package dev.jpires.cyberawarebaseapp.navigation
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import dev.jpires.cyberawarebaseapp.R
 import dev.jpires.cyberawarebaseapp.screens.BaseScreen
 import dev.jpires.cyberawarebaseapp.screens.HomeScreen
+import dev.jpires.cyberawarebaseapp.screens.OptionButton
 
-@Preview(showBackground = true)
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
@@ -36,16 +37,9 @@ fun AppNavigation() {
 
             val screenId = backStackEntry.arguments?.getString("screenId") ?: return@composable
             when (screenId) {
-                "1" -> BaseScreen(screenId = screenId) {
-                    navController.navigate("base/${it}")
-                }
-                "2" -> BaseScreen(screenId = screenId) {
-                    navController.navigate("base/${it}")
-                }
-                "3" -> BaseScreen(screenId = screenId) {
-                    navController.navigate("base/${it}")
-                }
+        
             }
         }
     }
 }
+        

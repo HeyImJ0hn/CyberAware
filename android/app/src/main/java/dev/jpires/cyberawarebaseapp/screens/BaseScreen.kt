@@ -1,11 +1,7 @@
 package dev.jpires.cyberawarebaseapp.screens
 
 import android.content.Context
-import android.content.res.Resources.Theme
 import android.net.Uri
-import androidx.activity.ComponentActivity
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,11 +12,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -44,41 +37,40 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.StyledPlayerView
-import dev.jpires.cyberawarebaseapp.R
+import java.util.logging.Logger
 
 @Composable
 fun BaseScreen(
     screenId: String,
-    onNavigateToBaseScreen: (String) -> Unit,
+    screenText: String,
+    isImage: Boolean,
+    resourceId: Int,
+    buttons: List<@Composable (Modifier) -> Unit>
 ) {
     val context = LocalContext.current
 
-    val isContentVisible = remember { mutableStateOf(false) }
-    val videoUri = getUriFromRaw(context, R.raw.python) // file name
+    val isContentVisible = remember { mutableStateOf(isImage) }
+    val videoUri = getUriFromRaw(context, rawResourceId = resourceId)
 
     Box(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        VideoPlayer(uri = videoUri, isContentVisible = isContentVisible)
-
-//        Image(
-//            // replace id
-//            painter = painterResource(id = R.drawable.pexels),
-//            contentDescription = "Image",
-//            modifier = Modifier.fillMaxSize(),
-//            contentScale = ContentScale.Crop
-//        )
+        if (!isImage)
+            VideoPlayer(uri = videoUri, isContentVisible = isContentVisible)
+        else
+            Image(
+                painter = painterResource(id = resourceId),
+                contentDescription = "Image",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
 
         if (!isContentVisible.value)
             Box(modifier = Modifier
@@ -89,7 +81,7 @@ fun BaseScreen(
                     color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
                     shape = RoundedCornerShape(24.dp)
                 )
-                .clickable {  },
+                .clickable { },
             ) {
                 IconButton(
                     onClick = { isContentVisible.value = !isContentVisible.value },
@@ -104,7 +96,7 @@ fun BaseScreen(
                 .background(
                     color = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f)
                 )
-                .clickable {  },
+                .clickable { },
             ) {
                 if (isContentVisible.value)
                     Box(modifier = Modifier
@@ -115,7 +107,7 @@ fun BaseScreen(
                             color = MaterialTheme.colorScheme.primary,
                             shape = RoundedCornerShape(24.dp)
                         )
-                        .clickable {  },
+                        .clickable { },
                     ) {
                         IconButton(
                             onClick = { isContentVisible.value = !isContentVisible.value },
@@ -128,11 +120,9 @@ fun BaseScreen(
                         .align(Alignment.BottomCenter)
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-
                 ) {
                     Text(
-                        text = "Text here and more text and even more text and this text keeps going everywhere still going and it just keeps on going" +
-                                "Text here and more text and even more text and this text keeps going everywhere still going and it just keeps on going",
+                        text = screenText,
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier
                             .padding(bottom = 16.dp, top = 28.dp)
@@ -141,63 +131,38 @@ fun BaseScreen(
 
                     Spacer(modifier = Modifier.weight(1f))
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Button(
-                            onClick = { onNavigateToBaseScreen("1") },
-                            colors = ButtonDefaults.buttonColors(
-                                contentColor = Color.White
-                            ),
-                            modifier = Modifier.weight(1f)
+                    val buttonChunks = buttons.chunked(2)
+                    buttonChunks.forEach { rowButtons ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(text = "Button 1")
-                        }
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        Button(
-                            onClick = { onNavigateToBaseScreen("2") },
-                            colors = ButtonDefaults.buttonColors(
-                                contentColor = Color.White
-                            ),
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text(text = "Button 2")
-                        }
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Button(
-                            onClick = { onNavigateToBaseScreen("1") },
-                            colors = ButtonDefaults.buttonColors(
-                                contentColor = Color.White
-                            ),
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text(text = "Button 3")
-                        }
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        Button(
-                            onClick = { onNavigateToBaseScreen("2") },
-                            colors = ButtonDefaults.buttonColors(
-                                contentColor = Color.White
-                            ),
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text(text = "Button 4")
+                            var i = 0
+                            rowButtons.forEach { button ->
+                                i++
+                                button(Modifier.weight(1f))
+                                if (i < rowButtons.size)
+                                    Spacer(modifier = Modifier.width(16.dp))
+                            }
                         }
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun OptionButton(modifier: Modifier, text: String, onNavigateToBaseScreen: () -> Unit) {
+    Button(
+        onClick = onNavigateToBaseScreen,
+        colors = ButtonDefaults.buttonColors(
+            contentColor = Color.White
+        ),
+        modifier = modifier
+    ) {
+        Text(text = text)
     }
 }
 
