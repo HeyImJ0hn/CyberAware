@@ -1,4 +1,4 @@
-from ui.design.dialog_boxes import UIAutoResizingContainer, UIButton, UITextEntryLine, NewGameDialog, OpenGameDialog, Toast, LoggerWindow
+from ui.design.dialog_boxes import *
 from pygame_gui.core import ObjectID
 from ui.design.toast_type import ToastType
 import pygame
@@ -91,11 +91,8 @@ class ToolbarControl:
         OpenGameDialog(self.ui_manager, '#open_path_dialog')
 
     def compile(self):
-        self.view_controller.compilling = True
-        self.view_controller.active_dialog = LoggerWindow(self.ui_manager)
-        self.game_manager.logger.subscribe(self.view_controller.active_dialog.log)
-        self.view_controller.active_toast = Toast(self.ui_manager, 'Compiling...', ToastType.INFO)
-        self.game_manager.compile()
+        self.view_controller.active_dialog = CompileDialog(self.ui_manager)
+        self.disable_toolbar()
     
     def disable_toolbar(self):
         for button in self.toolbar.toolbar_buttons:

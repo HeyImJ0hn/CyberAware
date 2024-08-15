@@ -19,3 +19,5 @@ class Logger:
             if "Build duration:" in message:
                 self.game_manager.finished_compiling = True
                 self.game_manager.compilation_logs = self.full_logs
+                self.logs = []
+                self.full_logs = []

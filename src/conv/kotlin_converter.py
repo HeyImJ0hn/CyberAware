@@ -4,7 +4,7 @@ from dao.gradle_con import GradleCon
 class KotlinConverter:
     
     @staticmethod
-    def convert_to_kotlin(game, logger):
+    def convert_to_kotlin(game, logger, signed, keystore):
         game_name = game.game_name
         entities = game.get_entities()
         entities = []
@@ -201,4 +201,4 @@ dependencies {{
         #    file.write(build_file)
             
         
-        GradleCon.compile(logger)
+        GradleCon.compile(logger, signed, keystore)

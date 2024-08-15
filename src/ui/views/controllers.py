@@ -1,6 +1,7 @@
 from ui.design.dialog_boxes import *
 from ui.views.view_types import ViewType
 from ui.design.toast_type import ToastType
+from dao.terminal_dao import TerminalDao
 import sys
 
 class ViewController:
@@ -23,6 +24,7 @@ class ViewController:
 
         self.new_game_dialog = None
         self.active_dialog = None
+        self.extra_dialog = None
 
         self.ctrl_pressed = False
         self.current_entity_option_id = None
@@ -33,6 +35,7 @@ class ViewController:
         self.preview_window = None
         
         self.compilling = False
+        self.generating_key = False
         
     def show_toast(self, toast_text, toast_type):
         if self.active_toast:
@@ -98,7 +101,8 @@ class ViewController:
         handlers = {
             '#save_path_dialog': self.handle_save_path_dialog,
             '#open_path_dialog': self.handle_open_path_dialog,
-            '#browse_media_dialog': self.handle_browse_media_dialog
+            '#browse_media_dialog': self.handle_browse_media_dialog,
+            '#browse_keystore_dialog': self.handle_browse_keystore
         }
         
         handler = handlers.get(event.ui_object_id)
@@ -125,7 +129,11 @@ class ViewController:
             '#remove_node.#cancel_button': self.cancel_remove_node,
             '#colour_picker_dialog.#cancel_button': self.cancel_colour_picker,
             '#colour_picker_dialog.#close_button': self.cancel_colour_picker,
-            '#logger_window.#logger_dismiss_button': self.clear_active_dialog
+            '#logger_window.#logger_dismiss_button': self.clear_active_dialog,
+            '#compile_dialog.#close_button': self.clear_active_dialog    ,
+            '#compile_dialog.#compile_signed_button': self.compile_signed_dialog,
+            '#compile_dialog.#compile_debug_button': self.compile_debug,
+            '#request_key_dialog.#browse_button': self.browse_keystore,
         }
 
         file_dialog_buttons = {'#file_dialog.#cancel_button', '#file_dialog.#close_button', '#file_dialog.#ok_button',
@@ -147,6 +155,12 @@ class ViewController:
             self.cancel_new_game(event)
         elif event.ui_object_id.startswith('#recent_list.'):
             self.handle_open_game_from_list(event)
+        elif event.ui_object_id == '#new_key_store_dialog.#ok_button':
+            self.create_key(event)
+        elif event.ui_object_id == '#request_key_dialog.#compile_button':
+            self.compile_signed(event)
+        elif event.ui_object_id == '#request_key_dialog.#create_new_button':
+            self.create_key_dialog(event)
     
     def mouse_hover(self):
         if not self.view.type == ViewType.BUILD or self.active_dialog:
@@ -246,6 +260,70 @@ class ViewController:
     ##########################
     #### Helper functions ####
     ##########################
+    def compile_signed_dialog(self):
+        self.clear_active_dialog()
+        #self.disable_toolbar()
+        self.active_dialog = RequestKeyDialog(self.ui_manager, self.game_manager)
+        
+    def create_key_dialog(self, event):
+        #self.clear_active_dialog()
+        #self.extra_dialog = CreateKeyDialog(self.ui_manager)
+        self.show_toast('Key Generation Started', ToastType.INFO)
+        self.generating_key = True
+        TerminalDao.start_key_generation(self.game_manager.game_to_file_name(self.game_manager.game_name).split(".")[0])
+            
+    def handle_key_generation_finish(self):
+        self.generating_key = False
+        self.show_toast('Key Generation Completed', ToastType.SUCCESS)
+        keystore = self.game_manager.get_keystore_path()
+        self.active_dialog.key_store_path.set_text(keystore)
+        
+    def create_key(self, event):
+        key_store_path = event.ui_element.ui_container.parent_element.key_store_path.get_text()
+        key_store_password = event.ui_element.ui_container.parent_element.password_entry.get_text()
+        key_alias = event.ui_element.ui_container.parent_element.key_alias_entry.get_text()
+        key_password = event.ui_element.ui_container.parent_element.key_password_entry.get_text()
+        
+        first_last_name = event.ui_element.ui_container.parent_element.certificate_entries[0][1].get_text()
+        organizational_unit = event.ui_element.ui_container.parent_element.certificate_entries[1][1].get_text()
+        organization = event.ui_element.ui_container.parent_element.certificate_entries[2][1].get_text()
+        city = event.ui_element.ui_container.parent_element.certificate_entries[3][1].get_text()
+        state = event.ui_element.ui_container.parent_element.certificate_entries[4][1].get_text()
+        country_code = event.ui_element.ui_container.parent_element.certificate_entries[5][1].get_text()
+        
+        result = self.game_manager.generate_key(key_alias=key_alias, key_password=key_password, keystore_password=key_store_password, 
+                                     keystore_name=key_store_path, name=first_last_name, org_unit=organizational_unit, 
+                                     org=organization, city=city, state=state, country=country_code)
+        
+        if result == 0:
+            self.clear_extra_dialog()
+            self.clear_active_dialog()
+            self.active_dialog = RequestKeyDialog(self.ui_manager, self.game_manager)
+            self.show_toast('Key generated', ToastType.SUCCESS)
+        else:
+            self.show_toast('Key generation failed', ToastType.ERROR)
+        
+    def compile_debug(self):
+        self.compile(False)
+        
+    def compile_signed(self, event):
+        self.compile(True, event)
+        
+    def compile(self, signed, event=None):
+        self.clear_active_dialog()
+        #self.disable_toolbar()
+        self.compilling = True
+        self.active_dialog = LoggerWindow(self.ui_manager)
+        self.game_manager.logger.subscribe(self.active_dialog.log)
+        self.active_toast = Toast(self.ui_manager, 'Compiling...', ToastType.INFO)
+        
+        if signed:
+            key_store_path = event.ui_element.ui_container.parent_element.key_store_path.get_text()
+            key_store_password = event.ui_element.ui_container.parent_element.key_store_password.get_text()
+            self.game_manager.set_keystore(key_store_path, key_store_password)
+            
+        self.game_manager.compile(signed)
+    
     def handle_compilation_finish(self):
         self.compilling = False
         self.active_dialog.log.set_text("".join(self.game_manager.compilation_logs))
@@ -253,6 +331,9 @@ class ViewController:
         self.game_manager.finished_compiling = False
         self.game_manager.compilation_logs = []
         self.show_toast('Compilation finished', ToastType.SUCCESS)
+        self.view.toolbar.controller.enable_toolbar()
+    
+        self.game_manager.move_build_folder()
     
     def handle_open_game_from_list(self, event):
         game_path = event.ui_object_id.split('#recent_list.')[1]
@@ -381,12 +462,18 @@ class ViewController:
         self.open_menu.entity.refresh_menu((self.open_menu.rect.x, self.open_menu.rect.y))
         self.active_dialog = None
         
+    def handle_browse_keystore(self, text):
+        self.active_dialog.key_store_path.set_text(text)
+        self.clear_extra_dialog()
+        
     def browse_new_game_path(self):
         SavePathDialog(self.ui_manager, '#save_path_dialog')
 
-    def create_new_game(self):
-        game_name = self.get_ui_element_text('#new_game_dialog.#game_name')
-        file_path = self.get_ui_element_text('#new_game_dialog.#file_path')
+    def create_new_game(self, event):
+        #game_name = self.get_ui_element_text('#new_game_dialog.#game_name')
+        #file_path = self.get_ui_element_text('#new_game_dialog.#file_path')
+        game_name = event.ui_element.ui_container.parent_element.game_name
+        file_path = event.ui_element.ui_container.parent_element.file_path
         self.game_manager.game_name = game_name
         self.game_manager.path = file_path
         self.game_manager.new_game()
@@ -401,6 +488,9 @@ class ViewController:
 
     def browse_media(self):
         self.set_active_dialog(BrowseMediaDialog(self.ui_manager, '#browse_media_dialog'))
+        
+    def browse_keystore(self):
+        self.set_extra_dialog(BrowseKeystore(self.ui_manager, '#browse_keystore_dialog'))
 
     def confirm_remove_node(self):
         entity = self.game_manager.get_entity(self.current_entity_id)
@@ -468,13 +558,23 @@ class ViewController:
 
     def set_active_dialog(self, dialog):
         self.active_dialog = dialog
+        
+    def set_extra_dialog(self, dialog):
+        self.extra_dialog = dialog
 
     def clear_active_dialog(self):
         if self.active_dialog.alive():
             self.active_dialog.kill()
         self.active_dialog = None
+        self.view.toolbar.controller.enable_toolbar()
+        
+    def clear_extra_dialog(self):
+        if self.extra_dialog.alive():
+            self.extra_dialog.kill()
+        self.extra_dialog = None
 
     def get_ui_element_text(self, element_id):
+        #event.ui_element.ui_container.parent_element.
         return self.ui_manager.get_ui_element(element_id).get_text()
 
     def kill_ui_element(self, element_id):
@@ -553,6 +653,12 @@ class ViewController:
     
     def set_open_menu(self, menu):
         self.open_menu = menu
+        
+    def disable_toolbar(self):
+        self.view.toolbar.controller.disable_toolbar()
+        
+    def enable_toolbar(self):
+        self.view.toolbar.controller.enable_toolbar()
         
 class HomeViewControl:
     def __init__(self, view):

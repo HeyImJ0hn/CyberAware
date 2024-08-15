@@ -9,6 +9,8 @@ from conv.json_converter import JSONConverter
 from config.settings import Settings
 from conv.kotlin_converter import KotlinConverter
 from model.logger import Logger
+from dao.gradle_con import GradleCon
+from model.keystore import KeyStore
 
 class GameManager:
     def __init__(self):
@@ -35,6 +37,8 @@ class GameManager:
         
         self.finished_compiling = False
         self.compilation_logs = []
+        
+        self.keystore = None
 
     def run(self):
         self.view.run()
@@ -73,8 +77,8 @@ class GameManager:
         json = self.json_converter.game_to_json(self)
         FileDAO.save(json, self.path)
 
-    def compile(self):
-        KotlinConverter.convert_to_kotlin(self, self.logger)
+    def compile(self, signed):
+        KotlinConverter.convert_to_kotlin(self, self.logger, signed, self.keystore)
 
     def quit(self):
         pygame.quit()
@@ -147,7 +151,23 @@ class GameManager:
                 self.recent_files.pop(i)
         Settings.RECENT_FILES = self.recent_files
         self.save_settings()
-
+        
+    def generate_key(self, key_alias, key_password, keystore_password, keystore_name, name, org_unit, org, city, state, country):
+        self.keystore = KeyStore(keystore_name, keystore_password)
+        return GradleCon.generate_key(self.logger, key_alias, key_password, keystore_password, keystore_name, name, org_unit, org, city, state, country)
+    
+    def set_keystore(self, keystore_path, keystore_password):
+        self.keystore = KeyStore(keystore_path, keystore_password)
+        
+    def get_keystore_path(self):
+        return FileDAO.join_path(FileDAO.get_game_folder(self.game_to_file_name(self.game_name).split(".")[0]), "keystore.jks")
+    
+    def does_keystore_exist(self):
+        return FileDAO.does_path_exist(self.get_keystore_path())
+    
+    def move_build_folder(self):
+        FileDAO.move_build_folder(self.game_to_file_name(self.game_name).split(".")[0])
+        
 class EntityManager:
     def __init__(self, ui_manager, entities=[]):
         self.entities = entities

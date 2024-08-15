@@ -1,6 +1,9 @@
 import os
 import json
 import shutil
+import platform
+import subprocess
+from pathlib import Path
 
 class FileDAO:
     @staticmethod
@@ -37,10 +40,8 @@ class FileDAO:
     @staticmethod
     def get_app_folder():
         if os.name == 'nt':  # windows
-            print("Detected OS: Windows")
             return os.path.join(os.environ['USERPROFILE'], 'CyberAware')
         else:  # mac / linux
-            print("Detected OS: Unix-like")
             return os.path.join(os.environ['HOME'], 'CyberAware')
 
     @staticmethod
@@ -161,3 +162,34 @@ class FileDAO:
     @staticmethod
     def does_path_exist(path):
         return os.path.exists(path)
+    
+    @staticmethod
+    def join_path(path, file):
+        return os.path.join(path, file)
+    
+    @staticmethod
+    def move_build_folder(game_name):
+        build_folder = os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..', '..' ,'android', 'app', 'build', 'outputs'))
+        game_folder = FileDAO.get_game_folder(game_name)
+        if os.path.exists(build_folder):
+            print('Moving build folder: ' + build_folder + ' to ' + game_folder)
+            if os.path.exists(os.path.join(game_folder, 'outputs')):
+                shutil.rmtree(os.path.join(game_folder, 'outputs'))
+            shutil.move(build_folder, game_folder)
+        else:
+            print('Build folder does not exist: ' + build_folder)
+            
+        FileDAO.open_folder(game_folder)
+    
+    @staticmethod        
+    def open_folder(path):
+        if not os.path.isdir(path):
+            print(f"{path} is not a valid directory.")
+            return
+        
+        if platform.system() == "Windows":
+            subprocess.Popen(f'explorer {os.path.normpath(path)}')
+        elif platform.system() == "Darwin":  # macOS
+            subprocess.Popen(['open', path])
+        else:  # Linux
+            subprocess.Popen(['xdg-open', path])

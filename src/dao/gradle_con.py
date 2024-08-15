@@ -6,17 +6,75 @@ import sys
 import time
 
 class GradleCon:
-    def generate_key(game):
-        pass
+    @staticmethod
+    def generate_key(
+        logger,
+        key_alias,
+        key_password,
+        keystore_password,
+        keystore_name,
+        name,
+        organizational_unit,
+        organization,
+        city,
+        state,
+        country_code,
+    ):
+        dname = f"CN={name}, OU={organizational_unit}, O={organization}, L={city}, ST={state}, C={country_code}"
 
-    def compile(logger):
+        keytool_command = [
+            "keytool", "-genkeypair",
+            "-alias", key_alias,
+            "-keyalg", "RSA",
+            "-keysize", "2048",
+            "-validity", "10000",
+            "-keystore", keystore_name,
+            "-storepass", keystore_password,
+            "-keypass", key_password,
+            "-dname", dname
+        ]
+
+        try:
+            print(f"Generating key with alias '{key_alias}'...")
+            print(f"Distinguished Name: {dname}")
+            #logger.log(f"Generating key with alias '{key_alias}'...")
+            #logger.log(f"Distinguished Name: {dname}")
+            result = subprocess.run(keytool_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            
+            if result.returncode == 0:
+                print(f"Key generation successful.\n{result.stdout}")
+                #logger.log(f"Key generation successful.<br>{result.stdout}")
+            else:
+                print(f"Key generation failed with error code {result.returncode}:\nCheck if password is at least 6 characters long.\n{result.stderr}")
+                #logger.log(f"Key generation failed with error code {result.returncode}:<br>{result.stderr}")
+            return result.returncode
+        except Exception as e:
+            print(f"An error occurred while generating the key: {e}")
+            #logger.log(f"An error occurred while generating the key: {e}<br>")
+            return -1
+
+    @staticmethod
+    def compile(logger, signed = False, keystore = None):
         def run_gradle_build():
-            android_project_dir = os.path.join(os.getcwd(), 'android')
+            android_project_dir =  os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..', '..' ,'android'))
 
             if platform.system() == "Windows":
-                gradle_command = 'gradlew.bat assembleDebug'
+                gradle_command = 'gradlew.bat'
             else:
-                gradle_command = './gradlew assembleDebug'
+                gradle_command = './gradlew'
+
+            if signed:
+                gradle_command += ' bundleRelease'
+            else:
+                gradle_command += ' assembleDebug'
+
+            if signed:
+                gradle_command += (
+                    f' -Pandroid.injected.signing.store.file={keystore.get_path()}'
+                    f' -Pandroid.injected.signing.store.password={keystore.get_store_password()}'
+                    f' -Pandroid.injected.signing.key.alias={keystore.get_key_alias()}'
+                    f' -Pandroid.injected.signing.key.password={keystore.get_key_password()}'
+                )
 
             gradle_wrapper = os.path.join(android_project_dir, gradle_command.split()[0])
             if not os.path.exists(gradle_wrapper):
@@ -25,7 +83,10 @@ class GradleCon:
                 return
 
             print(f"Running command: {gradle_command}")
-            logger.log(f"Running command: {gradle_command}<br>")
+            if signed:
+                logger.log(f"Running command: gradlew.bat bundleRelease<br>")
+            else:
+                logger.log(f"Running command: {gradle_command}<br>")
 
             start_time = time.time()
 

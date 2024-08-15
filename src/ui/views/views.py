@@ -111,6 +111,10 @@ class BuildView(View):
         
         if self.game_manager.finished_compiling:
             self.view_controller.handle_compilation_finish()
+            
+        if self.view_controller.generating_key:
+            if self.game_manager.does_keystore_exist():
+                self.view_controller.handle_key_generation_finish()
 
         self.update_display()
 

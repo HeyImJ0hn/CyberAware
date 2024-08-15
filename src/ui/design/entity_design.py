@@ -215,6 +215,7 @@ class PreviewWindow(UIWindow):
         self.setup_ui()
 
     def setup_ui(self):
+        '''
         # Background
         image_surface = self.resize_image_to_height(pygame.image.load("static/homeview_bg.png"), self.height)
         excess_width = image_surface.get_width() - self.width
@@ -226,6 +227,7 @@ class PreviewWindow(UIWindow):
                                 manager=self.ui_manager, 
                                 container=self, 
                                 object_id=ObjectID(class_id='@preview_window_background', object_id='#background_image'))
+        '''
         
         # Media
         if FileDAO.is_video_file(self.entity.media):
