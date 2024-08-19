@@ -29,6 +29,7 @@ class GameManager:
 
         self.game_name = ""
         self.path = None
+        self.app_version = 1
         
         self.check_recent_files()
 
@@ -58,7 +59,7 @@ class GameManager:
         self.view.run()
 
     def load_game(self, path):
-        self.game_name, entities = self.json_converter.game_from_json(self, path)
+        self.game_name, self.app_version, entities = self.json_converter.game_from_json(self, path)
         self.path = path
         self.update_recent_files()
         self._entity_manager.update_entities(entities)

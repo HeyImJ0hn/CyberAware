@@ -1,4 +1,4 @@
-package dev.jpires.cyberawarebaseapp.screens
+package dev.cyberaware.cyberawarebaseapp.screens
 
 import android.content.Context
 import android.net.Uri

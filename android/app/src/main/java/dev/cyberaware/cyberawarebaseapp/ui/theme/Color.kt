@@ -1,4 +1,4 @@
-package dev.jpires.cyberawarebaseapp.ui.theme
+package dev.cyberaware.cyberawarebaseapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -1,5 +1,6 @@
 {
     "name": "Burla por Email",
+    "app_version": "1",
     "entities": [
         {
             "id": 0,

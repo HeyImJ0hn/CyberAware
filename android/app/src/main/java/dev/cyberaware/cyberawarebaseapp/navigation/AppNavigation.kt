@@ -1,4 +1,4 @@
-package dev.jpires.cyberawarebaseapp.navigation
+package dev.cyberaware.cyberawarebaseapp.navigation
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
@@ -9,10 +9,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import dev.jpires.cyberawarebaseapp.R
-import dev.jpires.cyberawarebaseapp.screens.BaseScreen
-import dev.jpires.cyberawarebaseapp.screens.HomeScreen
-import dev.jpires.cyberawarebaseapp.screens.OptionButton
+import dev.cyberaware.cyberawarebaseapp.R
+import dev.cyberaware.cyberawarebaseapp.screens.BaseScreen
+import dev.cyberaware.cyberawarebaseapp.screens.HomeScreen
+import dev.cyberaware.cyberawarebaseapp.screens.OptionButton
 
 @Composable
 fun AppNavigation() {

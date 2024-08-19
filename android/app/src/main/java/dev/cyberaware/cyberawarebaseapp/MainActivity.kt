@@ -19,7 +19,6 @@ import dev.jpires.cyberawarebaseapp.ui.theme.CyberAwareBaseAppTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
 
         setContent {
             CyberAwareBaseAppTheme {

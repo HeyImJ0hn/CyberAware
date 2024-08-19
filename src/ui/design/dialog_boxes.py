@@ -233,6 +233,19 @@ class RequestKeyDialog(UIWindow):
                                               container=self, 
                                               object_id=ObjectID(class_id='@request_key_dialog_input', object_id='#key_store_password'), 
                                               initial_text=game_manager.keystore.get_store_password() if game_manager.keystore else "")
+        self.key_store_password.set_text_hidden(True)
+        
+        self.app_version_label = UILabel(relative_rect=pygame.Rect((10, 140), (label_width, 30)),
+                                            text="App version",
+                                            manager=self.ui_manager,
+                                            container=self,
+                                            object_id=ObjectID(class_id='@request_key_dialog_label', object_id='#app_version_label'))
+        self.app_version_input = UITextEntryLine(relative_rect=pygame.Rect((label_width + 20, 140), (entry_width, 30)),
+                                                    manager=self.ui_manager,
+                                                    container=self,
+                                                    object_id=ObjectID(class_id='@request_key_dialog_input', object_id='#app_version_input'),
+                                                    initial_text=str(game_manager.app_version))
+        self.app_version_input.tool_tip_text = "Numbers only"
 
         self.button_next = UIButton(relative_rect=pygame.Rect((WIDTH-140, HEIGHT-70), (130, 30)),
                                     text="Compile",
@@ -267,6 +280,7 @@ class BrowseKeystore:
     def kill(self):
         return self.dialog.kill()
 
+##### UNUSED #####
 class CreateKeyDialog(UIWindow):
     def __init__(self, ui_manager):
         WIDTH, HEIGHT = 500, 550

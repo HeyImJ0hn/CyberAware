@@ -33,6 +33,7 @@ class JSONConverter:
 
         return {
             "name": game_manager.game_name,
+            "app_version": str(game_manager.app_version),
             "entities": entities
         }
 
@@ -40,6 +41,7 @@ class JSONConverter:
         json = FileDAO.load(path)
 
         name = json["name"]
+        app_version = int(json["app_version"])
 
         entities = []
         for e in json["entities"]:
@@ -63,7 +65,7 @@ class JSONConverter:
 
             entities.append(entity)
 
-        return (name, entities)
+        return (name, app_version, entities)
     
     def name_from_json(self, path):
         json = FileDAO.load(path)

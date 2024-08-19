@@ -1,4 +1,4 @@
-package dev.jpires.cyberawarebaseapp.screens
+package dev.cyberaware.cyberawarebaseapp.screens
 
 import android.app.Activity
 import androidx.activity.ComponentActivity
@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import dev.jpires.cyberawarebaseapp.R
+import dev.cyberaware.cyberawarebaseapp.R
 
 @Composable
 fun HomeScreen(onNavigateToBaseScreen: (String) -> Unit) {
