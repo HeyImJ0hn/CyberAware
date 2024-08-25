@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "dev.jpires.cyberawarebaseapp"
+    namespace = "dev.cyberaware.burlaporemail"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "dev.jpires.cyberawarebaseapp"
+        applicationId = "dev.cyberaware.burlaporemail"
         minSdk = 26
         targetSdk = 34
         versionCode = 1

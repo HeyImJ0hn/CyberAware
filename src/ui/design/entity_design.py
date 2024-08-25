@@ -114,7 +114,7 @@ class EntityMenu(UIWindow):
         UILabel(relative_rect=pygame.Rect((10, 90), (60, 30)), 
                 text="Text", 
                 manager=self.ui_manager, 
-                container=self, 
+                container=self,
                 object_id=ObjectID(class_id='@entity_menu_label', object_id='#text_label'))
         
         self.text = UITextEntryBox(relative_rect=pygame.Rect((80, 90), (260, 80)), 

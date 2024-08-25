@@ -1,5 +1,5 @@
-package dev.cyberaware.cyberawarebaseapp.ui.theme
-
+package dev.cyberaware.burlaporemail.ui.theme
+        
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

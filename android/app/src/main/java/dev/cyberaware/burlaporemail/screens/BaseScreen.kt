@@ -1,4 +1,4 @@
-package dev.cyberaware.cyberawarebaseapp.screens
+package dev.cyberaware.burlaporemail.screens
 
 import android.content.Context
 import android.net.Uri

@@ -8,8 +8,26 @@ class KotlinConverter:
     def convert_to_kotlin(game, logger, signed, keystore):
         game_name = game.game_name
         entities = game.get_entities()
-        entities = []
         
+        dir_to_create = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name))
+        if not os.path.exists(dir_to_create):
+            os.makedirs(dir_to_create)
+        
+        dir_to_create = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'navigation')
+        if not os.path.exists(dir_to_create):
+            os.makedirs(dir_to_create)
+            
+        dir_to_create = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'screens')
+        if not os.path.exists(dir_to_create):
+            os.makedirs(dir_to_create)
+            
+        dir_to_create = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui')
+        if not os.path.exists(dir_to_create):
+            os.makedirs(dir_to_create)
+            
+        dir_to_create = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui', 'theme')
+        if not os.path.exists(dir_to_create):
+            os.makedirs(dir_to_create)
         
         # App Screens
         app_nav_file = f'''package dev.cyberaware.{TextUtils.clean_text(game_name)}.navigation
@@ -53,13 +71,14 @@ fun AppNavigation() {{
             when (screenId) {{
         '''
         for entity in entities:
-            string = f'"{entity.id}" -> BaseScreen(\n\
-                screenId=screenId, "{entity.text}", true, R.drawable.pexels, buttons = listOf('
+            string = f'\t\t\t\t"{entity.id}" -> BaseScreen(\n\
+                \tscreenId=screenId, """{entity.text}""", true, R.drawable.pexels, buttons = listOf(\n'
             
             for option in entity.options:
-                string += f'{{modifier -> OptionButton(modifier, "{option.text}") {{ navController.navigate("base/{str(option.entity.id)}") }} }},'
+                string += f'\t\t\t\t\t{{modifier -> OptionButton(modifier, "{option.text}") {{ navController.navigate("base/{str(option.entity.id)}") }} }},\n'
                 
-            string += f'))'
+            string += f'\t\t\t\t))\n'
+            app_nav_file += string
         app_nav_file +='''
             }
         }
@@ -67,8 +86,9 @@ fun AppNavigation() {{
 }
         '''
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'navigation', 'AppNavigation.kt')
-        with open(file_path, 'w') as file:
+        with open(file_path, 'w', encoding='utf-8') as file:
             file.write(app_nav_file)
+        print("AppNavigation.kt created")
             
             
             
@@ -81,9 +101,9 @@ fun AppNavigation() {{
 </resources>
         '''
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'res', 'values', 'strings.xml')
-        with open(file_path, 'w') as file:
+        with open(file_path, 'w', encoding='utf-8') as file:
             file.write(strings_file)
-            
+        print("strings.xml updated")
             
             
             
@@ -113,8 +133,9 @@ rootProject.name = "{TextUtils.clean_text(game_name)}"
 include(":app")
         '''
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'settings.gradle.kts')
-        with open(file_path, 'w') as file:
+        with open(file_path, 'w', encoding='utf-8') as file:
             file.write(settings_file)
+        print("settings.gradle.kts updated")
         
         
         
@@ -197,8 +218,9 @@ dependencies {{
 }}'''    
 
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'build.gradle.kts')
-        with open(file_path, 'w') as file:
+        with open(file_path, 'w', encoding='utf-8') as file:
             file.write(build_file)
+        print("build.gradle.kts updated")
             
             
             
@@ -219,8 +241,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import dev.jpires.{TextUtils.clean_text(game_name)}.navigation.AppNavigation
-import dev.jpires.{TextUtils.clean_text(game_name)}.ui.theme.CyberAwareBaseAppTheme
+import dev.cyberaware.{TextUtils.clean_text(game_name)}.navigation.AppNavigation
+import dev.cyberaware.{TextUtils.clean_text(game_name)}.ui.theme.CyberAwareBaseAppTheme
 
 class MainActivity : ComponentActivity() {{
     override fun onCreate(savedInstanceState: Bundle?) {{
@@ -238,8 +260,443 @@ class MainActivity : ComponentActivity() {{
         '''
         
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'MainActivity.kt')
-        with open(file_path, 'w') as file:
+        with open(file_path, 'w', encoding='utf-8') as file:
             file.write(main_activity_file)
+        print("MainActivity.kt created")
+            
+            
+
+        
+        ### Theme ###
+        # Color.kt
+        color_file = f'''package dev.cyberaware.{TextUtils.clean_text(game_name)}.ui.theme
+        
+import androidx.compose.ui.graphics.Color
+
+val Purple80 = Color(0xFFD0BCFF)
+val PurpleGrey80 = Color(0xFFCCC2DC)
+val Pink80 = Color(0xFFEFB8C8)
+
+val Purple40 = Color(0xFF6650a4)
+val PurpleGrey40 = Color(0xFF625b71)
+val Pink40 = Color(0xFF7D5260)
+
+val PrimaryBlue = Color(0xFF4A99F8)
+val DarkBlue = Color(0xFF050E27)
+val White = Color(0xFFFFFFFF)
+val Black = Color(0xFF000000)
+'''
+
+        file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui', 'theme', 'Color.kt')
+        with open(file_path, 'w', encoding='utf-8') as file:
+            file.write(color_file)
+        print("Color.kt created")
+            
+        # Theme.kt
+        theme_file = f'''package dev.cyberaware.{TextUtils.clean_text(game_name)}.ui.theme
+        
+import android.app.Activity
+import android.os.Build
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+
+private val DarkColorScheme = darkColorScheme(
+    primary = PrimaryBlue,
+    secondary = White,
+    tertiary = DarkBlue,
+
+    onBackground = White
+)
+
+private val LightColorScheme = lightColorScheme(
+    primary = PrimaryBlue,
+    secondary = White,
+    tertiary = DarkBlue,
+
+    onBackground = Black
+)
+
+@Composable
+fun CyberAwareBaseAppTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
+) {{
+    val colorScheme = when {{
+        darkTheme -> DarkColorScheme
+        else -> LightColorScheme
+    }}
+
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = Typography,
+        content = content
+    )
+}}
+'''
+
+        file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui', 'theme', 'Theme.kt')
+        with open(file_path, 'w', encoding='utf-8') as file:
+            file.write(theme_file)
+        print("Theme.kt created")
+            
+        # Type.kt
+        type_file = f'''package dev.cyberaware.{TextUtils.clean_text(game_name)}.ui.theme
+        
+import androidx.compose.material3.Typography
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+
+val Typography = Typography(
+    bodyLarge = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp
+    )
+)
+'''
+
+        file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui', 'theme', 'Type.kt')
+        with open(file_path, 'w', encoding='utf-8') as file:
+            file.write(type_file)
+        print("Type.kt created")
+            
+
+            
+        
+        ### Screens ###
+        # HomeScreen.kt
+        home_screen_file = f'''package dev.cyberaware.{TextUtils.clean_text(game_name)}.screens
+
+import android.app.Activity
+import androidx.activity.ComponentActivity
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import dev.cyberaware.{TextUtils.clean_text(game_name)}.R
+
+@Composable
+fun HomeScreen(onNavigateToBaseScreen: (String) -> Unit) {{
+
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {{
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {{
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {{
+                Text(
+                    text = "{game_name}",
+                    modifier = Modifier.padding(top = 100.dp),
+                    style = MaterialTheme.typography.headlineLarge.copy(
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+                Spacer(modifier = Modifier.height(128.dp))
+
+                // replace id
+                Image(
+                    painter = painterResource(id = R.drawable.pj),
+                    contentDescription = "Game Image",
+                    modifier = Modifier
+                        .height(248.dp)
+                        .width(248.dp)
+                        .clip(RoundedCornerShape(24.dp)),
+                    contentScale = ContentScale.Fit
+                )
+            }}
+
+            Button(
+                onClick = {{ onNavigateToBaseScreen("{entities[1].id}") }},
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = Color.White
+                ),
+                modifier = Modifier
+                    .padding(bottom = 64.dp)
+                    .align(Alignment.CenterHorizontally)
+            ) {{
+                Text(text = "{entities[0].options[0].text}")
+            }}
+        }}
+    }}
+
+}}
+'''
+
+        file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'screens', 'HomeScreen.kt')
+        with open(file_path, 'w', encoding='utf-8') as file:
+            file.write(home_screen_file)
+        print("HomeScreen.kt created")
+            
+        # BaseScreen.kt
+        base_screen_file = f'''package dev.cyberaware.{TextUtils.clean_text(game_name)}.screens
+
+import android.content.Context
+import android.net.Uri
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+import com.google.android.exoplayer2.ui.StyledPlayerView
+import java.util.logging.Logger
+
+@Composable
+fun BaseScreen(
+    screenId: String,
+    screenText: String,
+    isImage: Boolean,
+    resourceId: Int,
+    buttons: List<@Composable (Modifier) -> Unit>
+) {{
+    val context = LocalContext.current
+
+    val isContentVisible = remember {{ mutableStateOf(isImage) }}
+    val videoUri = getUriFromRaw(context, rawResourceId = resourceId)
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {{
+        if (!isImage)
+            VideoPlayer(uri = videoUri, isContentVisible = isContentVisible)
+        else
+            Image(
+                painter = painterResource(id = resourceId),
+                contentDescription = "Image",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+
+        if (!isContentVisible.value)
+            Box(modifier = Modifier
+                .align(Alignment.TopEnd)
+                .size(42.dp)
+                .padding(8.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                    shape = RoundedCornerShape(24.dp)
+                )
+                .clickable {{ }},
+            ) {{
+                IconButton(
+                    onClick = {{ isContentVisible.value = !isContentVisible.value }},
+                ) {{
+                    Icon(imageVector = Icons.Default.Menu, contentDescription = "Show Content")
+                }}
+            }}
+
+        if (isContentVisible.value) {{
+            Box(modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .background(
+                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f)
+                )
+                .clickable {{ }},
+            ) {{
+                if (isContentVisible.value)
+                    Box(modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .size(42.dp)
+                        .padding(8.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = RoundedCornerShape(24.dp)
+                        )
+                        .clickable {{ }},
+                    ) {{
+                        IconButton(
+                            onClick = {{ isContentVisible.value = !isContentVisible.value }},
+                        ) {{
+                            Icon(imageVector = Icons.Default.Close, contentDescription = "Hide Content")
+                        }}
+                    }}
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {{
+                    Text(
+                        text = screenText,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier
+                            .padding(bottom = 16.dp, top = 28.dp)
+                            .align(Alignment.Start)
+                    )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    val buttonChunks = buttons.chunked(2)
+                    buttonChunks.forEach {{ rowButtons ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {{
+                            var i = 0
+                            rowButtons.forEach {{ button ->
+                                i++
+                                button(Modifier.weight(1f))
+                                if (i < rowButtons.size)
+                                    Spacer(modifier = Modifier.width(16.dp))
+                            }}
+                        }}
+                    }}
+                }}
+            }}
+        }}
+    }}
+}}
+
+@Composable
+fun OptionButton(modifier: Modifier, text: String, onNavigateToBaseScreen: () -> Unit) {{
+    Button(
+        onClick = onNavigateToBaseScreen,
+        colors = ButtonDefaults.buttonColors(
+            contentColor = Color.White
+        ),
+        modifier = modifier
+    ) {{
+        Text(text = text)
+    }}
+}}
+
+@Composable
+fun VideoPlayer(uri: Uri, isContentVisible: MutableState<Boolean>) {{
+    val context = LocalContext.current
+    val exoPlayer = remember {{
+        ExoPlayer.Builder(context).build().apply {{
+            val mediaItem = MediaItem.fromUri(uri)
+            setMediaItem(mediaItem)
+            prepare()
+            playWhenReady = true
+        }}
+    }}
+
+    DisposableEffect(Unit) {{
+        val listener = object : Player.Listener {{
+            override fun onPlaybackStateChanged(playbackState: Int) {{
+                if (playbackState == Player.STATE_ENDED) {{
+                    isContentVisible.value = true
+                }}
+            }}
+        }}
+        exoPlayer.addListener(listener)
+
+        onDispose {{
+            exoPlayer.removeListener(listener)
+            exoPlayer.release()
+        }}
+    }}
+
+    AndroidView(
+        factory = {{
+            StyledPlayerView(context).apply {{
+                player = exoPlayer
+                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+            }}
+        }},
+        modifier = Modifier.fillMaxSize()
+    )
+}}
+
+fun getUriFromRaw(context: Context, rawResourceId: Int): Uri {{
+    return Uri.parse("android.resource://${{context.packageName}}/$rawResourceId")
+}}
+'''
+
+        file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'screens', 'BaseScreen.kt')
+        with open(file_path, 'w', encoding='utf-8') as file:
+            file.write(base_screen_file)
+        print("BaseScreen.kt created")
             
         
         GradleCon.compile(logger, signed, keystore)

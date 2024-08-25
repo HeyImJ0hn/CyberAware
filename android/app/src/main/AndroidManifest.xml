@@ -13,16 +13,6 @@
         android:theme="@style/Theme.CyberAwareBaseApp"
         tools:targetApi="31">
         <activity
-            android:name=".navigation.AppNavigation"
-            android:exported="false"
-            android:label="@string/title_activity_app_navigation"
-            android:theme="@style/Theme.CyberAwareBaseApp" />
-        <activity
-            android:name=".screens.HomeScreen"
-            android:exported="false"
-            android:label="@string/title_activity_home_screen"
-            android:theme="@style/Theme.CyberAwareBaseApp" />
-        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"

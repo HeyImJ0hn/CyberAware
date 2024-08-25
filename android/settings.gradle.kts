@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "CyberAwareBaseApp"
+rootProject.name = "burlaporemail"
 include(":app")
- 
+        

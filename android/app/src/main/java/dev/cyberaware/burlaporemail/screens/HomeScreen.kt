@@ -1,4 +1,4 @@
-package dev.cyberaware.cyberawarebaseapp.screens
+package dev.cyberaware.burlaporemail.screens
 
 import android.app.Activity
 import androidx.activity.ComponentActivity
@@ -40,25 +40,14 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import dev.cyberaware.cyberawarebaseapp.R
+import dev.cyberaware.burlaporemail.R
 
 @Composable
 fun HomeScreen(onNavigateToBaseScreen: (String) -> Unit) {
-    val background = if (isSystemInDarkTheme()) {
-        R.drawable.bg_dark
-    } else {
-        R.drawable.bg_light
-    }
 
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        Image(
-            painter = painterResource(id = background),
-            contentDescription = "Background Image",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
 
         Column(
             modifier = Modifier
@@ -71,7 +60,7 @@ fun HomeScreen(onNavigateToBaseScreen: (String) -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Game Title",
+                    text = "Burla por Email",
                     modifier = Modifier.padding(top = 100.dp),
                     style = MaterialTheme.typography.headlineLarge.copy(
                         fontWeight = FontWeight.Bold
@@ -82,7 +71,7 @@ fun HomeScreen(onNavigateToBaseScreen: (String) -> Unit) {
                 // replace id
                 Image(
                     painter = painterResource(id = R.drawable.pj),
-                    contentDescription = "Description of Image",
+                    contentDescription = "Game Image",
                     modifier = Modifier
                         .height(248.dp)
                         .width(248.dp)
@@ -100,8 +89,7 @@ fun HomeScreen(onNavigateToBaseScreen: (String) -> Unit) {
                     .padding(bottom = 64.dp)
                     .align(Alignment.CenterHorizontally)
             ) {
-                // replace with option text
-                Text(text = "Go to Base Screen 1")
+                Text(text = "Começar")
             }
         }
     }

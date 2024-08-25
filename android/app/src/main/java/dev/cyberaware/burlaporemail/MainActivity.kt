@@ -1,4 +1,4 @@
-package dev.jpires.cyberawarebaseapp
+package dev.cyberaware.burlaporemail
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -13,8 +13,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import dev.jpires.cyberawarebaseapp.navigation.AppNavigation
-import dev.jpires.cyberawarebaseapp.ui.theme.CyberAwareBaseAppTheme
+import dev.cyberaware.burlaporemail.navigation.AppNavigation
+import dev.cyberaware.burlaporemail.ui.theme.CyberAwareBaseAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,5 +28,5 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
 }
+        

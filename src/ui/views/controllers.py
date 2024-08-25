@@ -320,6 +320,8 @@ class ViewController:
         if signed:
             key_store_path = event.ui_element.ui_container.parent_element.key_store_path.get_text()
             key_store_password = event.ui_element.ui_container.parent_element.key_store_password.get_text()
+            app_version = event.ui_element.ui_container.parent_element.app_version_input.get_text()
+            self.game_manager.app_version = app_version
             self.game_manager.set_keystore(key_store_path, key_store_password)
             
         self.game_manager.compile(signed)
