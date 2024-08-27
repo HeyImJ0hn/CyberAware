@@ -5,7 +5,6 @@ from pygame_gui.elements import *
 from pygame_gui.core import ObjectID
 from config.settings import Settings
 from ui.design.toast_type import ToastType
-from pygame_gui.windows import UIMessageWindow
 
 class NewGameDialog(UIWindow):
     def __init__(self, ui_manager, game_name="", file_path=""):

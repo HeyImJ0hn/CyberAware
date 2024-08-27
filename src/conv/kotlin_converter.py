@@ -1,6 +1,7 @@
 import os
 from dao.gradle_con import GradleCon
 from utils.text_utils import TextUtils
+from dao.file_dao import FileDAO
 
 class KotlinConverter:
     
@@ -71,11 +72,17 @@ fun AppNavigation() {{
             when (screenId) {{
         '''
         for entity in entities:
+            isImage = FileDAO.is_image_file(entity.media)
+            folder = "drawable" if isImage else "raw"
+            resource = f'R.{folder}.id{entity.id}' if entity.media != "" else 0
             string = f'\t\t\t\t"{entity.id}" -> BaseScreen(\n\
-                \tscreenId=screenId, """{entity.text}""", true, R.drawable.pexels, buttons = listOf(\n'
+                \tscreenId=screenId, """{entity.text}""", {str(entity.media != "").lower()}, {str(isImage).lower() if resource != 0 else "true"}, {resource}, buttons = listOf(\n'
             
-            for option in entity.options:
-                string += f'\t\t\t\t\t{{modifier -> OptionButton(modifier, "{option.text}") {{ navController.navigate("base/{str(option.entity.id)}") }} }},\n'
+            if not entity.final:
+                for option in entity.options:
+                    string += f'\t\t\t\t\t{{modifier -> OptionButton(modifier, "{option.text}") {{ navController.navigate("base/{str(option.entity.id)}") }} }},\n'
+            else:
+                string += f'\t\t\t\t\t{{modifier -> OptionButton(modifier, "Recomeçar") {{ navController.navigate("home") }} }},\n'
                 
             string += f'\t\t\t\t))\n'
             app_nav_file += string
@@ -88,7 +95,6 @@ fun AppNavigation() {{
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'navigation', 'AppNavigation.kt')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(app_nav_file)
-        print("AppNavigation.kt created")
             
             
             
@@ -103,7 +109,6 @@ fun AppNavigation() {{
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'res', 'values', 'strings.xml')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(strings_file)
-        print("strings.xml updated")
             
             
             
@@ -135,7 +140,6 @@ include(":app")
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'settings.gradle.kts')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(settings_file)
-        print("settings.gradle.kts updated")
         
         
         
@@ -220,7 +224,6 @@ dependencies {{
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'build.gradle.kts')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(build_file)
-        print("build.gradle.kts updated")
             
             
             
@@ -262,7 +265,6 @@ class MainActivity : ComponentActivity() {{
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'MainActivity.kt')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(main_activity_file)
-        print("MainActivity.kt created")
             
             
 
@@ -290,7 +292,6 @@ val Black = Color(0xFF000000)
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui', 'theme', 'Color.kt')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(color_file)
-        print("Color.kt created")
             
         # Theme.kt
         theme_file = f'''package dev.cyberaware.{TextUtils.clean_text(game_name)}.ui.theme
@@ -344,7 +345,6 @@ fun CyberAwareBaseAppTheme(
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui', 'theme', 'Theme.kt')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(theme_file)
-        print("Theme.kt created")
             
         # Type.kt
         type_file = f'''package dev.cyberaware.{TextUtils.clean_text(game_name)}.ui.theme
@@ -369,7 +369,6 @@ val Typography = Typography(
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui', 'theme', 'Type.kt')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(type_file)
-        print("Type.kt created")
             
 
             
@@ -478,7 +477,6 @@ fun HomeScreen(onNavigateToBaseScreen: (String) -> Unit) {{
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'screens', 'HomeScreen.kt')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(home_screen_file)
-        print("HomeScreen.kt created")
             
         # BaseScreen.kt
         base_screen_file = f'''package dev.cyberaware.{TextUtils.clean_text(game_name)}.screens
@@ -532,6 +530,7 @@ import java.util.logging.Logger
 fun BaseScreen(
     screenId: String,
     screenText: String,
+    hasMedia: Boolean,
     isImage: Boolean,
     resourceId: Int,
     buttons: List<@Composable (Modifier) -> Unit>
@@ -545,15 +544,16 @@ fun BaseScreen(
         modifier = Modifier
             .fillMaxSize()
     ) {{
-        if (!isImage)
-            VideoPlayer(uri = videoUri, isContentVisible = isContentVisible)
-        else
-            Image(
-                painter = painterResource(id = resourceId),
-                contentDescription = "Image",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
+        if (hasMedia)
+            if (!isImage)
+                VideoPlayer(uri = videoUri, isContentVisible = isContentVisible)
+            else
+                Image(
+                    painter = painterResource(id = resourceId),
+                    contentDescription = "Image",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
 
         if (!isContentVisible.value)
             Box(modifier = Modifier

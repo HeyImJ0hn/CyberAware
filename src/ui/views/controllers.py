@@ -98,6 +98,7 @@ class ViewController:
             self.handle_dragging_entity(mouse_pos)
 
     def ui_file_dialog_path_picked(self, event):
+        print("ui_file_dialog_path_picked")
         handlers = {
             '#save_path_dialog': self.handle_save_path_dialog,
             '#open_path_dialog': self.handle_open_path_dialog,
@@ -123,7 +124,6 @@ class ViewController:
             '#new_game_dialog.#browse_button': self.browse_new_game_path,
             '#new_game_dialog.#create_button': self.create_new_game,
             '#entity_menu.#browse_button': self.browse_media,
-            '#browse_media_dialog.#ok_button': self.clear_active_dialog,
             '#browse_media_dialog.#cancel_button': self.clear_active_dialog,
             '#remove_node.#confirm_button': self.confirm_remove_node,
             '#remove_node.#cancel_button': self.cancel_remove_node,
@@ -459,6 +459,7 @@ class ViewController:
         self.game_manager.open_game(text)
 
     def handle_browse_media_dialog(self, text):
+        print('browse_media_dialog')
         self.game_manager.submit_media(text, self.open_menu.entity)
         self.open_menu.kill()
         self.open_menu.entity.refresh_menu((self.open_menu.rect.x, self.open_menu.rect.y))

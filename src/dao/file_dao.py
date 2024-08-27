@@ -97,6 +97,18 @@ class FileDAO:
             print('Copying media: ' + source + ' to ' + destination)
             shutil.copy2(source, destination)
             return os.path.join(destination, os.path.basename(source))
+    
+    @staticmethod
+    def media_to_android(source, file_name):
+        folder = 'drawable' if FileDAO.is_image_file(source) else 'raw'
+        destination = os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..', '..' ,'android', 'app', 'src', 'main', 'res', folder, 'id' + str(file_name) + FileDAO.get_file_extension(source)))
+        
+        if not os.path.exists(source):
+            print('Media does not exist: ' + source)
+            return
+        else:
+            print('Copying media: ' + source + ' to ' + destination)
+            shutil.copy2(source, destination)
 
     @staticmethod
     def get_base_name(file):
@@ -158,6 +170,10 @@ class FileDAO:
     def is_image_file(path):
         image_extensions = ['.png', '.jpg', '.jpeg']
         return any(path.endswith(ext) for ext in image_extensions)
+    
+    @staticmethod
+    def get_file_extension(file):
+        return os.path.splitext(file)[1]
     
     @staticmethod
     def does_path_exist(path):

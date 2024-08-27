@@ -76,10 +76,10 @@ class BuildView(View):
         self.type = ViewType.BUILD
         super().__init__(game_manager)
         
-        self.ui_manager.set_window_resolution(self.resolution)
+        #self.ui_manager.set_window_resolution(self.resolution)
         
-        window = Window.from_display_module()
-        window.position = (5, 35)
+        #window = Window.from_display_module()
+        #window.position = (5, 35)
         
         self.toolbar = Toolbar(self)
 

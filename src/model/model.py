@@ -122,6 +122,7 @@ class GameManager:
         self.json_converter.settings_to_json()
 
     def submit_media(self, media, entity):
+        FileDAO.media_to_android(media, entity.id)
         entity.update_media(FileDAO.copy_media(media, self.game_to_file_name(self.game_name).split(".")[0]))
 
     def get_parents(self, entity):
