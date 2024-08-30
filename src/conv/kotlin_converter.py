@@ -456,7 +456,7 @@ fun HomeScreen(onNavigateToBaseScreen: (String) -> Unit) {{
 
                 // replace id
                 Image(
-                    painter = painterResource(id = R.drawable.pj),
+                    painter = painterResource(id = R.drawable.id{entities[0].id}),
                     contentDescription = "Game Image",
                     modifier = Modifier
                         .height(248.dp)
