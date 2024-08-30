@@ -8,6 +8,7 @@ class KotlinConverter:
     @staticmethod
     def convert_to_kotlin(game, logger, signed, keystore):
         game_name = game.game_name
+        app_version = game.app_version
         entities = game.get_entities()
         
         dir_to_create = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name))
@@ -29,8 +30,31 @@ class KotlinConverter:
         dir_to_create = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui', 'theme')
         if not os.path.exists(dir_to_create):
             os.makedirs(dir_to_create)
+            
+        # Navigation
+        KotlinConverter._create_app_navigation(game_name, entities)
         
-        # App Screens
+        # Gradle Related
+        KotlinConverter._create_string_file(game_name)
+        KotlinConverter._create_settings_file(game_name)
+        KotlinConverter._create_build_gradle(game_name, app_version)
+            
+        # Main Activity
+        KotlinConverter._create_main_activity(game_name)
+
+        # Theme            
+        KotlinConverter._create_color_file(game_name)
+        KotlinConverter._create_theme_file(game_name)
+        KotlinConverter._create_type_file(game_name)
+        
+        # Screens
+        KotlinConverter._create_home_screen(game_name, entities)
+        KotlinConverter._create_base_screen(game_name)    
+        
+        GradleCon.compile(logger, signed, keystore)
+    
+    @staticmethod
+    def _create_app_navigation(game_name, entities):
         app_nav_file = f'''package dev.cyberaware.{TextUtils.clean_text(game_name)}.navigation
 
 import androidx.activity.compose.BackHandler
@@ -90,29 +114,26 @@ fun AppNavigation() {{
             }
         }
     }
-}
-        '''
+}'''
+
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'navigation', 'AppNavigation.kt')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(app_nav_file)
-            
-            
-            
-            
-        # Change app name in strings.xml
+        
+    @staticmethod    
+    def _create_string_file(game_name):
         strings_file = f'''<resources>
     <string name="app_name">{game_name}</string>
     <string name="title_activity_home_screen">HomeScreen</string>
     <string name="title_activity_app_navigation">AppNavigation</string>
-</resources>
-        '''
+</resources>'''
+
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'res', 'values', 'strings.xml')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(strings_file)
-            
-            
-            
-        # Change app name in settings.gradle.kts
+    
+    @staticmethod
+    def _create_settings_file(game_name):
         settings_file = f'''pluginManagement {{
     repositories {{
         google {{
@@ -135,15 +156,14 @@ dependencyResolutionManagement {{
 }}
 
 rootProject.name = "{TextUtils.clean_text(game_name)}"
-include(":app")
-        '''
+include(":app")'''
+
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'settings.gradle.kts')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(settings_file)
-        
-        
-        
-        # Change app name in build.gradle.kts
+    
+    @staticmethod
+    def _create_build_gradle(game_name, app_version):
         build_file = f'''plugins {{
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -157,8 +177,8 @@ android {{
         applicationId = "dev.cyberaware.{TextUtils.clean_text(game_name)}"
         minSdk = 26
         targetSdk = 34
-        versionCode = {game.app_version}
-        versionName = "{game.app_version}.0"
+        versionCode = {app_version}
+        versionName = "{app_version}.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {{
@@ -224,11 +244,9 @@ dependencies {{
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'build.gradle.kts')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(build_file)
-            
-            
-            
-            
-        # MainActivity.kt
+    
+    @staticmethod
+    def _create_main_activity(game_name):
         main_activity_file = f'''package dev.cyberaware.{TextUtils.clean_text(game_name)}
 
 import android.os.Bundle
@@ -259,18 +277,14 @@ class MainActivity : ComponentActivity() {{
             }}
         }}
     }}
-}}
-        '''
+}}'''
         
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'MainActivity.kt')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(main_activity_file)
-            
-            
-
-        
-        ### Theme ###
-        # Color.kt
+          
+    @staticmethod  
+    def _create_color_file(game_name):
         color_file = f'''package dev.cyberaware.{TextUtils.clean_text(game_name)}.ui.theme
         
 import androidx.compose.ui.graphics.Color
@@ -286,14 +300,14 @@ val Pink40 = Color(0xFF7D5260)
 val PrimaryBlue = Color(0xFF4A99F8)
 val DarkBlue = Color(0xFF050E27)
 val White = Color(0xFFFFFFFF)
-val Black = Color(0xFF000000)
-'''
+val Black = Color(0xFF000000)'''
 
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui', 'theme', 'Color.kt')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(color_file)
-            
-        # Theme.kt
+          
+    @staticmethod  
+    def _create_theme_file(game_name):
         theme_file = f'''package dev.cyberaware.{TextUtils.clean_text(game_name)}.ui.theme
         
 import android.app.Activity
@@ -339,14 +353,14 @@ fun CyberAwareBaseAppTheme(
         typography = Typography,
         content = content
     )
-}}
-'''
+}}'''
 
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui', 'theme', 'Theme.kt')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(theme_file)
             
-        # Type.kt
+    @staticmethod
+    def _create_type_file(game_name):
         type_file = f'''package dev.cyberaware.{TextUtils.clean_text(game_name)}.ui.theme
         
 import androidx.compose.material3.Typography
@@ -363,18 +377,13 @@ val Typography = Typography(
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     )
-)
-'''
-
+)'''
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui', 'theme', 'Type.kt')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(type_file)
-            
-
-            
-        
-        ### Screens ###
-        # HomeScreen.kt
+    
+    @staticmethod
+    def _create_home_screen(game_name, entities):
         home_screen_file = f'''package dev.cyberaware.{TextUtils.clean_text(game_name)}.screens
 
 import android.app.Activity
@@ -470,15 +479,14 @@ fun HomeScreen(onNavigateToBaseScreen: (String) -> Unit) {{
             }}
         }}
     }}
-
-}}
-'''
+}}'''
 
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'screens', 'HomeScreen.kt')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(home_screen_file)
-            
-        # BaseScreen.kt
+         
+    @staticmethod   
+    def _create_base_screen(game_name):
         base_screen_file = f'''package dev.cyberaware.{TextUtils.clean_text(game_name)}.screens
 
 import android.content.Context
@@ -690,13 +698,8 @@ fun VideoPlayer(uri: Uri, isContentVisible: MutableState<Boolean>) {{
 
 fun getUriFromRaw(context: Context, rawResourceId: Int): Uri {{
     return Uri.parse("android.resource://${{context.packageName}}/$rawResourceId")
-}}
-'''
+}}'''
 
         file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'screens', 'BaseScreen.kt')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(base_screen_file)
-        print("BaseScreen.kt created")
-            
-        
-        GradleCon.compile(logger, signed, keystore)
