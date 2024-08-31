@@ -19,7 +19,7 @@ class View:
         self.screen = pygame.display.set_mode(self.resolution, pygame.SRCALPHA if self.type == ViewType.HOME else pygame.RESIZABLE | pygame.SRCALPHA)
 
         self.ui_manager = pygame_gui.UIManager(self.resolution, 'theme.json')
-        pygame.display.set_caption("CyberAware - Plataform")
+        pygame.display.set_caption("CyberAware")
         
         self.clock = pygame.time.Clock()
 
@@ -207,7 +207,7 @@ class HomeView(View):
         
         # Left side
         self.title = UILabel(pygame.Rect((0, title_y), (WIDTH*0.25, 50)), text='CyberAware', object_id='#title', manager=self.ui_manager)
-        self.subtitle = UILabel(pygame.Rect((15, subtitle_y), (WIDTH*0.25, 50)), text='Plataform', object_id='#subtitle', manager=self.ui_manager)
+        self.subtitle = UILabel(pygame.Rect((15, subtitle_y), (WIDTH*0.25, 50)), text='Platform', object_id='#subtitle', manager=self.ui_manager)
         
         self.new_button = UIButton(pygame.Rect((left_size / 2 - button_width/2, new_button_y), (button_width, button_height)), 
                                    text='New Game', 
