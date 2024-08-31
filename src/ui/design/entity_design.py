@@ -4,7 +4,7 @@ from pygame_gui.core import ObjectID
 from dao.file_dao import FileDAO
 import cv2
 from PIL import Image
-import os
+import numpy as np
 
 class EntityBody:
     def __init__(self, x, y, width, height, colour=(215, 215, 215)):
@@ -16,11 +16,27 @@ class EntityBody:
         self.colour = colour
 
     def draw(self, screen):
+        self.draw_shadow(screen)
         pygame.draw.rect(screen, self.colour, self.rect, border_radius=12)
 
     def draw_selected(self, screen):
+        self.draw_shadow(screen)
         pygame.draw.rect(screen, (74, 153, 248), self.rect, border_radius=12)
-        pygame.draw.rect(screen, self.colour, pygame.Rect(self.x+4, self.y+4, self.width-8, self.height-8), border_radius=12)
+        inner_rect = pygame.Rect(self.x + 4, self.y + 4, self.width - 8, self.height - 8)
+        pygame.draw.rect(screen, self.colour, inner_rect, border_radius=12)
+
+    def draw_shadow(self, screen):
+        shadow_offset = 5
+        shadow_surface = pygame.Surface((self.width + shadow_offset * 2, self.height + shadow_offset * 2), pygame.SRCALPHA)
+
+        for i in range(shadow_offset):
+            alpha = int(40 * (i / shadow_offset)) 
+            shadow_color = (0, 0, 0, alpha)
+            shadow_rect = pygame.Rect((i, i), (self.width + (shadow_offset - i) * 2, self.height + (shadow_offset - i) * 2))
+            pygame.draw.rect(shadow_surface, shadow_color, shadow_rect, border_radius=12 + i)
+
+        screen.blit(shadow_surface, (self.x - shadow_offset, self.y - shadow_offset))
+
 
 class EntityButton:
     def __init__(self, x, y, width, height, text):
