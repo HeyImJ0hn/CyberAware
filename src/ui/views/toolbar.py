@@ -67,7 +67,7 @@ class Toolbar:
         screen.blit(shadow_surface, (0, 5))
 
         main_rect = pygame.Rect((0, 0), (self.toolbar_width, self.toolbar_height))
-        pygame.draw.rect(screen, (255, 255, 255), main_rect)
+        pygame.draw.rect(screen, (47, 51, 61), main_rect)
 
 class ToolbarControl:
     def __init__(self, toolbar):
