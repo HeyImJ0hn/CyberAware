@@ -313,8 +313,8 @@ class ViewController:
         self.clear_active_dialog()
         #self.disable_toolbar()
         self.compilling = True
-        self.active_dialog = LoggerWindow(self.ui_manager)
-        self.game_manager.logger.subscribe(self.active_dialog.log)
+        #self.active_dialog = LoggerWindow(self.ui_manager)
+        #self.game_manager.logger.subscribe(self.active_dialog.log)
         self.active_toast = Toast(self.ui_manager, 'Compiling...', ToastType.INFO)
         
         if signed:
@@ -328,8 +328,8 @@ class ViewController:
     
     def handle_compilation_finish(self):
         self.compilling = False
-        self.active_dialog.log.set_text("".join(self.game_manager.compilation_logs))
-        self.active_dialog.button.enable()
+        #self.active_dialog.log.set_text("".join(self.game_manager.compilation_logs))
+        #self.active_dialog.button.enable()
         self.game_manager.finished_compiling = False
         self.game_manager.compilation_logs = []
         self.show_toast('Compilation finished', ToastType.SUCCESS)

@@ -8,6 +8,9 @@ from ui.views.controllers import ViewController, HomeViewControl
 from ui.views.toolbar import Toolbar
 from ui.views.view_types import ViewType
 from ui.design.entity_design import EntityBody
+import math
+import numpy as np
+import cv2
 
 class View:
     def __init__(self, game_manager):
@@ -81,6 +84,9 @@ class BuildView(View):
         #window = Window.from_display_module()
         #window.position = (5, 35)
         
+        self.loading_angle = 0 
+        self.loading_start_time = pygame.time.get_ticks()  
+        
         self.toolbar = Toolbar(self)
 
     def render(self):
@@ -112,11 +118,63 @@ class BuildView(View):
         if self.game_manager.finished_compiling:
             self.view_controller.handle_compilation_finish()
             
+        if not self.game_manager.finished_compiling and self.view_controller.compilling:
+            background_surface = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+            background_surface.fill((255, 255, 255, 128))  
+            self.screen.blit(background_surface, (0, 0))
+            
+            center = (WIDTH // 2, HEIGHT // 2)
+            radius = 50
+            width = 5
+            arc_length = 70  
+            self.loading_angle += 5  
+            if self.loading_angle >= 360:
+                self.loading_angle = 0 
+
+            start_angle = np.radians(self.loading_angle)
+            end_angle = np.radians(self.loading_angle + arc_length)
+
+            self.drawAAArc(self.screen, (0, 157, 255), center, radius, start_angle, end_angle, width)
+            
         if self.view_controller.generating_key:
             if self.game_manager.does_keystore_exist():
                 self.view_controller.handle_key_generation_finish()
 
         self.update_display()
+        
+    def drawAAArc(self, surf, color, center, radius, start_angle, end_angle, width):
+        # Increase the size of the surface to add padding
+        padding = width + 2  # Extra space to avoid cutting off the arc
+        surface_size = (radius * 2 + padding * 2 + 4, radius * 2 + padding * 2 + 4)
+        
+        # Create an empty image with an alpha channel
+        arc_image = np.zeros((*surface_size, 4), dtype=np.uint8)
+
+        # Convert angles to radians and OpenCV requires angles in degrees
+        start_angle_deg = np.degrees(start_angle)
+        end_angle_deg = np.degrees(end_angle)
+
+        # Draw the arc on the image
+        arc_image = cv2.ellipse(
+            arc_image, 
+            (surface_size[0]//2, surface_size[1]//2),  # Center the arc in the padded surface
+            (radius, radius),  # Arc size remains the same
+            0, 
+            start_angle_deg, 
+            end_angle_deg, 
+            (*color, 255), 
+            width, 
+            lineType=cv2.LINE_AA
+        )
+        
+        # Create a surface from the buffer
+        arc_surface = pygame.image.frombuffer(arc_image.flatten(), surface_size, 'RGBA')
+        
+        # Adjust the position to center the arc properly on the main surface
+        arc_rect = arc_surface.get_rect(center=center)
+        
+        # Blit the arc surface onto the main surface
+        surf.blit(arc_surface, arc_rect)
 
 class HomeView(View):
     def __init__(self, game_manager):
