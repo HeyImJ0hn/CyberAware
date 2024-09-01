@@ -14,15 +14,15 @@ class NewGameDialog(UIWindow):
                          object_id='#new_game_dialog',
                          resizable=False)
         
-        self.game_name_label = UILabel(relative_rect=pygame.Rect((28, 40), (100, 30)), text="Name", manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@new_game_dialog_label', object_id='#name_label'))
-        self.game_name = UITextEntryLine(relative_rect=pygame.Rect((128, 40), (250, 30)), manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@new_game_dialog_input', object_id='#name_input'), initial_text=game_name)
+        self.game_name_label = UILabel(relative_rect=pygame.Rect((28, 20), (100, 30)), text="Name", manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@new_game_dialog_label', object_id='#name_label'))
+        self.game_name = UITextEntryLine(relative_rect=pygame.Rect((128, 20), (250, 30)), manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@new_game_dialog_input', object_id='#name_input'), initial_text=game_name)
         
-        self.file_path_label = UILabel(relative_rect=pygame.Rect((28, 100), (100, 30)), text="Save Path", manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@new_game_dialog_label', object_id='#file_label'))
-        self.file_path = UITextEntryLine(relative_rect=pygame.Rect((128, 100), (250, 30)), manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@new_game_dialog_input', object_id='#file_input'), initial_text=file_path)
-        self.browse_button = UIButton(relative_rect=pygame.Rect((378, 100), (30, 30)), text="...", manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@new_game_dialog_button', object_id='#browse_button'))
+        self.file_path_label = UILabel(relative_rect=pygame.Rect((28, 80), (100, 30)), text="Save Path", manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@new_game_dialog_label', object_id='#file_label'))
+        self.file_path = UITextEntryLine(relative_rect=pygame.Rect((128, 80), (250, 30)), manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@new_game_dialog_input', object_id='#file_input'), initial_text=file_path)
+        self.browse_button = UIButton(relative_rect=pygame.Rect((378, 80), (30, 30)), text="...", manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@new_game_dialog_button', object_id='#browse_button'))
         
-        self.create_button = UIButton(relative_rect=pygame.Rect((90, 160), (110, 30)), text="CREATE", manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@new_game_dialog_button', object_id='#create_button'))
-        self.cancel_button = UIButton(relative_rect=pygame.Rect((WIDTH-90-90, 160), (110, 30)), text="CANCEL", manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@new_game_dialog_button', object_id='#cancel_button'))
+        self.create_button = UIButton(relative_rect=pygame.Rect((90, 140), (110, 30)), text="CREATE", manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@new_game_dialog_button', object_id='#create_button'))
+        self.cancel_button = UIButton(relative_rect=pygame.Rect((WIDTH-90-90, 140), (110, 30)), text="CANCEL", manager=self.ui_manager, container=self, object_id=ObjectID(class_id='@new_game_dialog_button', object_id='#cancel_button'))
 
     def update_name(self, game_name):
         self.game_name.set_text(game_name)
@@ -119,7 +119,7 @@ class BrowseMediaDialog:
 class ColourPickerDialog:
     def __init__(self, ui_manager, initial_colour=(215, 215, 215)):
         self.dialog = pygame_gui.windows.UIColourPickerDialog(
-        rect=pygame.Rect(160, 50, 440, 500),
+        rect=pygame.Rect(160, 50, 440, 350),
         manager=ui_manager,
         window_title='Select Colour',
         object_id='#colour_picker_dialog',
@@ -219,7 +219,7 @@ class RequestKeyDialog(UIWindow):
                  text="Choose existing...", 
                  manager=self.ui_manager, 
                  container=self,
-                 object_id=ObjectID(class_id='@request_key_dialog_button', object_id='#browse_button'))
+                 object_id=ObjectID(class_id='@request_key_dialog_button', object_id='#browse_key_button'))
 
         self.key_store_password_label = UILabel(relative_rect=pygame.Rect((10, 100), (label_width, 30)),
                                             text="Key store password", 

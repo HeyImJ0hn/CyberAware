@@ -4,7 +4,7 @@ from pygame_gui.core import ObjectID
 from dao.file_dao import FileDAO
 import cv2
 from PIL import Image
-import numpy as np
+import os
 
 class EntityBody:
     def __init__(self, x, y, width, height, colour=(215, 215, 215)):
@@ -49,11 +49,23 @@ class EntityButton:
 
     def draw(self, screen):
         colour = (0, 255, 0) if self.text == "+" else (255, 0, 0)
-        pygame.draw.rect(screen, (255, 255, 255), self.rect, border_radius=24)
-        font = pygame.font.Font(None, 24)
-        text_surface = font.render(self.text, True, colour)
-        text_rect = text_surface.get_rect(center=self.rect.center)
-        screen.blit(text_surface, text_rect)
+        #pygame.draw.rect(screen, (255, 255, 255), self.rect, border_radius=24)
+
+        if self.text == "H" or self.text == "C" or self.text == "S":
+            current_dir = os.path.dirname(__file__)
+            img_file = "hide" if self.text == "H" else "show" if self.text == "S" else "palette"
+            scale_width = self.width + 5 if self.text == "H" or self.text == "S" else self.width
+            
+            svg_path = os.path.join(current_dir, f"../../../static/{img_file}.svg")
+            image = pygame.image.load(svg_path)
+            image = pygame.transform.smoothscale(image, (scale_width, self.height))
+            image_rect = image.get_rect(center=self.rect.center)
+            screen.blit(image, image_rect)
+        else:
+            font = pygame.font.Font(None, 36)
+            text_surface = font.render(self.text, True, colour)
+            text_rect = text_surface.get_rect(center=self.rect.center)
+            screen.blit(text_surface, text_rect)
 
 class EntityMenu(UIWindow):
     def __init__(self, ui_manager, entity):
@@ -244,6 +256,8 @@ class PreviewWindow(UIWindow):
                                 container=self, 
                                 object_id=ObjectID(class_id='@preview_window_background', object_id='#background_image'))
         '''
+        
+        self.background_colour = (0, 0, 0)
         
         # Media
         if FileDAO.is_video_file(self.entity.media):

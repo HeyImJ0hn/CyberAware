@@ -351,11 +351,11 @@ class Entity:
     def create_buttons(self):
         self.buttons = []
 
-        self.button_add = EntityButton(self.x + self.width, self.y, self.width/5, self.height/5, "+")
-        self.button_remove = EntityButton(self.x + self.width, self.y + self.height/5 + 2, self.width/5, self.height/5, "-")
+        self.button_add = EntityButton(self.x + self.width + 2, self.y, self.width/4, self.height/4, "+")
+        self.button_remove = EntityButton(self.x + self.width + 2, self.y + self.height/4 + 4, self.width/4, self.height/4, "-")
 
-        self.button_hide = EntityButton(self.x - self.width/5 - 2, self.y, self.width/5, self.height/5, "H")
-        self.button_colour = EntityButton(self.x - self.width/5 - 2, self.y + self.height/5 + 2, self.width/5, self.height/5, "C")
+        self.button_hide = EntityButton(self.x - self.width/4 - 6, self.y, self.width/4, self.height/4, "H")
+        self.button_colour = EntityButton(self.x - self.width/4 - 6, self.y + self.height/4 + 4, self.width/4, self.height/4, "C")
 
         self.buttons.append(self.button_add)
         self.buttons.append(self.button_hide)
@@ -375,30 +375,30 @@ class Entity:
         self.body.rect.x = x
         self.body.rect.y = y
 
-        self.button_add.x = x + self.width
+        self.button_add.x = x + self.width + 2
         self.button_add.y = y
 
-        self.button_add.rect.x = x + self.width
+        self.button_add.rect.x = x + self.width + 2
         self.button_add.rect.y = y
 
-        self.button_hide.x = x - 2 - self.width/5
+        self.button_hide.x = x - 6 - self.width/4
         self.button_hide.y = y
 
-        self.button_hide.rect.x = x - 2 - self.width/5
+        self.button_hide.rect.x = x - 6 - self.width/4
         self.button_hide.rect.y = y
 
-        self.button_colour.x = x - 2 - self.width/5
-        self.button_colour.y = y + self.height/5 + 2
+        self.button_colour.x = x - 6 - self.width/4
+        self.button_colour.y = y + self.height/4 + 4
 
-        self.button_colour.rect.x = x - 2 - self.width/5
-        self.button_colour.rect.y = y + self.height/5 + 2
+        self.button_colour.rect.x = x - 6 - self.width/4
+        self.button_colour.rect.y = y + self.height/4 + 4
 
         if self.depth != 0:
             self.button_remove.x = x + self.width
-            self.button_remove.y = y + self.height/5 + 2
+            self.button_remove.y = y + self.height/4 + 4
 
             self.button_remove.rect.x = x + self.width
-            self.button_remove.rect.y = y + self.height/5 + 2
+            self.button_remove.rect.y = y + self.height/4 + 4
 
         self.centroid = (self.x + self.width/2, self.y + self.height/2)
 
@@ -479,6 +479,7 @@ class Entity:
         self.hidden = not self.hidden
 
     def toggle_options(self, options=None):
+        self.buttons[1].text = "S" if self.buttons[1].text == "H" else "H"
         for option in self.options if not options else options:
             option.entity.toggle()
             if option.entity.options:

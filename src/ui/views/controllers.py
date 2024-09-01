@@ -130,10 +130,12 @@ class ViewController:
             '#colour_picker_dialog.#cancel_button': self.cancel_colour_picker,
             '#colour_picker_dialog.#close_button': self.cancel_colour_picker,
             '#logger_window.#logger_dismiss_button': self.clear_active_dialog,
-            '#compile_dialog.#close_button': self.clear_active_dialog    ,
+            '#compile_dialog.#close_button': self.clear_active_dialog,
             '#compile_dialog.#compile_signed_button': self.compile_signed_dialog,
             '#compile_dialog.#compile_debug_button': self.compile_debug,
             '#request_key_dialog.#browse_button': self.browse_keystore,
+            '#request_key_dialog.#close_button': self.clear_active_dialog,
+            '#request_key_dialog.#cancel_button': self.clear_active_dialog
         }
 
         file_dialog_buttons = {'#file_dialog.#cancel_button', '#file_dialog.#close_button', '#file_dialog.#ok_button',
@@ -368,11 +370,11 @@ class ViewController:
 
     def start_removal(self, entity):
         self.active_dialog = ConfirmationDialog(self.ui_manager)
-        self.current_entity_id = entity
+        self.current_entity_id = entity.id
 
     def open_colour_picker(self, entity):
         self.active_dialog = ColourPickerDialog(self.ui_manager, entity.colour)
-        self.current_entity_id = entity
+        self.current_entity_id = entity.id
         
     def handle_draw_to_cursor(self, entity, current_pos):
         if not entity.was_body_clicked(current_pos[0], current_pos[1]):
@@ -595,7 +597,8 @@ class ViewController:
             return
         
         entity = self.game_manager.get_entity(self.hovering_entity_id)
-        if (not self.space_pressed and not entity.hidden and 
+        
+        if (entity == None or not self.space_pressed and not entity.hidden and 
                 not (self.open_menu and self.open_menu.is_inside(current_pos[0], current_pos[1]))):
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
             self.hovering_entity_id = None
