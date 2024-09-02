@@ -244,9 +244,10 @@ class ViewController:
         )
         entity.update_options(menu.options)
         
-        entity.menu = None
         if self.open_menu and self.open_menu.entity.id == entity.id:
-            self.set_open_menu(None)
+            if entity.menu == menu:
+                entity.menu = None
+                self.set_open_menu(None)
 
     def ui_colour_picker_colour_picked(self, event):
         entity = self.game_manager.get_entity(self.current_entity_id)
@@ -461,10 +462,10 @@ class ViewController:
         self.game_manager.open_game(text)
 
     def handle_browse_media_dialog(self, text):
-        print('browse_media_dialog')
         self.game_manager.submit_media(text, self.open_menu.entity)
-        self.open_menu.kill()
-        self.open_menu.entity.refresh_menu((self.open_menu.rect.x, self.open_menu.rect.y))
+        #self.open_menu.kill()
+        #self.open_menu.entity.refresh_menu((self.open_menu.rect.x, self.open_menu.rect.y))
+        self.refresh_menu(self.open_menu.entity)
         self.active_dialog = None
         
     def handle_browse_keystore(self, text):
