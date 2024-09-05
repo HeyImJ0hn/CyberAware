@@ -80,6 +80,8 @@ class BuildView(View):
         self.type = ViewType.BUILD
         super().__init__(game_manager)
         
+        pygame.display.set_caption(f"CyberAware - {game_manager.path}")
+        
         #self.ui_manager.set_window_resolution(self.resolution)
         
         #window = Window.from_display_module()

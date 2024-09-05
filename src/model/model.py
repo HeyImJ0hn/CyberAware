@@ -31,6 +31,9 @@ class GameManager:
         self.path = None
         self.app_version = 1
         
+        self.temp_icon_path = ""
+        self.icon_path = ""
+        
         self.check_recent_files()
 
         self.view = HomeView(self)
@@ -59,7 +62,7 @@ class GameManager:
         self.view.run()
 
     def load_game(self, path):
-        self.game_name, self.app_version, entities = self.json_converter.game_from_json(self, path)
+        self.game_name, self.app_version, self.icon_path, entities = self.json_converter.game_from_json(self, path)
         self.path = path
         self.update_recent_files()
         self._entity_manager.update_entities(entities)
@@ -79,6 +82,9 @@ class GameManager:
         FileDAO.save(json, self.path)
 
     def compile(self, signed):
+        for entity in self.get_entities():
+            FileDAO.media_to_android(entity.media, entity.id)
+        FileDAO.app_icon_to_android(self.icon_path)
         KotlinConverter.convert_to_kotlin(self, self.logger, signed, self.keystore)
 
     def quit(self):
@@ -122,7 +128,7 @@ class GameManager:
         self.json_converter.settings_to_json()
 
     def submit_media(self, media, entity):
-        FileDAO.media_to_android(media, entity.id)
+        #FileDAO.media_to_android(media, entity.id)
         entity.update_media(FileDAO.copy_media(media, self.game_to_file_name(self.game_name).split(".")[0]))
 
     def get_parents(self, entity):
@@ -169,6 +175,18 @@ class GameManager:
     
     def move_build_folder(self):
         FileDAO.move_build_folder(self.game_to_file_name(self.game_name).split(".")[0])
+        
+    def update_app_icon(self):
+        self.icon_path = self.temp_icon_path
+        self.icon_path = FileDAO.save_app_icon(self.icon_path, self.game_name)
+        
+    def handle_compilation_finish(self):
+        self.finished_compiling = False
+        self.compilation_logs = []
+        self.move_build_folder()
+        
+        FileDAO.delete_android_media()
+        FileDAO.restore_default_app_icon()
         
 class EntityManager:
     def __init__(self, ui_manager, entities=[]):
@@ -394,10 +412,10 @@ class Entity:
         self.button_colour.rect.y = y + self.height/4 + 4
 
         if self.depth != 0:
-            self.button_remove.x = x + self.width
+            self.button_remove.x = x + self.width + 2
             self.button_remove.y = y + self.height/4 + 4
 
-            self.button_remove.rect.x = x + self.width
+            self.button_remove.rect.x = x + self.width + 2
             self.button_remove.rect.y = y + self.height/4 + 4
 
         self.centroid = (self.x + self.width/2, self.y + self.height/2)

@@ -85,11 +85,17 @@ class ViewController:
         self.mouse_pos = None
 
     def mouse_motion(self, event):
-        if not self.view.type == ViewType.BUILD or self.mouse_pos is None:
+        if not self.view.type == ViewType.BUILD:
             return
 
         mouse_pos = pygame.mouse.get_pos()
-
+        
+        self.view.toolbar.hover_file_button(mouse_pos)
+        self.view.toolbar.hover_run_button(mouse_pos)
+        
+        if self.mouse_pos is None:
+            return
+        
         if self.space_pressed:
             self.handle_space_pressed(mouse_pos)
         elif self.ctrl_pressed and self.current_entity_option_id:
@@ -103,8 +109,11 @@ class ViewController:
             '#save_path_dialog': self.handle_save_path_dialog,
             '#open_path_dialog': self.handle_open_path_dialog,
             '#browse_media_dialog': self.handle_browse_media_dialog,
-            '#browse_keystore_dialog': self.handle_browse_keystore
+            '#browse_keystore_dialog': self.handle_browse_keystore,
+            '#browse_icon_dialog': self.handle_browse_app_icon
         }
+        
+        Settings.RECENT_MEDIA_PATH = FileDAO.get_dir_name(event.text)
         
         handler = handlers.get(event.ui_object_id)
         if handler:
@@ -116,13 +125,15 @@ class ViewController:
             '#new_game_button': self.handle_controller_action('new_game'),
             '#open_game_button': self.handle_controller_action('open_game'),
             '#quit_button': self.handle_controller_action('quit'),
-            '@toolbar.#toolbar_new_game': self.handle_toolbar_action('new_game'),
-            '@toolbar.#toolbar_save_game': self.handle_toolbar_action('save_game'),
-            '@toolbar.#toolbar_open_game': self.handle_toolbar_action('open_game'),
-            '@toolbar.#toolbar_preview': self.handle_toolbar_action('enable_preview'),
-            '@toolbar.#toolbar_compile': self.handle_toolbar_action('compile'),
+            '@toolbar_dropdown.#toolbar_new_game': self.handle_toolbar_action('new_game'),
+            '@toolbar_dropdown.#toolbar_save_game': self.handle_toolbar_action('save_game'),
+            '@toolbar_dropdown.#toolbar_open_game': self.handle_toolbar_action('open_game'),
+            '@toolbar_dropdown.#toolbar_settings': self.handle_toolbar_action('settings'),
+            '@toolbar_dropdown.#toolbar_preview': self.handle_toolbar_action('enable_preview'),
+            '@toolbar_dropdown.#toolbar_compile': self.handle_toolbar_action('compile'),
             '#new_game_dialog.#browse_button': self.browse_new_game_path,
             '#new_game_dialog.#create_button': self.create_new_game,
+            '#new_game_dialog.#close_button': self.enable_home_or_toolbar_buttons,
             '#entity_menu.#browse_button': self.browse_media,
             '#browse_media_dialog.#cancel_button': self.clear_active_dialog,
             '#remove_node.#confirm_button': self.confirm_remove_node,
@@ -135,7 +146,11 @@ class ViewController:
             '#compile_dialog.#compile_debug_button': self.compile_debug,
             '#request_key_dialog.#browse_key_button': self.browse_keystore,
             '#request_key_dialog.#close_button': self.clear_active_dialog,
-            '#request_key_dialog.#cancel_button': self.clear_active_dialog
+            '#request_key_dialog.#cancel_button': self.clear_active_dialog,
+            '#settings_dialog.#save_game_name_button': self.save_game_name,
+            '#settings_dialog.#browse_icon_button': self.browse_app_icon,
+            '#settings_dialog.#save_icon_button': self.save_game_icon,
+            '#settings_dialog.#close_button': self.clear_active_dialog,
         }
 
         file_dialog_buttons = {'#file_dialog.#cancel_button', '#file_dialog.#close_button', '#file_dialog.#ok_button',
@@ -228,9 +243,16 @@ class ViewController:
         self.view.draw_ui()
 
     def ui_text_entry_finished(self, event):
-        if event.ui_object_id == '@toolbar.#toolbar_input':
-            self.game_manager.update_game_name(event.text)
-            self.show_toast('Game name updated', ToastType.SUCCESS)
+        pass
+    
+    def save_game_name(self):
+        name = self.active_dialog.game_name_input.get_text()
+        self.game_manager.update_game_name(name)
+        self.show_toast('Game name updated', ToastType.SUCCESS)
+        
+    def save_game_icon(self):
+        self.game_manager.update_app_icon()
+        self.show_toast('App icon updated', ToastType.SUCCESS)
 
     def menu_kill(self, event):
         entity = event.entity
@@ -333,12 +355,9 @@ class ViewController:
         self.compilling = False
         #self.active_dialog.log.set_text("".join(self.game_manager.compilation_logs))
         #self.active_dialog.button.enable()
-        self.game_manager.finished_compiling = False
-        self.game_manager.compilation_logs = []
         self.show_toast('Compilation finished', ToastType.SUCCESS)
         self.view.toolbar.controller.enable_toolbar()
-    
-        self.game_manager.move_build_folder()
+        self.game_manager.handle_compilation_finish()
     
     def handle_open_game_from_list(self, event):
         game_path = event.ui_object_id.split('#recent_list.')[1]
@@ -463,8 +482,6 @@ class ViewController:
 
     def handle_browse_media_dialog(self, text):
         self.game_manager.submit_media(text, self.open_menu.entity)
-        #self.open_menu.kill()
-        #self.open_menu.entity.refresh_menu((self.open_menu.rect.x, self.open_menu.rect.y))
         self.refresh_menu(self.open_menu.entity)
         self.active_dialog = None
         
@@ -472,12 +489,15 @@ class ViewController:
         self.active_dialog.key_store_path.set_text(text)
         self.clear_extra_dialog()
         
+    def handle_browse_app_icon(self, text):
+        self.game_manager.temp_icon_path = text
+        self.clear_extra_dialog()
+        self.active_dialog.refresh()
+        
     def browse_new_game_path(self):
         SavePathDialog(self.ui_manager, '#save_path_dialog')
 
     def create_new_game(self, event):
-        #game_name = self.get_ui_element_text('#new_game_dialog.#game_name')
-        #file_path = self.get_ui_element_text('#new_game_dialog.#file_path')
         game_name = event.ui_element.ui_container.parent_element.game_name
         file_path = event.ui_element.ui_container.parent_element.file_path
         self.game_manager.game_name = game_name
@@ -486,7 +506,6 @@ class ViewController:
 
     def cancel_new_game(self, event):
         self.active_dialog = None
-        #self.kill_ui_element('#new_game_dialog')
         event.ui_element.ui_container.parent_element.kill()
         self.game_manager.game_name = ""
         self.game_manager.file_path = ""
@@ -494,6 +513,9 @@ class ViewController:
 
     def browse_media(self):
         self.set_active_dialog(BrowseMediaDialog(self.ui_manager, '#browse_media_dialog'))
+        
+    def browse_app_icon(self):
+        self.set_extra_dialog(BrowseMediaDialog(self.ui_manager, '#browse_icon_dialog'))
         
     def browse_keystore(self):
         self.set_extra_dialog(BrowseKeystore(self.ui_manager, '#browse_keystore_dialog'))
@@ -591,6 +613,8 @@ class ViewController:
             for b in self.view.buttons:
                 b.enable()
         else:
+            if self.active_dialog:
+                self.clear_active_dialog()
             self.view.toolbar.controller.enable_toolbar()
             
     def reset_cursor_and_hovering_entity(self, current_pos):
@@ -642,7 +666,8 @@ class ViewController:
             'save_game': toolbar_controller.save_game,
             'open_game': toolbar_controller.open_game,
             'enable_preview': toolbar_controller.enable_preview,
-            'compile': toolbar_controller.compile
+            'compile': toolbar_controller.compile,
+            'settings': toolbar_controller.settings
         }
         return action_methods.get(action_name)
     

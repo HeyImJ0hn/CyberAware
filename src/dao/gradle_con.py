@@ -121,7 +121,6 @@ class GradleCon:
                 print(f"Build duration: {duration:.2f} seconds.")
                 logger.log(f"Build process finished with exit code {exit_code}.<br>")
                 logger.log(f"Build duration: {duration:.2f} seconds.<br>")
-
             except Exception as e:
                 print(f"Error occurred while building the APK: {e}")
                 logger.log(f"Error occurred while building the APK: {e}<br>")

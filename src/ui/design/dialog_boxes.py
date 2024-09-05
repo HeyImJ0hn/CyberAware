@@ -5,6 +5,7 @@ from pygame_gui.elements import *
 from pygame_gui.core import ObjectID
 from config.settings import Settings
 from ui.design.toast_type import ToastType
+from dao.file_dao import FileDAO
 
 class NewGameDialog(UIWindow):
     def __init__(self, ui_manager, game_name="", file_path=""):
@@ -51,7 +52,8 @@ class SavePathDialog:
         allow_picking_directories=True,
         allow_existing_files_only=False,
         object_id=id,
-        allowed_suffixes={"."}
+        allowed_suffixes={"."},
+        initial_file_path=Settings.RECENT_MEDIA_PATH if (Settings.RECENT_MEDIA_PATH != "" and FileDAO.does_path_exist(Settings.RECENT_MEDIA_PATH)) else None
         )
 
 class OpenGameDialog:
@@ -63,7 +65,8 @@ class OpenGameDialog:
         allow_picking_directories=False,
         allow_existing_files_only=True,
         object_id=id,
-        allowed_suffixes={"json"}
+        allowed_suffixes={"json"},
+        initial_file_path=Settings.RECENT_MEDIA_PATH if (Settings.RECENT_MEDIA_PATH != "" and FileDAO.does_path_exist(Settings.RECENT_MEDIA_PATH)) else None
         )
 
 class Toast(UIWindow):
@@ -106,8 +109,10 @@ class BrowseMediaDialog:
         window_title='Browse Media',
         allow_picking_directories=False,
         allow_existing_files_only=True,
+        always_on_top=True,
         object_id=id,
-        allowed_suffixes={"png", "jpg", "jpeg", "mp4", "mov", "avi", "wmv", "wav"}
+        allowed_suffixes={"png", "jpg", "jpeg", "mp4", "mov", "avi", "wmv", "wav"},
+        initial_file_path=Settings.RECENT_MEDIA_PATH if (Settings.RECENT_MEDIA_PATH != "" and FileDAO.does_path_exist(Settings.RECENT_MEDIA_PATH)) else None
         )
         
     def alive(self):
@@ -269,7 +274,8 @@ class BrowseKeystore:
         allow_existing_files_only=True,
         object_id=id,
         always_on_top=True,
-        allowed_suffixes={"jks"}
+        allowed_suffixes={"jks"},
+        initial_file_path=Settings.RECENT_MEDIA_PATH if (Settings.RECENT_MEDIA_PATH != "" and FileDAO.does_path_exist(Settings.RECENT_MEDIA_PATH)) else None
         )
         
         
@@ -279,121 +285,89 @@ class BrowseKeystore:
     def kill(self):
         return self.dialog.kill()
 
-##### UNUSED #####
-class CreateKeyDialog(UIWindow):
-    def __init__(self, ui_manager):
-        WIDTH, HEIGHT = 500, 550
+class SettingsDialog(UIWindow):
+    def __init__(self, ui_manager, game_manager):
+        self.gm = game_manager
+        WIDTH, HEIGHT = 500, 250  
         super().__init__(pygame.Rect((ui_manager.window_resolution[0]/2-WIDTH/2, ui_manager.window_resolution[1]/2-HEIGHT/2), (WIDTH, HEIGHT)), ui_manager,
-                         window_display_title='New Key Store',
-                         object_id='#new_key_store_dialog',
+                         window_display_title='Settings',
+                         object_id='#settings_dialog',
                          always_on_top=True,
                          resizable=False)
-
-        label_width = 150
-        entry_width = WIDTH - label_width - 60
-        y_offset = 20
-
-        self.key_store_path_label = UILabel(relative_rect=pygame.Rect((10, y_offset), (label_width, 30)),
-                                            text="Key store path:", 
+        
+        label_width = 140
+        entry_width = WIDTH - label_width - 100
+        
+        self.game_name_label = UILabel(relative_rect=pygame.Rect((20, 20), (label_width, 30)),
+                                            text="Game Name", 
                                             manager=self.ui_manager, 
                                             container=self, 
-                                            object_id=ObjectID(class_id='@new_key_store_dialog_label', object_id='#key_store_path_label'))
+                                            object_id=ObjectID(class_id='@settings_dialog_label', object_id='#game_name_label'))
         
-        self.key_store_path = UITextEntryLine(relative_rect=pygame.Rect((label_width + 20, y_offset), (entry_width - 22, 30)), 
+        self.game_name_input = UITextEntryLine(relative_rect=pygame.Rect((label_width + 20, 20), (entry_width, 30)), 
                                               manager=self.ui_manager, 
                                               container=self, 
-                                              object_id=ObjectID(class_id='@new_key_store_dialog_input', object_id='#key_store_path'), 
-                                              initial_text="")
+                                              object_id=ObjectID(class_id='@settings_dialog_input', object_id='#game_name_input'), 
+                                              initial_text=game_manager.game_name)
         
-        self.button_browse = UIButton(relative_rect=pygame.Rect((WIDTH - 69, y_offset), (30, 30)), 
-                                      text="...", 
-                                      manager=self.ui_manager, 
-                                      container=self,
-                                      object_id=ObjectID(class_id='@new_key_store_dialog_button', object_id='#browse_button'))
+        self.save_game_name_button = UIButton(relative_rect=pygame.Rect((label_width + entry_width + 20, 20), (60, 30)),
+                                    text="Save",
+                                    manager=self.ui_manager,
+                                    container=self,
+                                    object_id=ObjectID(class_id='@settings_dialog_button', object_id='#save_game_name_button'))
         
-        y_offset += 40
-
-        # Password and Confirm
-        self.password_label = UILabel(relative_rect=pygame.Rect((10, y_offset), (label_width, 30)),
-                                      text="Key Store Password:", 
+        self.horizontal_divider = UIPanel(
+            relative_rect=pygame.Rect(20, 60, WIDTH - 40, 1),
+            manager=self.ui_manager,
+            container=self,
+            starting_height=1, 
+            object_id='#horizontal_divider'
+        )
+        self.gm.temp_icon_path = ""
+        
+        if game_manager.icon_path == "":
+            if game_manager.temp_icon_path == "":
+                icon = pygame.image.load(FileDAO.get_default_app_icon())
+            else:
+                icon = pygame.image.load(game_manager.temp_icon_path)
+        else:
+            icon = pygame.image.load(game_manager.icon_path)
+        
+        self.app_icon_image = UIImage(relative_rect=pygame.Rect((20, 80), (124, 124)), 
+                                      image_surface=icon, 
                                       manager=self.ui_manager, 
                                       container=self, 
-                                      object_id=ObjectID(class_id='@new_key_store_dialog_label', object_id='#password_label'))
+                                      object_id=ObjectID(class_id='@settings_dialog', object_id='#app_icon_image'))
         
-        self.password_entry = UITextEntryLine(relative_rect=pygame.Rect((label_width + 20, y_offset), (entry_width, 30)), 
-                                              manager=self.ui_manager, 
-                                              container=self, 
-                                              object_id=ObjectID(class_id='@new_key_store_dialog_input', object_id='#password_entry'), 
-                                              initial_text="")
+        self.app_icon_label = UILabel(relative_rect=pygame.Rect((label_width + 20, 80), (label_width, 20)),
+                                            text="App Icon",
+                                            manager=self.ui_manager, 
+                                            container=self, 
+                                            object_id=ObjectID(class_id='@settings_dialog_label', object_id='#app_icon_label'))
         
-        y_offset += 40
-
-        self.key_alias_label = UILabel(relative_rect=pygame.Rect((10, y_offset), (label_width, 30)),
-                                       text="Alias:", 
-                                       manager=self.ui_manager, 
-                                       container=self, 
-                                       object_id=ObjectID(class_id='@new_key_store_dialog_label', object_id='#key_alias_label'))
+        self.browse_button = UIButton(relative_rect=pygame.Rect((label_width + 18, 174), (60, 30)), 
+                 text="Browse", 
+                 manager=self.ui_manager, 
+                 container=self,
+                 object_id=ObjectID(class_id='@settings_dialog_button', object_id='#browse_icon_button'))
         
-        self.key_alias_entry = UITextEntryLine(relative_rect=pygame.Rect((label_width + 20, y_offset), (entry_width, 30)), 
-                                               manager=self.ui_manager, 
-                                               container=self, 
-                                               object_id=ObjectID(class_id='@new_key_store_dialog_input', object_id='#key_alias_entry'), 
-                                               initial_text="mykey")
+        self.save_button = UIButton(relative_rect=pygame.Rect((label_width + 85, 174), (60, 30)),
+                                    text="Save",
+                                    manager=self.ui_manager,
+                                    container=self,
+                                    object_id=ObjectID(class_id='@settings_dialog_button', object_id='#save_icon_button'))
         
-        y_offset += 40
-
-        self.key_password_label = UILabel(relative_rect=pygame.Rect((10, y_offset), (label_width, 30)),
-                                          text="Key Password:", 
-                                          manager=self.ui_manager, 
-                                          container=self, 
-                                          object_id=ObjectID(class_id='@new_key_store_dialog_label', object_id='#key_password_label'))
-        
-        self.key_password_entry = UITextEntryLine(relative_rect=pygame.Rect((label_width + 20, y_offset), (entry_width, 30)), 
-                                                  manager=self.ui_manager, 
-                                                  container=self, 
-                                                  object_id=ObjectID(class_id='@new_key_store_dialog_input', object_id='#key_password_entry'), 
-                                                  initial_text="")
-        
-        y_offset += 40
-        
-        self.validity = 25        
-        
-        y_offset += 40
-
-        certificate_fields = [
-            "First and Last Name:",
-            "Organizational Unit:",
-            "Organization:",
-            "City or Locality:",
-            "State or Province:",
-            "Country Code (XX):"
-        ]
-        self.certificate_entries = []
-        for field in certificate_fields:
-            label = UILabel(relative_rect=pygame.Rect((10, y_offset), (label_width, 30)),
-                            text=field, 
-                            manager=self.ui_manager, 
-                            container=self, 
-                            object_id=ObjectID(class_id='@new_key_store_dialog_label', object_id=f'#{field.split(" ")[0].lower()}_label'))
+    def refresh(self):
+        if self.gm.temp_icon_path == "":
+            if self.gm.icon_path == "":
+                icon = pygame.image.load(FileDAO.get_default_app_icon())
+            else:
+                icon = pygame.image.load(self.gm.icon_path)
+        else:
+            icon = pygame.image.load(self.gm.temp_icon_path)
             
-            entry = UITextEntryLine(relative_rect=pygame.Rect((label_width + 20, y_offset), (entry_width, 30)), 
-                                    manager=self.ui_manager, 
-                                    container=self, 
-                                    object_id=ObjectID(class_id='@new_key_store_dialog_input', object_id=f'#{field.split(" ")[0]}_entry'), 
-                                    initial_text="")
-            self.certificate_entries.append((label, entry))
-            y_offset += 40
-
-        self.button_ok = UIButton(relative_rect=pygame.Rect((WIDTH-110, HEIGHT-70), (90, 30)),
-                                  text="OK",
-                                  manager=self.ui_manager,
-                                  container=self,
-                                  object_id=ObjectID(class_id='@new_key_store_dialog_button', object_id='#ok_button'))
-        
-        self.button_cancel = UIButton(relative_rect=pygame.Rect((WIDTH-210, HEIGHT-70), (90, 30)),
-                                      text="Cancel",
-                                      manager=self.ui_manager,
-                                      container=self,
-                                      object_id=ObjectID(class_id='@new_key_store_dialog_button', object_id='#cancel_button'))
-        
-        
+        self.app_icon_image = UIImage(relative_rect=pygame.Rect((20, 80), (124, 124)), 
+                                      image_surface=icon, 
+                                      manager=self.ui_manager, 
+                                      container=self, 
+                                      object_id=ObjectID(class_id='@settings_dialog', object_id='#app_icon_image'))

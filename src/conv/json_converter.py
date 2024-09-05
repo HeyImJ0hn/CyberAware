@@ -34,6 +34,7 @@ class JSONConverter:
         return {
             "name": game_manager.game_name,
             "app_version": str(game_manager.app_version),
+            "icon_path": game_manager.icon_path,
             "entities": entities
         }
 
@@ -42,6 +43,7 @@ class JSONConverter:
 
         name = json["name"]
         app_version = int(json["app_version"])
+        icon_path = json["icon_path"]
 
         entities = []
         for e in json["entities"]:
@@ -65,7 +67,7 @@ class JSONConverter:
 
             entities.append(entity)
 
-        return (name, app_version, entities)
+        return (name, app_version, icon_path, entities)
     
     def name_from_json(self, path):
         json = FileDAO.load(path)
@@ -76,7 +78,8 @@ class JSONConverter:
             "VERSION": Settings.VERSION,
             "RESOLUTION": Settings.RESOLUTION,
             "FIRST_RUN": Settings.FIRST_RUN,
-            "RECENT_FILES": Settings.RECENT_FILES
+            "RECENT_FILES": Settings.RECENT_FILES,
+            "RECENT_MEDIA_PATH": Settings.RECENT_MEDIA_PATH
         })
     
     def settings_from_json(self):
@@ -87,6 +90,7 @@ class JSONConverter:
             Settings.RESOLUTION = json["RESOLUTION"]
             Settings.FIRST_RUN = json["FIRST_RUN"]
             Settings.RECENT_FILES = json["RECENT_FILES"]
+            Settings.RECENT_MEDIA_PATH = json["RECENT_MEDIA_PATH"]
         
 
         

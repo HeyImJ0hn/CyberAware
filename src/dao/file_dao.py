@@ -87,7 +87,7 @@ class FileDAO:
         return game_folder
     
     @staticmethod
-    def copy_media(source, game_name):
+    def copy_media(source, game_name, custom_name=None):
         destination = FileDAO.create_game_folder(game_name)
 
         if not os.path.exists(source):
@@ -96,7 +96,7 @@ class FileDAO:
         else:
             print('Copying media: ' + source + ' to ' + destination)
             shutil.copy2(source, destination)
-            return os.path.join(destination, os.path.basename(source))
+            return os.path.join(destination, os.path.basename(source) if custom_name is None else custom_name)
     
     @staticmethod
     def media_to_android(source, file_name):
@@ -117,6 +117,10 @@ class FileDAO:
     @staticmethod
     def get_file_name_without_extension(file):
         return os.path.splitext(os.path.basename(file))[0]
+    
+    @staticmethod
+    def get_file_extension(file):
+        return os.path.splitext(os.path.basename(file))[1]
     
     @staticmethod
     def get_dir_name(file):
@@ -172,10 +176,6 @@ class FileDAO:
         return any(path.endswith(ext) for ext in image_extensions)
     
     @staticmethod
-    def get_file_extension(file):
-        return os.path.splitext(file)[1]
-    
-    @staticmethod
     def does_path_exist(path):
         return os.path.exists(path)
     
@@ -209,3 +209,42 @@ class FileDAO:
             subprocess.Popen(['open', path])
         else:  # Linux
             subprocess.Popen(['xdg-open', path])
+            
+    @staticmethod
+    def get_default_app_icon():
+        return os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..', '..', 'static', 'app_icon.png'))
+    
+    @staticmethod
+    def restore_default_app_icon():
+        default_icon = FileDAO.get_default_app_icon()
+        FileDAO.app_icon_to_android(default_icon)
+        
+    @staticmethod
+    def delete_android_media():
+        drawable = os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..', '..' ,'android', 'app', 'src', 'main', 'res', 'drawable'))
+        raw = os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..', '..' ,'android', 'app', 'src', 'main', 'res', 'raw'))
+        for file in os.listdir(drawable):
+            path = os.path.join(drawable, file)
+            if os.path.isfile(path):
+                os.unlink(path)
+        
+        for file in os.listdir(raw):
+            path = os.path.join(raw, file)
+            if os.path.isfile(path):
+                os.unlink(path)
+    
+    @staticmethod
+    def save_app_icon(icon_path, game_name):
+        return FileDAO.copy_media(icon_path, game_name.replace(" ", "_").lower(), "app_icon" + FileDAO.get_file_extension(icon_path))
+    
+    @staticmethod
+    def app_icon_to_android(icon_path):
+        destination = os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..', '..' ,'android', 'app', 'src', 'main', 'res', 'drawable', 'app_icon' + FileDAO.get_file_extension(icon_path)))
+        
+        if not os.path.exists(icon_path):
+            print('Media does not exist: ' + icon_path)
+            return
+        else:
+            print('Copying media: ' + icon_path + ' to ' + destination)
+            shutil.copy2(icon_path, destination)
+        
