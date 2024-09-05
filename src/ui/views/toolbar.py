@@ -32,8 +32,9 @@ class Toolbar:
         toolbar_buttons = []
         
         for i, (text, object_id) in enumerate(buttons):
+            rect = pygame.Rect(button_margin * (i + 1) + button_width * i , button_margin, button_width, button_height)
             toolbar_buttons.append(UIButton(
-                relative_rect=pygame.Rect(button_margin * (i + 1) + button_width * i, button_margin, button_width, button_height),
+                relative_rect=rect,
                 text=text,
                 manager=self.ui_manager,
                 container=self.toolbar_container,
@@ -68,7 +69,7 @@ class Toolbar:
 
         main_rect = pygame.Rect((0, 0), (self.toolbar_width, self.toolbar_height))
         pygame.draw.rect(screen, (47, 51, 61), main_rect)
-
+        
 class ToolbarControl:
     def __init__(self, toolbar):
         self.toolbar = toolbar

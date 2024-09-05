@@ -15,7 +15,8 @@ import cv2
 class View:
     def __init__(self, game_manager):
         self.game_manager = game_manager
-        self.resolution = (800, 600) if self.type == ViewType.HOME else Settings.RESOLUTION
+        #self.resolution = (800, 600) if self.type == ViewType.HOME else Settings.RESOLUTION
+        self.resolution = (800, 600)
         self.screen = pygame.display.set_mode(self.resolution, pygame.SRCALPHA if self.type == ViewType.HOME else pygame.RESIZABLE | pygame.SRCALPHA)
 
         self.ui_manager = pygame_gui.UIManager(self.resolution, 'theme.json')

@@ -876,10 +876,10 @@
     {
         "colours":
         {
-            "normal_bg": "#4A99F8",
-            "hovered_bg": "#3B7BC8",
-            "selected_bg": "#4A99F8",
-            "active_bg": "#4A99F8",
+            "normal_bg": "#10263c",
+            "hovered_bg": "#173452",
+            "selected_bg": "#10263c",
+            "active_bg": "#10263c",
             "dark_bg": "#050E27",
             "normal_text": "#FFFFFF",
             "hovered_text": "#FFFFFF",
@@ -1318,6 +1318,64 @@
         },
         "font":
         {
+            "name": "roboto-regular",
+            "size": "14",
+            "bold": "0"
+        }
+    },
+    "#remove_node.text_box":
+    {
+        "colours":{
+            "normal_text": "#ffffff",
+            "dark_bg": "#2f333d",
+            "text_cursor": "#ffffff"
+        }
+    },
+    "#remove_node.#confirm_button":{
+        "colours":{
+            "normal_bg": "#4a99f8",
+            "hovered_bg": "#3b7bc8",
+            "selected_bg": "#4a99f8",
+            "active_bg": "#4a99f8",
+            "dark_bg": "#050e27",
+            "normal_text": "#ffffff",
+            "hovered_text": "#ffffff",
+            "disabled_text": "#808080",
+            "selected_text": "#ffffff",
+            "active_text": "#ffffff"
+        },
+        "misc":{
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "6",
+            "border_width": "0",
+            "shadow_width": "2"
+        },
+        "font":{
+            "name": "roboto-regular",
+            "size": "14",
+            "bold": "0"
+        }
+    },
+    "#remove_node.#cancel_button":{
+        "colours":{
+            "normal_bg": "#4a99f8",
+            "hovered_bg": "#3b7bc8",
+            "selected_bg": "#4a99f8",
+            "active_bg": "#4a99f8",
+            "dark_bg": "#050e27",
+            "normal_text": "#ffffff",
+            "hovered_text": "#ffffff",
+            "disabled_text": "#808080",
+            "selected_text": "#ffffff",
+            "active_text": "#ffffff"
+        },
+        "misc":{
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "6",
+            "border_width": "0",
+            "shadow_width": "2"
+        },
+        "font":{
             "name": "roboto-regular",
             "size": "14",
             "bold": "0"

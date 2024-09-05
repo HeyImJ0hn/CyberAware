@@ -297,7 +297,7 @@ val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
-val PrimaryBlue = Color(0xFF4A99F8)
+val PrimaryBlue = Color(0xFF10263C)
 val DarkBlue = Color(0xFF050E27)
 val White = Color(0xFFFFFFFF)
 val Black = Color(0xFF000000)'''
@@ -365,9 +365,19 @@ fun CyberAwareBaseAppTheme(
         
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import dev.cyberaware.{TextUtils.clean_text(game_name)}.R
+
+val nexaFontFamily = FontFamily(
+    Font(R.font.nexa_regular, FontWeight.Normal, FontStyle.Normal),
+    Font(R.font.nexa_light, FontWeight.Light, FontStyle.Normal),
+    Font(R.font.nexa_bold, FontWeight.Bold, FontStyle.Normal),
+    Font(R.font.nexa_heavy, FontWeight.Black, FontStyle.Normal)
+)
 
 val Typography = Typography(
     bodyLarge = TextStyle(
@@ -375,6 +385,13 @@ val Typography = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp,
+        letterSpacing = 0.5.sp
+    ),
+    labelLarge = TextStyle(
+        fontFamily = nexaFontFamily,
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
         letterSpacing = 0.5.sp
     )
 )'''
@@ -527,6 +544,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.text.style.TextAlign
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
@@ -612,6 +630,8 @@ fun BaseScreen(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {{
+                    Spacer(modifier = Modifier.weight(1f))
+                    
                     Text(
                         text = screenText,
                         style = MaterialTheme.typography.bodyLarge,
@@ -619,8 +639,6 @@ fun BaseScreen(
                             .padding(bottom = 16.dp, top = 28.dp)
                             .align(Alignment.Start)
                     )
-
-                    Spacer(modifier = Modifier.weight(1f))
 
                     val buttonChunks = buttons.chunked(2)
                     buttonChunks.forEach {{ rowButtons ->
@@ -653,7 +671,11 @@ fun OptionButton(modifier: Modifier, text: String, onNavigateToBaseScreen: () ->
         ),
         modifier = modifier
     ) {{
-        Text(text = text)
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelLarge,
+            textAlign = TextAlign.Center
+        )
     }}
 }}
 

@@ -133,7 +133,7 @@ class ViewController:
             '#compile_dialog.#close_button': self.clear_active_dialog,
             '#compile_dialog.#compile_signed_button': self.compile_signed_dialog,
             '#compile_dialog.#compile_debug_button': self.compile_debug,
-            '#request_key_dialog.#browse_button': self.browse_keystore,
+            '#request_key_dialog.#browse_key_button': self.browse_keystore,
             '#request_key_dialog.#close_button': self.clear_active_dialog,
             '#request_key_dialog.#cancel_button': self.clear_active_dialog
         }
