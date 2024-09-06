@@ -82,6 +82,7 @@ class GameManager:
         FileDAO.save(json, self.path)
 
     def compile(self, signed):
+        FileDAO.delete_default_app_icon_android()
         for entity in self.get_entities():
             FileDAO.media_to_android(entity.media, entity.id)
         FileDAO.app_icon_to_android(self.icon_path)

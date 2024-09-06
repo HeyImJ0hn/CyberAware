@@ -95,9 +95,9 @@ class FileDAO:
             return
         else:
             print('Copying media: ' + source + ' to ' + destination)
-            shutil.copy2(source, destination)
-            return os.path.join(destination, os.path.basename(source) if custom_name is None else custom_name)
-    
+            new_destination = os.path.join(destination, os.path.basename(source) if custom_name is None else custom_name)
+            shutil.copy2(source, new_destination)
+            return new_destination
     @staticmethod
     def media_to_android(source, file_name):
         folder = 'drawable' if FileDAO.is_image_file(source) else 'raw'
@@ -247,4 +247,14 @@ class FileDAO:
         else:
             print('Copying media: ' + icon_path + ' to ' + destination)
             shutil.copy2(icon_path, destination)
+            
+    @staticmethod
+    def delete_default_app_icon_android():
+        destination = os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..', '..' ,'android', 'app', 'src', 'main', 'res', 'drawable', 'app_icon.png'))
+        
+        if os.path.exists(destination):
+            print('Deleting default app icon: ' + destination)
+            os.unlink(destination)
+        else:
+            print('Default app icon does not exist: ' + destination)
         

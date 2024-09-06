@@ -1,7 +1,7 @@
 {
     "name": "Burla por Email",
     "app_version": "1",
-    "icon_path": "",
+    "icon_path": "C:\\Users\\joaot\\CyberAware\\burla_por_email\\app_icon.jpg",
     "entities": [
         {
             "id": 0,

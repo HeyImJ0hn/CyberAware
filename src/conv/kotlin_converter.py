@@ -77,23 +77,33 @@ fun AppNavigation() {{
 
     NavHost(navController = navController, startDestination = "home") {{
         composable("home") {{
-            HomeScreen(
-                onNavigateToBaseScreen = {{ screenId ->
-                    navController.navigate("base/$screenId")
-                }}
-            )
-        }}
+            '''
+        entity = entities[0]
+        print(entity)
+        isImage = FileDAO.is_image_file(entity.media)
+        folder = "drawable" if isImage else "raw"
+        resource = f'R.{folder}.id{entity.id}' if entity.media != "" else 0
+        string = f'BaseScreen(\n\
+            \tscreenId="0", """{entity.text}""", {str(entity.media != "").lower()}, {str(isImage).lower() if resource != 0 else "true"}, {resource}, buttons = listOf(\n'
+        
+        for option in entity.options:
+            string += f'\t\t\t\t\t{{modifier -> OptionButton(modifier, "{option.text}") {{ navController.navigate("base/{str(option.entity.id)}") }} }},\n'
+            
+        string += f'\t\t\t\t))\n'
+        app_nav_file += string
+        app_nav_file+='''
+        }
 
         composable(
-            "base/{{screenId}}",
-            arguments = listOf(navArgument("screenId") {{ type = NavType.StringType }})
-        ) {{ backStackEntry ->
-            BackHandler(true) {{
+            "base/{screenId}",
+            arguments = listOf(navArgument("screenId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            BackHandler(true) {
                 // Do nothing
-            }}
+            }
 
             val screenId = backStackEntry.arguments?.getString("screenId") ?: return@composable
-            when (screenId) {{
+            when (screenId) {
         '''
         for entity in entities:
             isImage = FileDAO.is_image_file(entity.media)
@@ -518,6 +528,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -534,23 +545,27 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.compose.ui.text.style.TextAlign
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.StyledPlayerView
-import java.util.logging.Logger
 
 @Composable
 fun BaseScreen(
@@ -564,6 +579,7 @@ fun BaseScreen(
     val context = LocalContext.current
 
     val isContentVisible = remember {{ mutableStateOf(isImage) }}
+    val canPress = remember {{ mutableStateOf(false) }}
     val videoUri = getUriFromRaw(context, rawResourceId = resourceId)
 
     Box(
@@ -571,15 +587,24 @@ fun BaseScreen(
             .fillMaxSize()
     ) {{
         if (hasMedia)
-            if (!isImage)
-                VideoPlayer(uri = videoUri, isContentVisible = isContentVisible)
-            else
+            if (!isImage) {{
+                VideoPlayer(uri = videoUri, isContentVisible = isContentVisible, canPress = canPress)
+                if (!canPress.value) {{
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .fillMaxSize()
+                            .clickable {{ }},
+                    )
+                }}
+            }} else {{
                 Image(
                     painter = painterResource(id = resourceId),
                     contentDescription = "Image",
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
+            }}
 
         if (!isContentVisible.value)
             Box(modifier = Modifier
@@ -680,7 +705,7 @@ fun OptionButton(modifier: Modifier, text: String, onNavigateToBaseScreen: () ->
 }}
 
 @Composable
-fun VideoPlayer(uri: Uri, isContentVisible: MutableState<Boolean>) {{
+fun VideoPlayer(uri: Uri, isContentVisible: MutableState<Boolean>, canPress: MutableState<Boolean>) {{
     val context = LocalContext.current
     val exoPlayer = remember {{
         ExoPlayer.Builder(context).build().apply {{
@@ -690,12 +715,17 @@ fun VideoPlayer(uri: Uri, isContentVisible: MutableState<Boolean>) {{
             playWhenReady = true
         }}
     }}
+    
+    var playerView: StyledPlayerView? by remember {{ mutableStateOf(null) }}
 
     DisposableEffect(Unit) {{
         val listener = object : Player.Listener {{
             override fun onPlaybackStateChanged(playbackState: Int) {{
                 if (playbackState == Player.STATE_ENDED) {{
                     isContentVisible.value = true
+                }} else if (playbackState == Player.STATE_READY) {{
+                    playerView?.hideController()
+                    canPress.value = false    
                 }}
             }}
         }}
@@ -710,6 +740,8 @@ fun VideoPlayer(uri: Uri, isContentVisible: MutableState<Boolean>) {{
     AndroidView(
         factory = {{
             StyledPlayerView(context).apply {{
+                playerView = this
+                controllerAutoShow = false
                 player = exoPlayer
                 resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
             }}
