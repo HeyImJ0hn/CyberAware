@@ -7,8 +7,8 @@
             "id": 0,
             "name": "Início",
             "coords": [
-                549.5,
-                10.0
+                473.5,
+                116.0
             ],
             "size": [
                 75,
@@ -36,8 +36,8 @@
             "id": 1,
             "name": "Screen 1",
             "coords": [
-                548.5,
-                265.0
+                472.5,
+                371.0
             ],
             "size": [
                 75,
@@ -70,14 +70,6 @@
                 {
                     "text": "Teste 2",
                     "entity_id": 9
-                },
-                {
-                    "text": "",
-                    "entity_id": 10
-                },
-                {
-                    "text": "",
-                    "entity_id": 11
                 }
             ]
         },
@@ -85,8 +77,8 @@
             "id": 2,
             "name": "Screen 2",
             "coords": [
-                302.5,
-                378.0
+                226.5,
+                484.0
             ],
             "size": [
                 75,
@@ -118,8 +110,8 @@
             "id": 3,
             "name": "Screen 3",
             "coords": [
-                827.5,
-                469.0
+                751.5,
+                575.0
             ],
             "size": [
                 75,
@@ -147,8 +139,8 @@
             "id": 4,
             "name": "Screen 4",
             "coords": [
-                236.5,
-                627.0
+                160.5,
+                733.0
             ],
             "size": [
                 75,
@@ -165,14 +157,19 @@
                 0
             ],
             "final": true,
-            "options": []
+            "options": [
+                {
+                    "text": "Início",
+                    "entity_id": 0
+                }
+            ]
         },
         {
             "id": 6,
             "name": "Screen 6",
             "coords": [
-                34.5,
-                458.0
+                -41.5,
+                564.0
             ],
             "size": [
                 75,
@@ -189,14 +186,19 @@
                 0
             ],
             "final": true,
-            "options": []
+            "options": [
+                {
+                    "text": "Início",
+                    "entity_id": 0
+                }
+            ]
         },
         {
             "id": 7,
             "name": "Screen 7",
             "coords": [
-                930.5,
-                653.0
+                854.5,
+                759.0
             ],
             "size": [
                 75,
@@ -213,14 +215,19 @@
                 0
             ],
             "final": true,
-            "options": []
+            "options": [
+                {
+                    "text": "Restart",
+                    "entity_id": 0
+                }
+            ]
         },
         {
             "id": 8,
             "name": "Screen 8",
             "coords": [
-                1090.5,
-                112.0
+                1014.5,
+                218.0
             ],
             "size": [
                 75,
@@ -237,14 +244,19 @@
                 215
             ],
             "final": true,
-            "options": []
+            "options": [
+                {
+                    "text": "Start",
+                    "entity_id": 0
+                }
+            ]
         },
         {
             "id": 9,
             "name": "Screen 9",
             "coords": [
-                1091.5,
-                306.0
+                1015.5,
+                412.0
             ],
             "size": [
                 75,
@@ -261,55 +273,12 @@
                 215
             ],
             "final": true,
-            "options": []
-        },
-        {
-            "id": 10,
-            "name": "Screen 10",
-            "coords": [
-                468.5,
-                571.0
-            ],
-            "size": [
-                75,
-                75
-            ],
-            "depth": 2,
-            "text": "",
-            "notes": "",
-            "media": "",
-            "hidden": false,
-            "colour": [
-                12,
-                160,
-                160
-            ],
-            "final": false,
-            "options": []
-        },
-        {
-            "id": 11,
-            "name": "Screen 11",
-            "coords": [
-                682.5,
-                569.0
-            ],
-            "size": [
-                75,
-                75
-            ],
-            "depth": 2,
-            "text": "",
-            "notes": "",
-            "media": "",
-            "hidden": false,
-            "colour": [
-                255,
-                216,
-                0
-            ],
-            "final": false,
-            "options": []
+            "options": [
+                {
+                    "text": "Restart",
+                    "entity_id": 0
+                }
+            ]
         }
     ]
 }

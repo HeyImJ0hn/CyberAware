@@ -112,11 +112,8 @@ fun AppNavigation() {{
             string = f'\t\t\t\t"{entity.id}" -> BaseScreen(\n\
                 \tscreenId=screenId, """{entity.text}""", {str(entity.media != "").lower()}, {str(isImage).lower() if resource != 0 else "true"}, {resource}, buttons = listOf(\n'
             
-            if not entity.final:
-                for option in entity.options:
-                    string += f'\t\t\t\t\t{{modifier -> OptionButton(modifier, "{option.text}") {{ navController.navigate("base/{str(option.entity.id)}") }} }},\n'
-            else:
-                string += f'\t\t\t\t\t{{modifier -> OptionButton(modifier, "Recomeçar") {{ navController.navigate("home") }} }},\n'
+            for option in entity.options:
+                string += f'\t\t\t\t\t{{modifier -> OptionButton(modifier, "{option.text}") {{ navController.navigate("base/{str(option.entity.id)}") }} }},\n'
                 
             string += f'\t\t\t\t))\n'
             app_nav_file += string

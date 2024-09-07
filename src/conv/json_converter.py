@@ -76,7 +76,6 @@ class JSONConverter:
     def settings_to_json(self):
         FileDAO.save_settings({
             "VERSION": Settings.VERSION,
-            "RESOLUTION": Settings.RESOLUTION,
             "FIRST_RUN": Settings.FIRST_RUN,
             "RECENT_FILES": Settings.RECENT_FILES,
             "RECENT_MEDIA_PATH": Settings.RECENT_MEDIA_PATH
@@ -87,7 +86,6 @@ class JSONConverter:
         
         if json:
             Settings.VERSION = json["VERSION"]
-            Settings.RESOLUTION = json["RESOLUTION"]
             Settings.FIRST_RUN = json["FIRST_RUN"]
             Settings.RECENT_FILES = json["RECENT_FILES"]
             Settings.RECENT_MEDIA_PATH = json["RECENT_MEDIA_PATH"]

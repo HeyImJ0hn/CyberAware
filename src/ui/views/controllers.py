@@ -217,7 +217,7 @@ class ViewController:
     def window_resize(self, event):
         self.view.resolution = (event.w, event.h)
         Settings.RESOLUTION = (event.w, event.h)
-        Settings.FULLSCREEN = False
+        #Settings.FULLSCREEN = False
 
         self.game_manager.update_resolution((event.w, event.h))
         self.ui_manager.set_window_resolution(self.view.resolution)
@@ -257,7 +257,7 @@ class ViewController:
     def menu_kill(self, event):
         entity = event.entity
         menu = event.ui_element
-
+        
         entity.update_properties(
             name=menu.name.get_text(),
             text=menu.text.get_text(),
@@ -555,11 +555,20 @@ class ViewController:
             self.remove_entity_option(event.ui_element)
 
     def toggle_final_checkbox(self):
-        if len(self.open_menu.entity.options) == 0:
-            self.open_menu.final_checkbox.set_text("X" if self.open_menu.final_checkbox.text == "" else "")
-            self.show_toast('Set Screen to Final', ToastType.SUCCESS) if self.open_menu.final_checkbox.text == "X" else self.show_toast('Unset Screen to Final', ToastType.SUCCESS)
+        entity = self.open_menu.entity
+        if entity.menu.final_checkbox.text == "X":
+            entity.remove_option(self.game_manager.get_entities()[0])
+            self.open_menu.final_checkbox.set_text("")
+            self.show_toast('Unset Screen as Final', ToastType.SUCCESS)
+            #self.refresh_menu(entity)
         else:
-            self.show_toast('Final screen cannot have options', ToastType.ERROR)
+            if len(entity.options) == 0:
+                entity.add_option(self.game_manager.get_entities()[0])
+                self.open_menu.final_checkbox.set_text("X")
+                self.show_toast('Set Screen to Final', ToastType.SUCCESS)
+                #self.refresh_menu(entity)
+            else:
+                self.show_toast('Final screen cannot have options', ToastType.ERROR)
 
     def remove_entity_option(self, ui_element):
         option = self.open_menu.entity.get_option_from_menu(ui_element)

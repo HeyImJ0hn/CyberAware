@@ -176,7 +176,7 @@ class EntityMenu(UIWindow):
                                         object_id=ObjectID(class_id='@entity_menu_checkbox', object_id='#final_checkbox'))
         
         self.final_checkbox.set_text("X" if self.entity.final else "")
-
+        
         options = self.entity.options
         if len(options) > 0:
             UILabel(relative_rect=pygame.Rect((10, 290), (80, 30)), 
@@ -243,20 +243,6 @@ class PreviewWindow(UIWindow):
         self.setup_ui()
 
     def setup_ui(self):
-        '''
-        # Background
-        image_surface = self.resize_image_to_height(pygame.image.load("static/homeview_bg.png"), self.height)
-        excess_width = image_surface.get_width() - self.width
-        if excess_width > 0:
-            crop_rect = pygame.Rect(excess_width // 2, 0, self.width, self.height)
-            image_surface = image_surface.subsurface(crop_rect)
-        self.background = UIImage(relative_rect=pygame.Rect((0, 0), (self.width, self.height)), 
-                                image_surface=image_surface,
-                                manager=self.ui_manager, 
-                                container=self, 
-                                object_id=ObjectID(class_id='@preview_window_background', object_id='#background_image'))
-        '''
-        
         self.background_colour = (0, 0, 0)
         
         # Media
@@ -278,24 +264,13 @@ class PreviewWindow(UIWindow):
                     crop_rect = pygame.Rect(excess_width // 2, 0, self.width, self.height)
                     image_surface = image_surface.subsurface(crop_rect)
 
-            if self.entity.depth == 0:
-                rect = pygame.Rect((60, 120), (240, 240))
-            else:
-                rect = pygame.Rect((0, 0), (self.width, self.height))
+            rect = pygame.Rect((0, 0), (self.width, self.height))
 
             self.media = UIImage(relative_rect=rect, 
                                 image_surface=image_surface, 
                                 manager=self.ui_manager, 
                                 container=self, 
                                 object_id=ObjectID(class_id='@preview_window_image', object_id='#media_image'))
-        
-        if self.entity.depth == 0:
-            # Game Name
-            self.title = UILabel(relative_rect=pygame.Rect((0, 40), (self.width, 60)), 
-                                text=self.game_name, 
-                                manager=self.ui_manager, 
-                                container=self, 
-                                object_id=ObjectID(class_id='@preview_window_title', object_id='#title_label'))
         
         # Text
         self.text = UITextBox(relative_rect=pygame.Rect((0, 0), (self.width, self.height - len(self.entity.options) * 30 - 80)), 

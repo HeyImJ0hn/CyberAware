@@ -366,6 +366,8 @@ class SettingsDialog(UIWindow):
         else:
             icon = pygame.image.load(self.gm.temp_icon_path)
             
+        self.app_icon_image.kill()
+            
         self.app_icon_image = UIImage(relative_rect=pygame.Rect((20, 80), (124, 124)), 
                                       image_surface=icon, 
                                       manager=self.ui_manager, 

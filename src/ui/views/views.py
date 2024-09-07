@@ -146,22 +146,18 @@ class BuildView(View):
         self.update_display()
         
     def drawAAArc(self, surf, color, center, radius, start_angle, end_angle, width):
-        # Increase the size of the surface to add padding
-        padding = width + 2  # Extra space to avoid cutting off the arc
+        padding = width + 2
         surface_size = (radius * 2 + padding * 2 + 4, radius * 2 + padding * 2 + 4)
         
-        # Create an empty image with an alpha channel
         arc_image = np.zeros((*surface_size, 4), dtype=np.uint8)
 
-        # Convert angles to radians and OpenCV requires angles in degrees
         start_angle_deg = np.degrees(start_angle)
         end_angle_deg = np.degrees(end_angle)
 
-        # Draw the arc on the image
         arc_image = cv2.ellipse(
             arc_image, 
-            (surface_size[0]//2, surface_size[1]//2),  # Center the arc in the padded surface
-            (radius, radius),  # Arc size remains the same
+            (surface_size[0]//2, surface_size[1]//2),
+            (radius, radius),
             0, 
             start_angle_deg, 
             end_angle_deg, 
@@ -170,13 +166,8 @@ class BuildView(View):
             lineType=cv2.LINE_AA
         )
         
-        # Create a surface from the buffer
         arc_surface = pygame.image.frombuffer(arc_image.flatten(), surface_size, 'RGBA')
-        
-        # Adjust the position to center the arc properly on the main surface
         arc_rect = arc_surface.get_rect(center=center)
-        
-        # Blit the arc surface onto the main surface
         surf.blit(arc_surface, arc_rect)
 
 class HomeView(View):

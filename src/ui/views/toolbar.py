@@ -195,7 +195,12 @@ class ToolbarControl:
         self.disable_toolbar()
         
     def settings(self):
-        self.view_controller.active_dialog = SettingsDialog(self.ui_manager, self.game_manager)
+        try:
+            pygame.image.load(self.game_manager.icon_path)
+        except FileNotFoundError:
+            self.view_controller.show_toast('Missing File: App Icon', ToastType.ERROR)
+        else:
+            self.view_controller.active_dialog = SettingsDialog(self.ui_manager, self.game_manager)
     
     def disable_toolbar(self):
         for button in self.toolbar.toolbar_buttons:
@@ -206,4 +211,7 @@ class ToolbarControl:
             button.enable()
 
     def enable_preview(self):
-        self.view_controller.preview_window = self.game_manager.open_preview_window()
+        if self.game_manager.is_file_missing():
+            self.view_controller.show_toast('Missing Media Files', ToastType.ERROR)
+        else:
+            self.view_controller.preview_window = self.game_manager.open_preview_window()

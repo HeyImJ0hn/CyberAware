@@ -146,6 +146,13 @@ class GameManager:
     def open_preview_window(self, entity=None):
         return PreviewWindow(self.view.ui_manager, entity if entity else self._entity_manager.entities[0], self.game_name)
     
+    def is_file_missing(self):
+        for entity in self.get_entities():
+            if entity.media == "": continue
+            if not FileDAO.does_path_exist(entity.media):
+                return True
+        return False
+    
     def update_recent_files(self):
         for i, file in enumerate(self.recent_files):
             if file == self.path:
@@ -235,7 +242,7 @@ class EntityManager:
     def draw_entities(self, screen):
         for entity in self.entities:
             for option in entity.options:
-                if not option.entity.hidden:
+                if not option.entity.hidden and not option.entity.id == 0:
                     pygame.draw.aaline(screen, (0, 0, 0), entity.centroid, option.entity.centroid)
 
         for entity in self.entities:
@@ -304,7 +311,7 @@ class Entity:
             return
 
         for option in self.options:
-            if not option.entity.hidden:
+            if not option.entity.hidden and not option.entity.id == 0:
                 #pygame.draw.aaline(screen, (0, 0, 0), self.centroid, option.entity.centroid)
 
                 # Texto da opção
