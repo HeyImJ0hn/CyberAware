@@ -152,3 +152,4 @@ cython_debug/
 #.idea/
 /android/app/src/main/res/raw
 /android/app/src/main/res/drawable
+android/app/build.gradle.kts
