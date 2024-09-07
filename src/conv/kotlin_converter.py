@@ -612,10 +612,10 @@ fun BaseScreen(
         if (!isContentVisible.value)
             Box(modifier = Modifier
                 .align(Alignment.TopEnd)
-                .size(42.dp)
+                .size(52.dp)
                 .padding(8.dp)
                 .background(
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
                     shape = RoundedCornerShape(24.dp)
                 )
                 .clickable {{ }},
@@ -638,7 +638,7 @@ fun BaseScreen(
                 if (isContentVisible.value)
                     Box(modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .size(42.dp)
+                        .size(52.dp)
                         .padding(8.dp)
                         .background(
                             color = MaterialTheme.colorScheme.primary,
