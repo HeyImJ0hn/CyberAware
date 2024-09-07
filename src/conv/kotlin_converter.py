@@ -185,7 +185,7 @@ android {{
 
     defaultConfig {{
         applicationId = "dev.cyberaware.{TextUtils.clean_text(game_name)}"
-        minSdk = 26
+        minSdk = 21
         targetSdk = 34
         versionCode = {app_version}
         versionName = "{app_version}.0"
