@@ -507,8 +507,9 @@ class ViewController:
     def cancel_new_game(self, event):
         self.active_dialog = None
         event.ui_element.ui_container.parent_element.kill()
-        self.game_manager.game_name = ""
-        self.game_manager.file_path = ""
+        if self.view.type == ViewType.HOME:
+            self.game_manager.game_name = ""
+            self.game_manager.file_path = ""
         self.enable_home_or_toolbar_buttons()
 
     def browse_media(self):
