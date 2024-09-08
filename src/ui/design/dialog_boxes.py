@@ -1,6 +1,7 @@
 import pygame
 import pygame_gui
 import colorsys
+import os
 from pygame_gui.elements import *
 from pygame_gui.core import ObjectID
 from config.settings import Settings
@@ -78,7 +79,7 @@ class Toast(UIWindow):
         padding = 20
         toolbar_height = 40
 
-        font = pygame.font.Font("fonts/Roboto-Regular.ttf", 20)  
+        font = pygame.font.Font(os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "fonts", "Roboto-Regular.ttf")), 20)  
         text_width, _ = font.size(toast_text)
         
         min_width = 100 
@@ -87,7 +88,9 @@ class Toast(UIWindow):
         WIDTH = min(max(text_width + 80, min_width), max_width)
         
         object_id = '#success_toast' if toast_type == ToastType.SUCCESS else '#error_toast' if toast_type == ToastType.ERROR else '#info_toast'
-        image = 'static/check-solid.svg' if toast_type == ToastType.SUCCESS else 'static/xmark-solid.svg' if toast_type == ToastType.ERROR else 'static/info-solid.svg'
+        image = 'check-solid.svg' if toast_type == ToastType.SUCCESS else 'xmark-solid.svg' if toast_type == ToastType.ERROR else 'info-solid.svg'
+        
+        image_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "static", image))
 
         super().__init__(pygame.Rect((screen_res[0] - WIDTH - padding, toolbar_height + padding), (WIDTH, HEIGHT)), ui_manager,
                         window_display_title='Toast',
@@ -98,7 +101,7 @@ class Toast(UIWindow):
         icon_pos = (16, HEIGHT/2-10) if toast_type == ToastType.INFO else (20, HEIGHT/2-10)
         icon_size = (22.5*1.2, 18.5*1.2) if toast_type == ToastType.INFO else (17.5, 22.5)
         
-        self.icon = UIImage(relative_rect=pygame.Rect(icon_pos, icon_size), image_surface=pygame.image.load(image), manager=self.ui_manager, container=self, object_id=ObjectID(class_id=f'@{toast_type.name.lower()}_popup_icon', object_id='#icon'))
+        self.icon = UIImage(relative_rect=pygame.Rect(icon_pos, icon_size), image_surface=pygame.image.load(image_path), manager=self.ui_manager, container=self, object_id=ObjectID(class_id=f'@{toast_type.name.lower()}_popup_icon', object_id='#icon'))
         self.message = UILabel(relative_rect=pygame.Rect((28, 0), (WIDTH-28, HEIGHT)), text=toast_text, manager=self.ui_manager, container=self, object_id=ObjectID(class_id=f'@{toast_type.name.lower()}_popup_label', object_id='#message_label'))
 
 class BrowseMediaDialog:

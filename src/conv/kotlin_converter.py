@@ -6,31 +6,42 @@ from dao.file_dao import FileDAO
 class KotlinConverter:
     
     @staticmethod
+    def create_folders(game):
+        game_name = game.game_name
+        dir_to_create = os.path.join(os.path.dirname(__file__), '..', 'android', 'app', 'src', 'main', 'res', 'drawable')
+        if not os.path.exists(dir_to_create):
+            os.makedirs(dir_to_create)
+        
+        dir_to_create = os.path.join(os.path.dirname(__file__), '..', 'android', 'app', 'src', 'main', 'res', 'raw')
+        if not os.path.exists(dir_to_create):
+            os.makedirs(dir_to_create)
+        
+        dir_to_create = os.path.join(os.path.dirname(__file__), '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name))
+        if not os.path.exists(dir_to_create):
+            os.makedirs(dir_to_create)
+            
+        dir_to_create = os.path.join(os.path.dirname(__file__), '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'navigation')
+        if not os.path.exists(dir_to_create):
+            os.makedirs(dir_to_create)
+            
+        dir_to_create = os.path.join(os.path.dirname(__file__), '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'screens')
+        if not os.path.exists(dir_to_create):
+            os.makedirs(dir_to_create)
+            
+        dir_to_create = os.path.join(os.path.dirname(__file__), '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui')
+        if not os.path.exists(dir_to_create):
+            os.makedirs(dir_to_create)
+            
+        dir_to_create = os.path.join(os.path.dirname(__file__), '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui', 'theme')
+        if not os.path.exists(dir_to_create):
+            os.makedirs(dir_to_create)
+    
+    @staticmethod
     def convert_to_kotlin(game, logger, signed, keystore):
         game_name = game.game_name
         app_version = game.app_version
         entities = game.get_entities()
         
-        dir_to_create = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name))
-        if not os.path.exists(dir_to_create):
-            os.makedirs(dir_to_create)
-        
-        dir_to_create = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'navigation')
-        if not os.path.exists(dir_to_create):
-            os.makedirs(dir_to_create)
-            
-        dir_to_create = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'screens')
-        if not os.path.exists(dir_to_create):
-            os.makedirs(dir_to_create)
-            
-        dir_to_create = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui')
-        if not os.path.exists(dir_to_create):
-            os.makedirs(dir_to_create)
-            
-        dir_to_create = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui', 'theme')
-        if not os.path.exists(dir_to_create):
-            os.makedirs(dir_to_create)
-            
         # Navigation
         KotlinConverter._create_app_navigation(game_name, entities)
         
@@ -123,7 +134,7 @@ fun AppNavigation() {{
     }
 }'''
 
-        file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'navigation', 'AppNavigation.kt')
+        file_path = os.path.join(os.path.dirname(__file__), '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'navigation', 'AppNavigation.kt')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(app_nav_file)
         
@@ -135,7 +146,7 @@ fun AppNavigation() {{
     <string name="title_activity_app_navigation">AppNavigation</string>
 </resources>'''
 
-        file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'res', 'values', 'strings.xml')
+        file_path = os.path.join(os.path.dirname(__file__), '..', 'android', 'app', 'src', 'main', 'res', 'values', 'strings.xml')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(strings_file)
     
@@ -165,7 +176,7 @@ dependencyResolutionManagement {{
 rootProject.name = "{TextUtils.clean_text(game_name)}"
 include(":app")'''
 
-        file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'settings.gradle.kts')
+        file_path = os.path.join(os.path.dirname(__file__), '..', 'android', 'settings.gradle.kts')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(settings_file)
     
@@ -250,7 +261,7 @@ dependencies {{
     implementation("androidx.compose.material:material-icons-extended:1.6.8")
 }}'''    
 
-        file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'build.gradle.kts')
+        file_path = os.path.join(os.path.dirname(__file__), '..', 'android', 'app', 'build.gradle.kts')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(build_file)
     
@@ -288,7 +299,7 @@ class MainActivity : ComponentActivity() {{
     }}
 }}'''
         
-        file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'MainActivity.kt')
+        file_path = os.path.join(os.path.dirname(__file__), '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'MainActivity.kt')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(main_activity_file)
           
@@ -311,7 +322,7 @@ val DarkBlue = Color(0xFF050E27)
 val White = Color(0xFFFFFFFF)
 val Black = Color(0xFF000000)'''
 
-        file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui', 'theme', 'Color.kt')
+        file_path = os.path.join(os.path.dirname(__file__), '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui', 'theme', 'Color.kt')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(color_file)
           
@@ -364,7 +375,7 @@ fun CyberAwareBaseAppTheme(
     )
 }}'''
 
-        file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui', 'theme', 'Theme.kt')
+        file_path = os.path.join(os.path.dirname(__file__), '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui', 'theme', 'Theme.kt')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(theme_file)
             
@@ -404,7 +415,7 @@ val Typography = Typography(
         letterSpacing = 0.5.sp
     )
 )'''
-        file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui', 'theme', 'Type.kt')
+        file_path = os.path.join(os.path.dirname(__file__), '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui', 'theme', 'Type.kt')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(type_file)
     
@@ -507,7 +518,7 @@ fun HomeScreen(onNavigateToBaseScreen: (String) -> Unit) {{
     }}
 }}'''
 
-        file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'screens', 'HomeScreen.kt')
+        file_path = os.path.join(os.path.dirname(__file__), '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'screens', 'HomeScreen.kt')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(home_screen_file)
          
@@ -763,6 +774,6 @@ fun getUriFromRaw(context: Context, rawResourceId: Int): Uri {{
     return Uri.parse("android.resource://${{context.packageName}}/$rawResourceId")
 }}'''
 
-        file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'screens', 'BaseScreen.kt')
+        file_path = os.path.join(os.path.dirname(__file__), '..', 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'screens', 'BaseScreen.kt')
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(base_screen_file)

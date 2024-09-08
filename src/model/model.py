@@ -1,6 +1,7 @@
 import pygame
 import sys
 import math
+import os
 
 from ui.design.entity_design import EntityBody, EntityButton, PreviewWindow, EntityMenu
 from ui.views.views import HomeView, BuildView
@@ -83,6 +84,7 @@ class GameManager:
 
     def compile(self, signed):
         FileDAO.delete_default_app_icon_android()
+        KotlinConverter.create_folders(self)
         for entity in self.get_entities():
             FileDAO.media_to_android(entity.media, entity.id)
         FileDAO.app_icon_to_android(self.icon_path)
@@ -193,8 +195,8 @@ class GameManager:
         self.compilation_logs = []
         self.move_build_folder()
         
-        FileDAO.delete_android_media()
-        FileDAO.restore_default_app_icon()
+        #FileDAO.delete_android_media()
+        #FileDAO.restore_default_app_icon()
         
 class EntityManager:
     def __init__(self, ui_manager, entities=[]):
@@ -297,8 +299,8 @@ class Entity:
 
         self.centroid = (self.x + self.width/2, self.y + self.height/2)
 
-        self.options_font = pygame.font.Font("fonts/Roboto-Regular.ttf", 20)
-        self.name_font = pygame.font.Font("fonts/Roboto-Bold.ttf", 20)
+        self.options_font = pygame.font.Font(os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "fonts", "Roboto-Regular.ttf")), 20)
+        self.name_font = pygame.font.Font(os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "fonts", "Roboto-Bold.ttf")), 20)
 
         self.hidden = False
         self.hovered = False

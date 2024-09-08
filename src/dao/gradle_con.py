@@ -56,7 +56,7 @@ class GradleCon:
     @staticmethod
     def compile(logger, signed = False, keystore = None):
         def run_gradle_build():
-            android_project_dir =  os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..', '..' ,'android'))
+            android_project_dir =  os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..' ,'android'))
 
             if platform.system() == "Windows":
                 gradle_command = 'gradlew.bat'

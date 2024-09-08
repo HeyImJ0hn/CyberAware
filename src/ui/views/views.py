@@ -1,16 +1,15 @@
 import pygame
 import pygame_gui
-from pygame._sdl2 import Window
-from pygame_gui.elements import UIButton, UILabel, UIScrollingContainer, UISelectionList
+from pygame_gui.elements import UIButton, UILabel, UISelectionList
 from pygame_gui.core import ObjectID
 from config.settings import *
 from ui.views.controllers import ViewController, HomeViewControl
 from ui.views.toolbar import Toolbar
 from ui.views.view_types import ViewType
-from ui.design.entity_design import EntityBody
-import math
 import numpy as np
 import cv2
+import os
+import sys
 
 class View:
     def __init__(self, game_manager):
@@ -19,7 +18,15 @@ class View:
         self.resolution = (800, 600)
         self.screen = pygame.display.set_mode(self.resolution, pygame.SRCALPHA if self.type == ViewType.HOME else pygame.RESIZABLE | pygame.SRCALPHA)
 
-        self.ui_manager = pygame_gui.UIManager(self.resolution, 'theme.json')
+        if getattr(sys, 'frozen', False):
+            base_path = sys._MEIPASS  # This is where PyInstaller unpacks files at runtime
+        else:
+            base_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))  # Use the script's directory
+
+        theme_path = os.path.normcase(os.path.join(base_path, 'theme.json'))
+        self.ui_manager = pygame_gui.UIManager(self.resolution, theme_path)
+
+        #self.ui_manager = pygame_gui.UIManager(self.resolution, os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'theme.json')))
         pygame.display.set_caption("CyberAware")
         
         self.clock = pygame.time.Clock()

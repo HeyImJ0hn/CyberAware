@@ -33,8 +33,8 @@
             "size": "14",
             "bold": "0",
             "italic": "0",
-            "regular_path": "fonts/Roboto-Regular.ttf",
-            "bold_path": "fonts/Roboto-Bold.ttf"
+            "regular_path": "src/fonts/Roboto-Regular.ttf",
+            "bold_path": "src/fonts/Roboto-Bold.ttf"
         },
         "misc":
         {
@@ -70,8 +70,8 @@
             "size": "16",
             "bold": "0",
             "italic": "0",
-            "regular_path": "fonts/Roboto-Regular.ttf",
-            "bold_path": "fonts/Roboto-Bold.ttf"
+            "regular_path": "src/fonts/Roboto-Regular.ttf",
+            "bold_path": "src/fonts/Roboto-Bold.ttf"
         }
     },
     "@toolbar_dropdown_button":
@@ -103,8 +103,8 @@
             "size": "16",
             "bold": "0",
             "italic": "0",
-            "regular_path": "fonts/Roboto-Regular.ttf",
-            "bold_path": "fonts/Roboto-Bold.ttf"
+            "regular_path": "src/fonts/Roboto-Regular.ttf",
+            "bold_path": "src/fonts/Roboto-Bold.ttf"
         }
     },
     "#toolbar_input": 
@@ -136,8 +136,8 @@
             "size": "16",
             "bold": "0",
             "italic": "0",
-            "regular_path": "fonts/Roboto-Regular.ttf",
-            "bold_path": "fonts/Roboto-Bold.ttf"
+            "regular_path": "src/fonts/Roboto-Regular.ttf",
+            "bold_path": "src/fonts/Roboto-Bold.ttf"
         }
     },
     "@main_menu_button":
@@ -166,8 +166,8 @@
             "name": "roboto-regular",
             "size": "14",
             "bold": "0",
-            "regular_path": "fonts/Roboto-Thin.ttf",
-            "bold_path": "fonts/Roboto-Black.ttf"
+            "regular_path": "src/fonts/Roboto-Thin.ttf",
+            "bold_path": "src/fonts/Roboto-Black.ttf"
         }
     },
     "#title":
@@ -181,8 +181,8 @@
             "name": "roboto-special",
             "size": "32",
             "bold": "1",
-            "regular_path": "fonts/Roboto-Thin.ttf",
-            "bold_path": "fonts/Roboto-Black.ttf"
+            "regular_path": "src/fonts/Roboto-Thin.ttf",
+            "bold_path": "src/fonts/Roboto-Black.ttf"
         },
         "misc":
         {
@@ -200,8 +200,8 @@
         {
             "name": "roboto-regular",
             "size": "16",
-            "regular_path": "fonts/Roboto-Thin.ttf",
-            "bold_path": "fonts/Roboto-Black.ttf"
+            "regular_path": "src/fonts/Roboto-Thin.ttf",
+            "bold_path": "src/fonts/Roboto-Black.ttf"
         },
         "misc":
         {
@@ -249,8 +249,8 @@
             "name": "roboto-regular",
             "size": "16",
             "bold": "1",
-            "regular_path": "fonts/Roboto-Regular.ttf",
-            "bold_path": "fonts/Roboto-Bold.ttf"
+            "regular_path": "src/fonts/Roboto-Regular.ttf",
+            "bold_path": "src/fonts/Roboto-Bold.ttf"
         },
         "misc":
         {
@@ -278,8 +278,8 @@
             "size": "16",
             "bold": "0",
             "italic": "0",
-            "regular_path": "fonts/Roboto-Regular.ttf",
-            "bold_path": "fonts/Roboto-Bold.ttf"
+            "regular_path": "src/fonts/Roboto-Regular.ttf",
+            "bold_path": "src/fonts/Roboto-Bold.ttf"
         }
     },
     "#entity_menu.#title_bar": 
@@ -348,8 +348,8 @@
             "size": "18",
             "bold": "1",
             "italic": "0",
-            "regular_path": "fonts/Roboto-Regular.ttf",
-            "bold_path": "fonts/Roboto-Bold.ttf"
+            "regular_path": "src/fonts/Roboto-Regular.ttf",
+            "bold_path": "src/fonts/Roboto-Bold.ttf"
         }
     },
     "@entity_menu_input": 
@@ -375,8 +375,8 @@
             "size": "14",
             "bold": "0",
             "italic": "0",
-            "regular_path": "fonts/Roboto-Regular.ttf",
-            "bold_path": "fonts/Roboto-Bold.ttf"
+            "regular_path": "src/fonts/Roboto-Regular.ttf",
+            "bold_path": "src/fonts/Roboto-Bold.ttf"
         }
     },
     "#text_input":
@@ -507,8 +507,8 @@
             "size": "14",
             "bold": "0",
             "italic": "0",
-            "regular_path": "fonts/Roboto-Regular.ttf",
-            "bold_path": "fonts/Roboto-Bold.ttf"
+            "regular_path": "src/fonts/Roboto-Regular.ttf",
+            "bold_path": "src/fonts/Roboto-Bold.ttf"
         }
     },
     "@entity_option_input": 
@@ -533,8 +533,8 @@
             "size": "14",
             "bold": "0",
             "italic": "0",
-            "regular_path": "fonts/Roboto-Regular.ttf",
-            "bold_path": "fonts/Roboto-Bold.ttf"
+            "regular_path": "src/fonts/Roboto-Regular.ttf",
+            "bold_path": "src/fonts/Roboto-Bold.ttf"
         }
     },
     "@entity_option_button":
@@ -1461,8 +1461,8 @@
                 "size": "14",
                 "bold": "0",
                 "italic": "0",
-                "regular_path": "fonts/Roboto-Regular.ttf",
-                "bold_path": "fonts/Roboto-Bold.ttf"
+                "regular_path": "src/fonts/Roboto-Regular.ttf",
+                "bold_path": "src/fonts/Roboto-Bold.ttf"
             }
     },
     "#game_name_input":
