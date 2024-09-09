@@ -1,6 +1,6 @@
-from ui.design.dialog_boxes import *
+from ui.design.dialogboxes.dialog_boxes import *
 from pygame_gui.core import ObjectID
-from ui.design.toast_type import ToastType
+from ui.design.dialogboxes.toast_type import ToastType
 import pygame
 
 class Toolbar:

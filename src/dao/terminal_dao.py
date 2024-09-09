@@ -1,8 +1,6 @@
 import subprocess
 import platform
 from dao.file_dao import FileDAO
-import os
-import time
 
 class TerminalDao:
 

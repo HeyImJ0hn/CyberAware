@@ -1,6 +1,6 @@
-from ui.design.dialog_boxes import *
+from ui.design.dialogboxes.dialog_boxes import *
 from ui.views.view_types import ViewType
-from ui.design.toast_type import ToastType
+from ui.design.dialogboxes.toast_type import ToastType
 from dao.terminal_dao import TerminalDao
 import sys
 
@@ -241,9 +241,6 @@ class ViewController:
         self.view.quit_button.rect.y = HEIGHT/2 - 240/2 + 350
 
         self.view.draw_ui()
-
-    def ui_text_entry_finished(self, event):
-        pass
     
     def save_game_name(self):
         name = self.active_dialog.game_name_input.get_text()

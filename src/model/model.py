@@ -3,7 +3,7 @@ import sys
 import math
 import os
 
-from ui.design.entity_design import EntityBody, EntityButton, PreviewWindow, EntityMenu
+from ui.design.entitydesign.entity_design import EntityBody, EntityButton, PreviewWindow, EntityMenu
 from ui.views.views import HomeView, BuildView
 from dao.file_dao import FileDAO
 from conv.json_converter import JSONConverter
@@ -131,7 +131,7 @@ class GameManager:
         self.json_converter.settings_to_json()
 
     def submit_media(self, media, entity):
-        #FileDAO.media_to_android(media, entity.id)
+        FileDAO.media_to_android(media, entity.id)
         entity.update_media(FileDAO.copy_media(media, self.game_to_file_name(self.game_name).split(".")[0]))
 
     def get_parents(self, entity):
@@ -170,10 +170,6 @@ class GameManager:
         Settings.RECENT_FILES = self.recent_files
         self.save_settings()
         
-    def generate_key(self, key_alias, key_password, keystore_password, keystore_name, name, org_unit, org, city, state, country):
-        self.keystore = KeyStore(keystore_name, keystore_password)
-        return GradleCon.generate_key(self.logger, key_alias, key_password, keystore_password, keystore_name, name, org_unit, org, city, state, country)
-    
     def set_keystore(self, keystore_path, keystore_password):
         self.keystore = KeyStore(keystore_path, keystore_password)
         

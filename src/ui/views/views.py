@@ -134,8 +134,6 @@ class BuildView(View):
             self.screen.blit(background_surface, (0, 0))
             
             center = (WIDTH // 2, HEIGHT // 2)
-            radius = 50
-            width = 5
             arc_length = 70  
             self.loading_angle += 5  
             if self.loading_angle >= 360:
@@ -144,7 +142,7 @@ class BuildView(View):
             start_angle = np.radians(self.loading_angle)
             end_angle = np.radians(self.loading_angle + arc_length)
 
-            self.drawAAArc(self.screen, (0, 157, 255), center, radius, start_angle, end_angle, width)
+            self.drawAAArc(self.screen, center, start_angle, end_angle)
             
         if self.view_controller.generating_key:
             if self.game_manager.does_keystore_exist():
@@ -152,7 +150,10 @@ class BuildView(View):
 
         self.update_display()
         
-    def drawAAArc(self, surf, color, center, radius, start_angle, end_angle, width):
+    def drawAAArc(self, surf, center, start_angle, end_angle):
+        color = (0, 157, 255)
+        width = 5
+        radius = 50
         padding = width + 2
         surface_size = (radius * 2 + padding * 2 + 4, radius * 2 + padding * 2 + 4)
         

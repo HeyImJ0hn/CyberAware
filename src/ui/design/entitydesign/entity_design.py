@@ -55,7 +55,7 @@ class EntityButton:
             current_dir = os.path.dirname(__file__)
             img_file = "hide" if self.text == "H" else "show" if self.text == "S" else "palette"
             scale_width = self.width + 5 if self.text == "H" or self.text == "S" else self.width
-            svg_path = os.path.normpath(os.path.join(current_dir, "..", "..", "static", f"{img_file}.svg"))
+            svg_path = os.path.normpath(os.path.join(current_dir, "..", "..", "..", "static", f"{img_file}.svg"))
             image = pygame.image.load(svg_path)
             image = pygame.transform.smoothscale(image, (scale_width, self.height))
             image_rect = image.get_rect(center=self.rect.center)

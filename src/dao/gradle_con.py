@@ -7,53 +7,6 @@ import time
 
 class GradleCon:
     @staticmethod
-    def generate_key(
-        logger,
-        key_alias,
-        key_password,
-        keystore_password,
-        keystore_name,
-        name,
-        organizational_unit,
-        organization,
-        city,
-        state,
-        country_code,
-    ):
-        dname = f"CN={name}, OU={organizational_unit}, O={organization}, L={city}, ST={state}, C={country_code}"
-
-        keytool_command = [
-            "keytool", "-genkeypair",
-            "-alias", key_alias,
-            "-keyalg", "RSA",
-            "-keysize", "2048",
-            "-validity", "10000",
-            "-keystore", keystore_name,
-            "-storepass", keystore_password,
-            "-keypass", key_password,
-            "-dname", dname
-        ]
-
-        try:
-            print(f"Generating key with alias '{key_alias}'...")
-            print(f"Distinguished Name: {dname}")
-            #logger.log(f"Generating key with alias '{key_alias}'...")
-            #logger.log(f"Distinguished Name: {dname}")
-            result = subprocess.run(keytool_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            
-            if result.returncode == 0:
-                print(f"Key generation successful.\n{result.stdout}")
-                #logger.log(f"Key generation successful.<br>{result.stdout}")
-            else:
-                print(f"Key generation failed with error code {result.returncode}:\nCheck if password is at least 6 characters long.\n{result.stderr}")
-                #logger.log(f"Key generation failed with error code {result.returncode}:<br>{result.stderr}")
-            return result.returncode
-        except Exception as e:
-            print(f"An error occurred while generating the key: {e}")
-            #logger.log(f"An error occurred while generating the key: {e}<br>")
-            return -1
-
-    @staticmethod
     def compile(logger, signed = False, keystore = None):
         def run_gradle_build():
             android_project_dir =  os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..' ,'android'))

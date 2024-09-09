@@ -5,7 +5,7 @@ import os
 from pygame_gui.elements import *
 from pygame_gui.core import ObjectID
 from config.settings import Settings
-from ui.design.toast_type import ToastType
+from ui.design.dialogboxes.toast_type import ToastType
 from dao.file_dao import FileDAO
 
 class NewGameDialog(UIWindow):
@@ -79,7 +79,7 @@ class Toast(UIWindow):
         padding = 20
         toolbar_height = 40
 
-        font = pygame.font.Font(os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "fonts", "Roboto-Regular.ttf")), 20)  
+        font = pygame.font.Font(os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "fonts", "Roboto-Regular.ttf")), 20)  
         text_width, _ = font.size(toast_text)
         
         min_width = 100 
@@ -90,7 +90,7 @@ class Toast(UIWindow):
         object_id = '#success_toast' if toast_type == ToastType.SUCCESS else '#error_toast' if toast_type == ToastType.ERROR else '#info_toast'
         image = 'check-solid.svg' if toast_type == ToastType.SUCCESS else 'xmark-solid.svg' if toast_type == ToastType.ERROR else 'info-solid.svg'
         
-        image_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "static", image))
+        image_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "static", image))
 
         super().__init__(pygame.Rect((screen_res[0] - WIDTH - padding, toolbar_height + padding), (WIDTH, HEIGHT)), ui_manager,
                         window_display_title='Toast',
@@ -138,31 +138,6 @@ class ColourPickerDialog:
         r_norm, g_norm, b_norm = r / 255.0, g / 255.0, b / 255.0
         h, s, v = colorsys.rgb_to_hsv(r_norm, g_norm, b_norm)
         return pygame.Color(h, s, v, alpha)
-    
-class LoggerWindow(UIWindow):
-    def __init__(self, ui_manager):
-        WIDTH, HEIGHT = 800, 600
-        super().__init__(pygame.Rect((ui_manager.window_resolution[0]/2-WIDTH/2, ui_manager.window_resolution[1]/2-HEIGHT/2), (WIDTH, HEIGHT)), ui_manager,
-                         window_display_title='Logger',
-                         object_id='#logger_window',
-                         always_on_top=True,
-                         resizable=False)
-        
-        self.log = UITextBox(
-            relative_rect=pygame.Rect((10, 10), (WIDTH-20, HEIGHT-80)),
-            manager=self.ui_manager,
-            html_text="",
-            container=self,
-            object_id=ObjectID(class_id='@logger_window', object_id='#log')
-        )
-        
-        self.button = UIButton(relative_rect=pygame.Rect((WIDTH-100, HEIGHT-70), (90, 30)), 
-                 text="Dismiss", 
-                 manager=self.ui_manager, 
-                 container=self,
-                 object_id=ObjectID(class_id='@logger_window_button', object_id='#logger_dismiss_button'))
-        
-        self.button.disable()
         
 class CompileDialog(UIWindow):
     def __init__(self, ui_manager):
@@ -173,7 +148,7 @@ class CompileDialog(UIWindow):
                          always_on_top=True,
                          resizable=False)
         
-        self.log = UILabel(
+        UILabel(
             relative_rect=pygame.Rect((10, 10), (WIDTH-20, HEIGHT-80)),
             manager=self.ui_manager,
             text="Generate Signed App Bundle or Debug APK?",
@@ -181,13 +156,13 @@ class CompileDialog(UIWindow):
             object_id=ObjectID(class_id='@compile_dialog', object_id='#info')
         )
         
-        self.button_signed = UIButton(relative_rect=pygame.Rect((WIDTH-200, HEIGHT-70), (150, 30)), 
+        UIButton(relative_rect=pygame.Rect((WIDTH-200, HEIGHT-70), (150, 30)), 
                  text="Signed App Bundle", 
                  manager=self.ui_manager, 
                  container=self,
                  object_id=ObjectID(class_id='@compile_dialog_button', object_id='#compile_signed_button'))
         
-        self.button_debug = UIButton(relative_rect=pygame.Rect((WIDTH-350, HEIGHT-70), (150, 30)), 
+        UIButton(relative_rect=pygame.Rect((WIDTH-350, HEIGHT-70), (150, 30)), 
                  text="Debug APK", 
                  manager=self.ui_manager, 
                  container=self,
