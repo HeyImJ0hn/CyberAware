@@ -132,7 +132,6 @@ class ViewController:
             '@toolbar_dropdown.#toolbar_preview': self.handle_toolbar_action('enable_preview'),
             '@toolbar_dropdown.#toolbar_compile': self.handle_toolbar_action('compile'),
             '#new_game_dialog.#browse_button': self.browse_new_game_path,
-            '#new_game_dialog.#create_button': self.create_new_game,
             '#new_game_dialog.#close_button': self.enable_home_or_toolbar_buttons,
             '#entity_menu.#browse_button': self.browse_media,
             '#browse_media_dialog.#cancel_button': self.clear_active_dialog,
@@ -178,6 +177,8 @@ class ViewController:
             self.compile_signed(event)
         elif event.ui_object_id == '#request_key_dialog.#create_new_button':
             self.create_key_dialog(event)
+        elif event.ui_object_id == '#new_game_dialog.#create_button':
+            self.create_new_game(event)
     
     def mouse_hover(self):
         if not self.view.type == ViewType.BUILD or self.active_dialog:
@@ -242,15 +243,6 @@ class ViewController:
 
         self.view.draw_ui()
     
-    def save_game_name(self):
-        name = self.active_dialog.game_name_input.get_text()
-        self.game_manager.update_game_name(name)
-        self.show_toast('Game name updated', ToastType.SUCCESS)
-        
-    def save_game_icon(self):
-        self.game_manager.update_app_icon()
-        self.show_toast('App icon updated', ToastType.SUCCESS)
-
     def menu_kill(self, event):
         entity = event.entity
         menu = event.ui_element
@@ -282,6 +274,15 @@ class ViewController:
     ##########################
     #### Helper functions ####
     ##########################
+    def save_game_name(self):
+        name = self.active_dialog.game_name_input.get_text()
+        self.game_manager.update_game_name(name)
+        self.show_toast('Game name updated', ToastType.SUCCESS)
+        
+    def save_game_icon(self):
+        self.game_manager.update_app_icon()
+        self.show_toast('App icon updated', ToastType.SUCCESS)
+    
     def compile_signed_dialog(self):
         self.clear_active_dialog()
         #self.disable_toolbar()
@@ -495,8 +496,8 @@ class ViewController:
         SavePathDialog(self.ui_manager, '#save_path_dialog')
 
     def create_new_game(self, event):
-        game_name = event.ui_element.ui_container.parent_element.game_name
-        file_path = event.ui_element.ui_container.parent_element.file_path
+        game_name = event.ui_element.ui_container.parent_element.game_name.get_text()
+        file_path = event.ui_element.ui_container.parent_element.file_path.get_text()
         self.game_manager.game_name = game_name
         self.game_manager.path = file_path
         self.game_manager.new_game()
@@ -609,7 +610,6 @@ class ViewController:
         self.extra_dialog = None
 
     def get_ui_element_text(self, element_id):
-        #event.ui_element.ui_container.parent_element.
         return self.ui_manager.get_ui_element(element_id).get_text()
 
     def kill_ui_element(self, element_id):
