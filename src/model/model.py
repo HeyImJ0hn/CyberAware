@@ -12,6 +12,7 @@ from conv.kotlin_converter import KotlinConverter
 from model.logger import Logger
 from dao.gradle_con import GradleCon
 from model.keystore import KeyStore
+from utils.text_utils import TextUtils
 
 class GameManager:
     def __init__(self):
@@ -191,8 +192,9 @@ class GameManager:
         self.compilation_logs = []
         self.move_build_folder()
         
-        #FileDAO.delete_android_media()
-        #FileDAO.restore_default_app_icon()
+        FileDAO.delete_android_media()
+        FileDAO.restore_default_app_icon()
+        FileDAO.delete_android_game_folder(TextUtils.clean_text(self.game_name))
         
 class EntityManager:
     def __init__(self, ui_manager, entities=[]):
@@ -295,8 +297,13 @@ class Entity:
 
         self.centroid = (self.x + self.width/2, self.y + self.height/2)
 
-        self.options_font = pygame.font.Font(os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "fonts", "Roboto-Regular.ttf")), 20)
-        self.name_font = pygame.font.Font(os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "fonts", "Roboto-Bold.ttf")), 20)
+        if getattr(sys, 'frozen', False):
+            base_path = os.path.normpath(os.path.join(sys._MEIPASS, "fonts"))
+        else:
+            base_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "fonts"))
+            
+        self.options_font = pygame.font.Font(os.path.join(base_path, "Roboto-Regular.ttf"), 20)
+        self.name_font = pygame.font.Font(os.path.join(base_path, "Roboto-Bold.ttf"), 20)
 
         self.hidden = False
         self.hovered = False

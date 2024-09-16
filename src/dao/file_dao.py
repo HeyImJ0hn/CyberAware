@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import shutil
 import platform
@@ -100,7 +101,11 @@ class FileDAO:
     @staticmethod
     def media_to_android(source, file_name):
         folder = 'drawable' if FileDAO.is_image_file(source) else 'raw'
-        destination = os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..' ,'android', 'app', 'src', 'main', 'res', folder, 'id' + str(file_name) + FileDAO.get_file_extension(source)))
+        if getattr(sys, 'frozen', False):
+            base_path = sys._MEIPASS
+        else:
+            base_path = os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
+        destination = os.path.normpath(os.path.join(base_path, 'android', 'app', 'src', 'main', 'res', folder, 'id' + str(file_name) + FileDAO.get_file_extension(source)))
         
         if not os.path.exists(source):
             print('Media does not exist: ' + source)
@@ -133,7 +138,10 @@ class FileDAO:
 
         if os.path.exists(old_game_folder):
             print('Renaming directory: ' + old_game_folder + ' to ' + new_game_folder)
-            os.rename(old_game_folder, new_game_folder)
+            try:
+                os.rename(old_game_folder, new_game_folder)
+            except:
+                print('Error renaming directory: ' + old_game_folder + ' to ' + new_game_folder)
         else:
             print('Directory does not exist: ' + old_game_folder)
 
@@ -184,7 +192,12 @@ class FileDAO:
     
     @staticmethod
     def move_build_folder(game_name):
-        build_folder = os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..' ,'android', 'app', 'build', 'outputs'))
+        if getattr(sys, 'frozen', False):
+            base_path = sys._MEIPASS
+        else:
+            base_path = os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
+        
+        build_folder = os.path.normpath(os.path.join(base_path, 'android', 'app', 'build', 'outputs'))
         game_folder = FileDAO.get_game_folder(game_name)
         if os.path.exists(build_folder):
             print('Moving build folder: ' + build_folder + ' to ' + game_folder)
@@ -211,7 +224,11 @@ class FileDAO:
             
     @staticmethod
     def get_default_app_icon():
-        return os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..', 'static', 'app_icon.png'))
+        if getattr(sys, 'frozen', False):
+            base_path = sys._MEIPASS
+        else:
+            base_path = os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
+        return os.path.normpath(os.path.join(base_path, 'static', 'app_icon.png'))
     
     @staticmethod
     def restore_default_app_icon():
@@ -220,8 +237,12 @@ class FileDAO:
         
     @staticmethod
     def delete_android_media():
-        drawable = os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..' ,'android', 'app', 'src', 'main', 'res', 'drawable'))
-        raw = os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..' ,'android', 'app', 'src', 'main', 'res', 'raw'))
+        if getattr(sys, 'frozen', False):
+            base_path = sys._MEIPASS
+        else:
+            base_path = os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
+        drawable = os.path.normpath(os.path.join(base_path, 'android', 'app', 'src', 'main', 'res', 'drawable'))
+        raw = os.path.normpath(os.path.join(base_path, 'android', 'app', 'src', 'main', 'res', 'raw'))
         for file in os.listdir(drawable):
             path = os.path.join(drawable, file)
             if os.path.isfile(path):
@@ -238,10 +259,16 @@ class FileDAO:
     
     @staticmethod
     def app_icon_to_android(icon_path):
-        destination = os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..' ,'android', 'app', 'src', 'main', 'res', 'drawable', 'app_icon' + FileDAO.get_file_extension(icon_path)))
+        if getattr(sys, 'frozen', False):
+            base_path = sys._MEIPASS
+        else:
+            base_path = os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
+        destination = os.path.normpath(os.path.join(base_path, 'android', 'app', 'src', 'main', 'res', 'drawable', 'app_icon' + FileDAO.get_file_extension(icon_path)))
         
         if not os.path.exists(icon_path):
             print('Media does not exist: ' + icon_path)
+            print('Restoring default app icon')
+            FileDAO.restore_default_app_icon()
             return
         else:
             print('Copying media: ' + icon_path + ' to ' + destination)
@@ -249,11 +276,28 @@ class FileDAO:
             
     @staticmethod
     def delete_default_app_icon_android():
-        destination = os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..' ,'android', 'app', 'src', 'main', 'res', 'drawable', 'app_icon.png'))
+        if getattr(sys, 'frozen', False):
+            base_path = sys._MEIPASS
+        else:
+            base_path = os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
+        destination = os.path.normpath(os.path.join(base_path, 'android', 'app', 'src', 'main', 'res', 'drawable', 'app_icon.png'))
         
         if os.path.exists(destination):
             print('Deleting default app icon: ' + destination)
             os.unlink(destination)
         else:
             print('Default app icon does not exist: ' + destination)
+            
+    @staticmethod
+    def delete_android_game_folder(game_name):
+        if getattr(sys, 'frozen', False):
+            base_path = sys._MEIPASS
+        else:
+            base_path = os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
+        game_folder = os.path.normpath(os.path.join(base_path, 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', game_name))
+        if os.path.exists(game_folder):
+            print('Deleting game folder: ' + game_folder)
+            shutil.rmtree(game_folder)
+        else:
+            print('Game folder does not exist: ' + game_folder)
         

@@ -196,7 +196,8 @@ class ToolbarControl:
         
     def settings(self):
         try:
-            pygame.image.load(self.game_manager.icon_path)
+            if self.game_manager.icon_path != "":
+                pygame.image.load(self.game_manager.icon_path)
         except FileNotFoundError:
             self.view_controller.show_toast('Missing File: App Icon', ToastType.ERROR)
         else:

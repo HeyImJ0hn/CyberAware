@@ -21,7 +21,7 @@ class View:
         if getattr(sys, 'frozen', False):
             base_path = sys._MEIPASS  # This is where PyInstaller unpacks files at runtime
         else:
-            base_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))  # Use the script's directory
+            base_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))  # Use the script's directory
 
         theme_path = os.path.normcase(os.path.join(base_path, 'theme.json'))
         self.ui_manager = pygame_gui.UIManager(self.resolution, theme_path)
@@ -47,8 +47,6 @@ class View:
                     self.view_controller.mouse_button_up(event)
                 elif event.type == pygame.MOUSEMOTION:
                     self.view_controller.mouse_motion(event)
-                elif event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED:
-                    self.view_controller.ui_text_entry_finished(event)
                 elif event.type == pygame_gui.UI_BUTTON_PRESSED:
                     self.view_controller.ui_button_pressed(event)
                 elif event.type == pygame.KEYDOWN:

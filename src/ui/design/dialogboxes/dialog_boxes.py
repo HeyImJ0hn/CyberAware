@@ -7,6 +7,7 @@ from pygame_gui.core import ObjectID
 from config.settings import Settings
 from ui.design.dialogboxes.toast_type import ToastType
 from dao.file_dao import FileDAO
+import sys
 
 class NewGameDialog(UIWindow):
     def __init__(self, ui_manager, game_name="", file_path=""):
@@ -79,7 +80,11 @@ class Toast(UIWindow):
         padding = 20
         toolbar_height = 40
 
-        font = pygame.font.Font(os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "fonts", "Roboto-Regular.ttf")), 20)  
+        if getattr(sys, 'frozen', False):
+            base_path = sys._MEIPASS
+        else:
+            base_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+        font = pygame.font.Font(os.path.normpath(os.path.join(base_path, "fonts", "Roboto-Regular.ttf")), 20)  
         text_width, _ = font.size(toast_text)
         
         min_width = 100 
@@ -90,8 +95,11 @@ class Toast(UIWindow):
         object_id = '#success_toast' if toast_type == ToastType.SUCCESS else '#error_toast' if toast_type == ToastType.ERROR else '#info_toast'
         image = 'check-solid.svg' if toast_type == ToastType.SUCCESS else 'xmark-solid.svg' if toast_type == ToastType.ERROR else 'info-solid.svg'
         
-        image_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "static", image))
-
+        if getattr(sys, 'frozen', False):
+            image_path = os.path.normpath(os.path.join(sys._MEIPASS, "static", image))
+        else:
+            image_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "static", image))
+        
         super().__init__(pygame.Rect((screen_res[0] - WIDTH - padding, toolbar_height + padding), (WIDTH, HEIGHT)), ui_manager,
                         window_display_title='Toast',
                         object_id=object_id,

@@ -5,6 +5,7 @@ from dao.file_dao import FileDAO
 import cv2
 from PIL import Image
 import os
+import sys
 
 class EntityBody:
     def __init__(self, x, y, width, height, colour=(215, 215, 215)):
@@ -52,10 +53,14 @@ class EntityButton:
         #pygame.draw.rect(screen, (255, 255, 255), self.rect, border_radius=24)
 
         if self.text == "H" or self.text == "C" or self.text == "S":
-            current_dir = os.path.dirname(__file__)
+            if getattr(sys, 'frozen', False):
+                base_path = os.path.normpath(os.path.join(sys._MEIPASS, "static"))  # This is where PyInstaller unpacks files at runtime
+            else:
+                base_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "static"))
+                
             img_file = "hide" if self.text == "H" else "show" if self.text == "S" else "palette"
             scale_width = self.width + 5 if self.text == "H" or self.text == "S" else self.width
-            svg_path = os.path.normpath(os.path.join(current_dir, "..", "..", "..", "static", f"{img_file}.svg"))
+            svg_path = os.path.normpath(os.path.join(base_path, f"{img_file}.svg"))
             image = pygame.image.load(svg_path)
             image = pygame.transform.smoothscale(image, (scale_width, self.height))
             image_rect = image.get_rect(center=self.rect.center)
