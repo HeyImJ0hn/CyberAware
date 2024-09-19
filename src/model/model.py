@@ -512,6 +512,7 @@ class Entity:
     def toggle_options(self, options=None):
         self.buttons[1].text = "S" if self.buttons[1].text == "H" else "H"
         for option in self.options if not options else options:
+            if option.entity.id == 0: continue
             option.entity.toggle()
             if option.entity.options:
                 self.toggle_options(option.entity.options)
