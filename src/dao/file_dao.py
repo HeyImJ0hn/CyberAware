@@ -241,6 +241,8 @@ class FileDAO:
             base_path = sys._MEIPASS
         else:
             base_path = os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
+        
+        print('Deleting media in android folder')
         drawable = os.path.normpath(os.path.join(base_path, 'android', 'app', 'src', 'main', 'res', 'drawable'))
         raw = os.path.normpath(os.path.join(base_path, 'android', 'app', 'src', 'main', 'res', 'raw'))
         for file in os.listdir(drawable):

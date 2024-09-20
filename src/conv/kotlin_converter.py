@@ -98,7 +98,6 @@ fun AppNavigation() {{
         composable("home") {{
             '''
         entity = entities[0]
-        print(entity)
         isImage = FileDAO.is_image_file(entity.media)
         folder = "drawable" if isImage else "raw"
         resource = f'R.{folder}.id{entity.id}' if entity.media != "" else 0

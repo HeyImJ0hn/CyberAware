@@ -260,7 +260,7 @@ class BrowseKeystore:
         allow_existing_files_only=True,
         object_id=id,
         always_on_top=True,
-        allowed_suffixes={"jks"},
+        allowed_suffixes={"jks", "keystore"},
         initial_file_path=Settings.RECENT_MEDIA_PATH if (Settings.RECENT_MEDIA_PATH != "" and FileDAO.does_path_exist(Settings.RECENT_MEDIA_PATH)) else None
         )
         

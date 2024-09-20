@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "burlasdigitais"
+rootProject.name = "burlaporemail"
 include(":app")
