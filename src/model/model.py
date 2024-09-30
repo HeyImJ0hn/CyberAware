@@ -83,13 +83,13 @@ class GameManager:
         json = self.json_converter.game_to_json(self)
         FileDAO.save(json, self.path)
 
-    def compile(self, signed):
+    def compile(self, signed=False, source_code=False):
         FileDAO.delete_default_app_icon_android()
         KotlinConverter.create_folders(self)
         for entity in self.get_entities():
             FileDAO.media_to_android(entity.media, entity.id)
         FileDAO.app_icon_to_android(self.icon_path)
-        KotlinConverter.convert_to_kotlin(self, self.logger, signed, self.keystore)
+        KotlinConverter.convert_to_kotlin(self, self.logger, signed, self.keystore, source_code=source_code)
 
     def quit(self):
         pygame.quit()

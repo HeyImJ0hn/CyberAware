@@ -43,7 +43,7 @@ class KotlinConverter:
             os.makedirs(dir_to_create)
     
     @staticmethod
-    def convert_to_kotlin(game, logger, signed, keystore):
+    def convert_to_kotlin(game, logger, signed, keystore, source_code=False):
         game_name = game.game_name
         app_version = game.app_version
         entities = game.get_entities()
@@ -70,7 +70,13 @@ class KotlinConverter:
         KotlinConverter._create_home_screen(game_name, entities)
         KotlinConverter._create_base_screen(game_name)    
         
-        GradleCon.compile(logger, signed, keystore)
+        if not source_code:
+            GradleCon.compile(logger, signed, keystore)
+        else:
+            FileDAO.copy_android_folder(game_name)
+            FileDAO.delete_android_media()
+            FileDAO.restore_default_app_icon()
+            FileDAO.delete_android_game_folder(TextUtils.clean_text(game_name))
     
     @staticmethod
     def _create_app_navigation(game_name, entities):
@@ -147,8 +153,11 @@ fun AppNavigation() {{
             base_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
         file_path = os.path.join(base_path, 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'navigation', 'AppNavigation.kt')
-        with open(file_path, 'w', encoding='utf-8') as file:
-            file.write(app_nav_file)
+        try:
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(app_nav_file)
+        except Exception as e:
+            print("Exception writting nav file -> \n", e)
         
     @staticmethod    
     def _create_string_file(game_name):
@@ -164,8 +173,11 @@ fun AppNavigation() {{
             base_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
         file_path = os.path.join(base_path, 'android', 'app', 'src', 'main', 'res', 'values', 'strings.xml')
-        with open(file_path, 'w', encoding='utf-8') as file:
-            file.write(strings_file)
+        try:
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(strings_file)
+        except Exception as e:
+            print("Exception writting strings file -> \n", e)
     
     @staticmethod
     def _create_settings_file(game_name):
@@ -199,8 +211,11 @@ include(":app")'''
             base_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
         file_path = os.path.join(base_path, 'android', 'settings.gradle.kts')
-        with open(file_path, 'w', encoding='utf-8') as file:
-            file.write(settings_file)
+        try:
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(settings_file)
+        except Exception as e:
+            print("Exception writting settings file -> \n", e)
     
     @staticmethod
     def _create_build_gradle(game_name, app_version):
@@ -289,8 +304,11 @@ dependencies {{
             base_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
         
         file_path = os.path.join(base_path, 'android', 'app', 'build.gradle.kts')
-        with open(file_path, 'w', encoding='utf-8') as file:
-            file.write(build_file)
+        try:
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(build_file)
+        except Exception as e:
+            print("Exception writting build file -> \n", e)
     
     @staticmethod
     def _create_main_activity(game_name):
@@ -332,8 +350,11 @@ class MainActivity : ComponentActivity() {{
             base_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
         
         file_path = os.path.join(base_path, 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'MainActivity.kt')
-        with open(file_path, 'w', encoding='utf-8') as file:
-            file.write(main_activity_file)
+        try:
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(main_activity_file)
+        except Exception as e:
+            print("Exception writting main activity file -> \n", e)
           
     @staticmethod  
     def _create_color_file(game_name):
@@ -360,8 +381,11 @@ val Black = Color(0xFF000000)'''
             base_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
         file_path = os.path.join(base_path, 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui', 'theme', 'Color.kt')
-        with open(file_path, 'w', encoding='utf-8') as file:
-            file.write(color_file)
+        try:
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(color_file)
+        except Exception as e:
+            print("Exception writting color file -> \n", e)
           
     @staticmethod  
     def _create_theme_file(game_name):
@@ -418,8 +442,11 @@ fun CyberAwareBaseAppTheme(
             base_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
         file_path = os.path.join(base_path, 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui', 'theme', 'Theme.kt')
-        with open(file_path, 'w', encoding='utf-8') as file:
-            file.write(theme_file)
+        try:
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(theme_file)
+        except Exception as e:
+            print("Exception writting theme file -> \n", e)
             
     @staticmethod
     def _create_type_file(game_name):
@@ -464,8 +491,11 @@ val Typography = Typography(
             base_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
         file_path = os.path.join(base_path, 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'ui', 'theme', 'Type.kt')
-        with open(file_path, 'w', encoding='utf-8') as file:
-            file.write(type_file)
+        try:
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(type_file)
+        except Exception as e:
+            print("Exception writting type file -> \n", e)
     
     @staticmethod
     def _create_home_screen(game_name, entities):
@@ -572,8 +602,11 @@ fun HomeScreen(onNavigateToBaseScreen: (String) -> Unit) {{
             base_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
         file_path = os.path.join(base_path, 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'screens', 'HomeScreen.kt')
-        with open(file_path, 'w', encoding='utf-8') as file:
-            file.write(home_screen_file)
+        try:
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(home_screen_file)
+        except Exception as e:
+            print("Exception writting home screen file -> \n", e)
          
     @staticmethod   
     def _create_base_screen(game_name):
@@ -666,7 +699,7 @@ fun BaseScreen(
                     painter = painterResource(id = resourceId),
                     contentDescription = "Image",
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.FillHeight
                 )
             }}
 
@@ -816,7 +849,7 @@ fun VideoPlayer(uri: Uri, isContentVisible: MutableState<Boolean>, canPress: Mut
                 playerView = this
                 controllerAutoShow = false
                 player = exoPlayer
-                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
             }}
         }},
         modifier = Modifier.fillMaxSize()
@@ -833,5 +866,8 @@ fun getUriFromRaw(context: Context, rawResourceId: Int): Uri {{
             base_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
         file_path = os.path.join(base_path, 'android', 'app', 'src', 'main', 'java', 'dev', 'cyberaware', TextUtils.clean_text(game_name), 'screens', 'BaseScreen.kt')
-        with open(file_path, 'w', encoding='utf-8') as file:
-            file.write(base_screen_file)
+        try:
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(base_screen_file)
+        except Exception as e:
+            print("Exception writting base screen file -> \n", e)

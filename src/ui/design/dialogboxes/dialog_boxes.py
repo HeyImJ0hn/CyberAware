@@ -157,24 +157,30 @@ class CompileDialog(UIWindow):
                          resizable=False)
         
         UILabel(
-            relative_rect=pygame.Rect((10, 10), (WIDTH-20, HEIGHT-80)),
+            relative_rect=pygame.Rect((10, 10), (WIDTH-20, HEIGHT-120)),
             manager=self.ui_manager,
             text="Generate Signed App Bundle or Debug APK?",
             container=self,
             object_id=ObjectID(class_id='@compile_dialog', object_id='#info')
         )
         
-        UIButton(relative_rect=pygame.Rect((WIDTH-200, HEIGHT-70), (150, 30)), 
+        UIButton(relative_rect=pygame.Rect((WIDTH-198, HEIGHT-110), (150, 30)), 
                  text="Signed App Bundle", 
                  manager=self.ui_manager, 
                  container=self,
                  object_id=ObjectID(class_id='@compile_dialog_button', object_id='#compile_signed_button'))
         
-        UIButton(relative_rect=pygame.Rect((WIDTH-350, HEIGHT-70), (150, 30)), 
+        UIButton(relative_rect=pygame.Rect((WIDTH-352, HEIGHT-110), (150, 30)), 
                  text="Debug APK", 
                  manager=self.ui_manager, 
                  container=self,
                  object_id=ObjectID(class_id='@compile_dialog_button', object_id='#compile_debug_button'))
+        
+        UIButton(relative_rect=pygame.Rect((WIDTH-275, HEIGHT-75), (150, 30)),
+                    text="Source Code",
+                    manager=self.ui_manager,
+                    container=self,
+                    object_id=ObjectID(class_id='@compile_dialog_button', object_id='#compile_src_button'))
         
 class RequestKeyDialog(UIWindow):
     def __init__(self, ui_manager, game_manager):

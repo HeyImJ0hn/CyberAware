@@ -143,6 +143,7 @@ class ViewController:
             '#compile_dialog.#close_button': self.clear_active_dialog,
             '#compile_dialog.#compile_signed_button': self.compile_signed_dialog,
             '#compile_dialog.#compile_debug_button': self.compile_debug,
+            '#compile_dialog.#compile_src_button': self.compile_src,
             '#request_key_dialog.#browse_key_button': self.browse_keystore,
             '#request_key_dialog.#close_button': self.clear_active_dialog,
             '#request_key_dialog.#cancel_button': self.clear_active_dialog,
@@ -331,6 +332,12 @@ class ViewController:
         
     def compile_signed(self, event):
         self.compile(True, event)
+
+    def compile_src(self):
+        self.clear_active_dialog()
+        self.show_toast('Compiling Source Code', ToastType.INFO)
+
+        self.game_manager.compile(source_code=True)
         
     def compile(self, signed, event=None):
         self.clear_active_dialog()
@@ -348,12 +355,13 @@ class ViewController:
             self.game_manager.set_keystore(key_store_path, key_store_password)
             
         self.game_manager.compile(signed)
-    
+
     def handle_compilation_finish(self):
         self.compilling = False
-        #self.active_dialog.log.set_text("".join(self.game_manager.compilation_logs))
-        #self.active_dialog.button.enable()
-        self.show_toast('Compilation finished', ToastType.SUCCESS)
+        if 'BUILD SUCCESSFUL' in self.game_manager.compilation_logs[-1]:
+            self.show_toast('Compilation finished', ToastType.SUCCESS)
+        elif 'BUILD FAILED' in self.game_manager.compilation_logs[-1]:
+            self.show_toast('Compilation failed', ToastType.ERROR)
         self.view.toolbar.controller.enable_toolbar()
         self.game_manager.handle_compilation_finish()
     

@@ -208,6 +208,25 @@ class FileDAO:
             print('Build folder does not exist: ' + build_folder)
             
         FileDAO.open_folder(game_folder)
+
+    @staticmethod
+    def copy_android_folder(game_name):
+        if getattr(sys, 'frozen', False):
+            base_path = sys._MEIPASS
+        else:
+            base_path = os.path.normpath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
+        
+        android_folder = os.path.normpath(os.path.join(base_path, 'android'))
+        game_folder = os.path.normpath(os.path.join(FileDAO.get_game_folder(game_name), 'android')) 
+        if os.path.exists(android_folder):
+            print('Copying android folder: ' + android_folder + ' to ' + game_folder)
+            if os.path.exists(os.path.join(game_folder)):
+                shutil.rmtree(os.path.join(game_folder))
+            path = shutil.copytree(android_folder, game_folder)
+            FileDAO.open_folder(path)
+        else:
+            print('Android folder does not exist: ' + android_folder)
+            
     
     @staticmethod        
     def open_folder(path):
