@@ -1,0 +1,127 @@
+{
+    "name": "teste",
+    "app_version": "1",
+    "icon_path": "",
+    "entities": [
+        {
+            "id": 0,
+            "name": "Screen 0",
+            "coords": [
+                448.5,
+                192.5
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 0,
+            "text": "teste",
+            "notes": "",
+            "media": "C:\\Users\\joaot\\CyberAware\\teste\\3195394-uhd_3840_2160_25fps.mp4",
+            "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
+            ],
+            "final": false,
+            "options": [
+                {
+                    "text": "opçao 1",
+                    "entity_id": 1
+                },
+                {
+                    "text": "opçao 2",
+                    "entity_id": 2
+                }
+            ]
+        },
+        {
+            "id": 1,
+            "name": "Screen 1",
+            "coords": [
+                300.5,
+                348.5
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 1,
+            "text": "texto ecra 1",
+            "notes": "",
+            "media": "C:\\Users\\joaot\\CyberAware\\teste\\3195394-uhd_3840_2160_25fps.mp4",
+            "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
+            ],
+            "final": true,
+            "options": [
+                {
+                    "text": "recomeçar",
+                    "entity_id": 0
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "name": "Screen 2",
+            "coords": [
+                591.5,
+                351.5
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 1,
+            "text": "texto ecra 2",
+            "notes": "",
+            "media": "C:\\Users\\joaot\\CyberAware\\teste\\3195394-uhd_3840_2160_25fps.mp4",
+            "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
+            ],
+            "final": false,
+            "options": [
+                {
+                    "text": "opção final",
+                    "entity_id": 3
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "name": "Screen 3",
+            "coords": [
+                416.5,
+                516.5
+            ],
+            "size": [
+                75,
+                75
+            ],
+            "depth": 2,
+            "text": "texto ecra final",
+            "notes": "",
+            "media": "C:\\Users\\joaot\\CyberAware\\teste\\3195394-uhd_3840_2160_25fps.mp4",
+            "hidden": false,
+            "colour": [
+                215,
+                215,
+                215
+            ],
+            "final": true,
+            "options": [
+                {
+                    "text": "recomeçar",
+                    "entity_id": 0
+                }
+            ]
+        }
+    ]
+}

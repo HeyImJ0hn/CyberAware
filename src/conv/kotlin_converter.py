@@ -67,7 +67,7 @@ class KotlinConverter:
         KotlinConverter._create_type_file(game_name)
         
         # Screens
-        KotlinConverter._create_home_screen(game_name, entities)
+        #KotlinConverter._create_home_screen(game_name, entities)
         KotlinConverter._create_base_screen(game_name)    
         
         if not source_code:
@@ -93,7 +93,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dev.cyberaware.{TextUtils.clean_text(game_name)}.R
 import dev.cyberaware.{TextUtils.clean_text(game_name)}.screens.BaseScreen
-import dev.cyberaware.{TextUtils.clean_text(game_name)}.screens.HomeScreen
+
 import dev.cyberaware.{TextUtils.clean_text(game_name)}.screens.OptionButton
 
 @Composable
